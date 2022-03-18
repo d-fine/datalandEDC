@@ -22,9 +22,15 @@
  *
  */
 
+val swaggerJaxrs2Version: String by project
+val rsApi: String by project
+
 plugins {
     `java-library`
     id("application")
+    id("io.swagger.core.v3.swagger-gradle-plugin") version "2.1.13"
+    id("org.openapi.generator") version "5.4.0"
+    id("com.rameshkp.openapi-merger-gradle-plugin") version "1.0.4"
 }
 
 repositories {
@@ -48,4 +54,75 @@ dependencies {
 
 application {
     mainClass.set("org.eclipse.dataspaceconnector.boot.system.runtime.BaseRuntime")
+}
+
+val taskName = "generateClient"
+val clientOutputDir = "$buildDir/Clients"
+val destinationPackage = "org.dataland.datalandbackend.edcClient"
+val jsonOutputDir = buildDir
+val jsonFile = "OpenApiSpec.json"
+
+buildscript {
+    dependencies {
+        classpath("io.swagger.core.v3:swagger-gradle-plugin:2.1.13")
+    }
+}
+
+pluginManager.withPlugin("io.swagger.core.v3.swagger-gradle-plugin") {
+
+    dependencies {
+        // this is used to scan the classpath and generate an openapi yaml file
+        implementation("io.swagger.core.v3:swagger-jaxrs2-jakarta:${swaggerJaxrs2Version}")
+        implementation("jakarta.ws.rs:jakarta.ws.rs-api:${rsApi}")
+    }
+// this is used to scan the classpath and generate an openapi yaml file
+    tasks.withType<io.swagger.v3.plugins.gradle.tasks.ResolveTask> {
+        outputFileName = jsonFile
+        prettyPrint = true
+        classpath = java.sourceSets["main"].runtimeClasspath
+        buildClasspath = classpath
+        resourcePackages = setOf("org.eclipse.dataspaceconnector")
+        outputDir = file(jsonOutputDir)
+    }
+    configurations {
+        all {
+            exclude(group = "com.fasterxml.jackson.jaxrs", module = "jackson-jaxrs-json-provider")
+        }
+    }
+}
+
+openApiMerger {
+    inputDirectory.set(jsonOutputDir)
+    output {
+        directory.set(jsonOutputDir)
+        fileName.set("openApi")
+        fileExtension.set("json")
+    }
+    openApi {
+        openApiVersion.set("3.0.1")
+        info {
+            title.set("Dataland EDC OpenAPI Spec")
+            version.set("1.0.0-SNAPSHOT")
+        }
+    }
+}
+
+tasks.getByName("mergeOpenApiFiles"){
+    dependsOn("resolve")
+}
+
+tasks.register(taskName, org.openapitools.generator.gradle.plugin.tasks.GenerateTask::class) {
+    input = project.file("$jsonOutputDir/openapi.json").path
+    outputDir.set(clientOutputDir)
+    modelPackage.set("$destinationPackage.model")
+    apiPackage.set("$destinationPackage.api")
+    packageName.set(destinationPackage)
+    generatorName.set("kotlin")
+    configOptions.set(
+        mapOf(
+            "dateLibrary" to "java17",
+            "useTags" to "true"
+        )
+    )
+    dependsOn("mergeOpenApiFiles")
 }
