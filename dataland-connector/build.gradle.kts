@@ -60,7 +60,7 @@ val taskName = "generateClient"
 val clientOutputDir = "$buildDir/Clients"
 val destinationPackage = "org.dataland.datalandbackend.edcClient"
 val jsonOutputDir = buildDir
-val jsonFile = rootProject.extra["OpenApiSpec"]
+val jsonFile = "OpenApiSpec"
 
 buildscript {
     dependencies {
@@ -91,28 +91,9 @@ pluginManager.withPlugin("io.swagger.core.v3.swagger-gradle-plugin") {
     }
 }
 
-openApiMerger {
-    inputDirectory.set(jsonOutputDir)
-    output {
-        directory.set(jsonOutputDir)
-        fileName.set("openApi")
-        fileExtension.set("json")
-    }
-    openApi {
-        openApiVersion.set("3.0.1")
-        info {
-            title.set("Dataland EDC OpenAPI Spec")
-            version.set("1.0.0-SNAPSHOT")
-        }
-    }
-}
-
-tasks.getByName("mergeOpenApiFiles"){
-    dependsOn("resolve")
-}
 
 tasks.register(taskName, org.openapitools.generator.gradle.plugin.tasks.GenerateTask::class) {
-    input = project.file("$jsonOutputDir/openapi.json").path
+    input = project.file("$jsonOutputDir/$jsonFile.json").path
     outputDir.set(clientOutputDir)
     modelPackage.set("$destinationPackage.model")
     apiPackage.set("$destinationPackage.api")
@@ -124,5 +105,5 @@ tasks.register(taskName, org.openapitools.generator.gradle.plugin.tasks.Generate
             "useTags" to "true"
         )
     )
-    dependsOn("mergeOpenApiFiles")
+    dependsOn("resolve")
 }
