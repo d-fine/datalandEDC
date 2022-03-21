@@ -21,9 +21,18 @@
 
 package org.eclipse.dataspaceconnector.extensions.api;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
 import org.eclipse.dataspaceconnector.spi.WebService;
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtension;
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext;
+
+@OpenAPIDefinition(
+        info = @Info(
+                title = "Dataland EDC OpenAPI Spec",
+                version = "1.0.0-SNAPSHOT"
+        )
+)
 
 public class ApiEndpointExtension implements ServiceExtension {
 
@@ -35,6 +44,6 @@ public class ApiEndpointExtension implements ServiceExtension {
     @Override
     public void initialize(ServiceExtensionContext context) {
         var webService = context.getService(WebService.class);
-        webService.registerController(new ConsumerApiController(context.getMonitor()));
+        webService.registerResource(new ConsumerApiController(context.getMonitor()));
     }
 }
