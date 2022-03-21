@@ -4,4 +4,4 @@ allprojects {
     }
 }
 
-extra["OpenApiSpec"] = "OpenApi.json"
+extra["OpenApiSpec"] = "OpenApiSpec.json"

@@ -60,7 +60,7 @@ val taskName = "generateClient"
 val clientOutputDir = "$buildDir/Clients"
 val destinationPackage = "org.dataland.datalandbackend.edcClient"
 val jsonOutputDir = buildDir
-val jsonFile = "OpenApiSpec"
+val jsonFile = rootProject.extra["OpenApiSpec"]
 
 buildscript {
     dependencies {
@@ -77,7 +77,7 @@ pluginManager.withPlugin("io.swagger.core.v3.swagger-gradle-plugin") {
     }
 // this is used to scan the classpath and generate an openapi yaml file
     tasks.withType<io.swagger.v3.plugins.gradle.tasks.ResolveTask> {
-        outputFileName = jsonFile
+        outputFileName = jsonFile.toString().substringBeforeLast('.')
         prettyPrint = true
         classpath = java.sourceSets["main"].runtimeClasspath
         buildClasspath = classpath
@@ -90,7 +90,6 @@ pluginManager.withPlugin("io.swagger.core.v3.swagger-gradle-plugin") {
         }
     }
 }
-
 
 tasks.register(taskName, org.openapitools.generator.gradle.plugin.tasks.GenerateTask::class) {
     input = project.file("$jsonOutputDir/$jsonFile.json").path
@@ -106,4 +105,15 @@ tasks.register(taskName, org.openapitools.generator.gradle.plugin.tasks.Generate
         )
     )
     dependsOn("resolve")
+}
+
+val openApiSpec by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+}
+
+artifacts {
+    add("openApiSpec", project.file("$jsonOutputDir/$jsonFile")) {
+        builtBy("resolve")
+    }
 }
