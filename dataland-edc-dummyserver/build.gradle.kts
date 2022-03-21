@@ -47,6 +47,7 @@ tasks.register(taskName, org.openapitools.generator.gradle.plugin.tasks.Generate
     apiPackage.set("$destinationPackage.api")
     packageName.set(destinationPackage)
     generatorName.set("kotlin-spring")
+    dependsOn("getOpenApiSpec")
     configOptions.set(
         mapOf(
             "dateLibrary" to "java17",

@@ -17,7 +17,9 @@ package org.eclipse.dataspaceconnector.extensions.api;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.MediaType;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
 
@@ -38,5 +40,20 @@ public class ConsumerApiController {
         monitor.info("%s :: Received a health request");
         return "{\"response\":\"I'm alive!\"}";
     }
+
+    @GET
+    @Path("{dataId}")
+    public String selectDataById(@PathParam("dataId") String dataId) {
+        //logic
+        return "You requested the data set with the id " + dataId + ".";
+    }
+
+    @POST
+    @Path("data")
+    public String insertData(String data) {
+        //logic
+        return "You posted data with the content: " + data + ".";
+    }
+
 }
 
