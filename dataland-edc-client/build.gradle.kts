@@ -27,7 +27,6 @@ val rsApi: String by project
 
 plugins {
     `java-library`
-    id("application")
     id("org.openapi.generator") version "5.4.0"
 }
 
@@ -37,11 +36,6 @@ val openApiSpecConfig by configurations.creating {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("org.springdoc:springdoc-openapi-ui:1.6.6")
-    implementation("org.junit.jupiter:junit-jupiter:5.8.2")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
     openApiSpecConfig(project(mapOf("path" to ":dataland-connector", "configuration" to "openApiSpec")))
 }
 
