@@ -15,6 +15,7 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.eclipse.dataspaceconnector:dataloading")
     implementation("org.springdoc:springdoc-openapi-ui:1.6.6")
     implementation("org.junit.jupiter:junit-jupiter:5.8.2")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -42,4 +43,8 @@ tasks.register("generateEuroDatServer", org.openapitools.generator.gradle.plugin
 sourceSets {
     val main by getting
     main.java.srcDir("$serverOutputDir/src/main/kotlin")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
