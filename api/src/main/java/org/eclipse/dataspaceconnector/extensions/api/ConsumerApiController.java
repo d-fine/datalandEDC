@@ -42,7 +42,7 @@ public class ConsumerApiController {
     }
 
     @GET
-    @Path("{dataId}")
+    @Path("data/{dataId}")
     public String selectDataById(@PathParam("dataId") String dataId) {
         //logic
         return "You requested the data set with the id " + dataId + ".";
@@ -50,7 +50,7 @@ public class ConsumerApiController {
 
     @POST
     @Path("data")
-    public String insertData(String data) {
+    public String insertData(PostDataRequest data) {
         //logic
         return "You posted data with the content: " + data + ".";
     }
