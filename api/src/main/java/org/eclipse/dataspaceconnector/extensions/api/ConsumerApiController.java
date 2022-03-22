@@ -50,7 +50,7 @@ public class ConsumerApiController {
 
     @POST
     @Path("data")
-    public String insertData(PostDataRequest data) {
+    public String insertData(String data) {
         //logic
         return "You posted data with the content: " + data + ".";
     }

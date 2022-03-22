@@ -7,17 +7,16 @@ import org.springframework.web.bind.annotation.RestController
 
 
 @RestController
-class DummyController : DefaultApi  {
+class DummyController : DefaultApi {
     val dataStore = InMemoryDataStore()
 
     override fun selectDataById(dataId: String): ResponseEntity<String> {
         return ResponseEntity.ok(dataStore.selectDataSet(dataId))
     }
 
-    override fun request(header: Any?, payload: String?): ResponseEntity<String> {
-        return ResponseEntity.ok(dataStore.insertDataSet(payload ?: ""))
+    override fun insertData(body: String?): ResponseEntity<String> {
+        return ResponseEntity.ok(dataStore.insertDataSet(body ?:""))
     }
-
 }
 
 
