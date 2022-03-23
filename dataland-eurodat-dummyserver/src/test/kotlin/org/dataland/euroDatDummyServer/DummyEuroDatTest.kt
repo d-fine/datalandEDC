@@ -21,4 +21,14 @@ class DummyEuroDatTest(@Autowired var mockMvc: MockMvc) {
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
     }
+
+    @Test
+    fun `check registerAsset`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/asset/register")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+    }
 }
