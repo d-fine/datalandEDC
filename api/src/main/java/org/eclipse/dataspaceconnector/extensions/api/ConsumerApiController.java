@@ -42,14 +42,14 @@ public class ConsumerApiController {
     }
 
     @GET
-    @Path("data/{dataId}")
+    @Path("dataland/data/{dataId}")
     public String selectDataById(@PathParam("dataId") String dataId) {
         //logic
         return "You requested the data set with the id " + dataId + ".";
     }
 
     @POST
-    @Path("data")
+    @Path("dataland/data")
     public String insertData(String data) {
         //logic
         return "You posted data with the content: " + data + ".";
