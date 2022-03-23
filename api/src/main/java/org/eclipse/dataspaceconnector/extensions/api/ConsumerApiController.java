@@ -44,16 +44,12 @@ public class ConsumerApiController {
     @GET
     @Path("dataland/data/{dataId}")
     public String selectDataById(@PathParam("dataId") String dataId) {
-        //logic
-        return "You requested the data set with the id " + dataId + ".";
+        return "Not implemented.";
     }
 
     @POST
     @Path("dataland/data")
     public String insertData(String data) {
-        //logic
-        return "You posted data with the content: " + data + ".";
+        return "Not implemented.";
     }
-
 }
-
