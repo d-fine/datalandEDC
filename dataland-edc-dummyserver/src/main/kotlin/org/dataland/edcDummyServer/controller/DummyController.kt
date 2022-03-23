@@ -5,6 +5,9 @@ import org.dataland.edcDummyServer.service.InMemoryDataStore
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 
+/**
+ * Implementation of API
+ */
 @RestController
 class DummyController : DefaultApi {
     val dataStore = InMemoryDataStore()

@@ -6,6 +6,9 @@ import org.dataland.euroDatDummyServer.openApiServer.model.ProviderRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 
+/**
+ * Implementation of API
+ */
 @RestController
 class DummyController : DefaultApi {
 
