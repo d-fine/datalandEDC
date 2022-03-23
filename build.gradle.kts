@@ -34,6 +34,13 @@ detekt {
     source = files(detektFileTree)
 }
 
+ktlint {
+    filter {
+        exclude("**/openApiClient/**")
+        exclude("**/openApiServer/**")
+    }
+}
+
 tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
     reports {
         html.required.set(true)
