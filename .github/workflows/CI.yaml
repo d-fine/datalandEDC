@@ -44,6 +44,7 @@ jobs:
 
   run-checks:
     runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v2
       - name: Check formatting and code convention by using base image from GitHub Registry
