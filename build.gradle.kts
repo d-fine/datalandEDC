@@ -1,8 +1,10 @@
+// main
+
 allprojects {
     repositories {
         mavenCentral()
     }
-    /*group = "org.datalandedc"
+    /*group = "org.dataland"
     val releaseTagPrefix = "RELEASE-"
     val refName = System.getenv("GITHUB_REF") ?: ""
     val isRelease = (System.getenv("GITHUB_REF_TYPE") ?: "") == "tag" && refName.substringAfterLast("/")
@@ -23,10 +25,6 @@ allprojects {
 extra["OpenApiSpec"] = "OpenApiSpec.json"
 
 subprojects {
-    // apply(plugin = "org.springframework.boot")
-    // apply(plugin = "io.spring.dependency-management")
-    // apply(plugin = "org.openapi.generator")
-    // apply(plugin = "java-library")
     apply(plugin = "maven-publish")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
 }
@@ -51,13 +49,6 @@ detekt {
     detektFileTree.exclude("**/build/**").exclude("**/node_modules/**")
         .exclude(".gradle").exclude("**/DataSpaceConnector/**")
     source = files(detektFileTree)
-}
-
-ktlint {
-    filter {
-        exclude("**/openApiClient/**")
-        exclude("**/openApiServer/**")
-    }
 }
 
 tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {

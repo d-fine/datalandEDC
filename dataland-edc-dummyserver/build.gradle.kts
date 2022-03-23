@@ -65,3 +65,9 @@ sourceSets {
     val main by getting
     main.java.srcDir("$serverOutputDir/src/main/kotlin")
 }
+
+ktlint {
+    filter {
+        exclude("**/openApiServer/**")
+    }
+}
