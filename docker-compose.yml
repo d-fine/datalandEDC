@@ -13,3 +13,13 @@ services:
       context: ./dataland-eurodat-dummyserver
     ports:
       - "8085:8080"
+  develop:
+    profiles:
+      - "development"
+    build:
+      context: ./
+      dockerfile: ./devcontainer/Dockerfile
+    volumes:
+      - "./:/code:rw"
+    ports:
+      - "8081:8080"
