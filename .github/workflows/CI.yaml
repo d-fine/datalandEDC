@@ -16,15 +16,15 @@ jobs:
     #if: github.event_name == 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v2
+        with:
+          submodules: true
       - uses: actions/setup-java@v2
         with:
           distribution: temurin
           java-version: 17
           cache: gradle
-      - name: git?
-        run: git version
-      - name: get submodule
-        run: git submodule update --init --recursive
+      #- name: get submodule
+      #  run: git submodule update --init --recursive
       - name: Create the EDC spec
         run: ./gradlew dataland-connector:resolve --no-daemon
       - name: Copy the gradle cache into the workspace
