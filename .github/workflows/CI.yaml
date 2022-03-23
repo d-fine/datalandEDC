@@ -39,7 +39,7 @@ jobs:
         with:
           context: .
           file: ./baseDockerfiles/temurinBaseImageDockerfile
-          tags: ghcr.io/d-fine/datalandEDC/temurinbase:latest
+          tags: ghcr.io/d-fine/datalandedc/temurinbase:latest
           push: true
 
   run-checks:
@@ -48,7 +48,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Check formatting and code convention by using base image from GitHub Registry
         run: |
-          docker run -v $(pwd):/app:rw ghcr.io/d-fine/datalandEDC/temurinbase:latest \
+          docker run -v $(pwd):/app:rw ghcr.io/d-fine/datalandedc/temurinbase:latest \
           /app/gradlew -p /app ktlintcheck detekt --no-daemon
 
   summary:

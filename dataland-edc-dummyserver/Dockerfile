@@ -1,4 +1,4 @@
-FROM ghcr.io/d-fine/datalandEDC/temurinbase:latest
+FROM ghcr.io/d-fine/datalandedc/temurinbase:latest
 COPY . /app/
 EXPOSE 8080
 WORKDIR /app
