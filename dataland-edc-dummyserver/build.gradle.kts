@@ -6,7 +6,7 @@ repositories {
 
 plugins {
     id("org.springframework.boot") version "2.6.4"
-    kotlin("jvm") version "1.6.10"
+    kotlin("jvm")
     kotlin("plugin.spring") version "1.6.10"
     id("com.github.johnrengelman.processes") version "0.5.0"
     id("org.springdoc.openapi-gradle-plugin") version "1.3.3"

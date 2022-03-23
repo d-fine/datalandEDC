@@ -1,10 +1,9 @@
 package org.dataland.euroDatDummyServer.controller
 
 import org.dataland.euroDatDummyServer.openApiServer.api.DefaultApi
+import org.dataland.euroDatDummyServer.openApiServer.model.ConsumerRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
-import org.dataland.euroDatDummyServer.openApiServer.model.ConsumerRequest
-
 
 @RestController
 class DummyController : DefaultApi {
@@ -13,5 +12,3 @@ class DummyController : DefaultApi {
         return ResponseEntity.ok(Unit)
     }
 }
-
-

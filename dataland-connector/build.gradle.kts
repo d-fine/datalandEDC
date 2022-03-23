@@ -47,8 +47,8 @@ dependencies {
     implementation("org.eclipse.dataspaceconnector:iam-mock")
     implementation("org.eclipse.dataspaceconnector:control")
     implementation("org.eclipse.dataspaceconnector:ids")
-    implementation("io.swagger.core.v3:swagger-jaxrs2-jakarta:${swaggerJaxrs2Version}")
-    implementation("jakarta.ws.rs:jakarta.ws.rs-api:${rsApi}")
+    implementation("io.swagger.core.v3:swagger-jaxrs2-jakarta:$swaggerJaxrs2Version")
+    implementation("jakarta.ws.rs:jakarta.ws.rs-api:$rsApi")
     implementation(project(":api"))
 }
 

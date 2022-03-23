@@ -5,7 +5,6 @@ import org.dataland.edcDummyServer.service.InMemoryDataStore
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 
-
 @RestController
 class DummyController : DefaultApi {
     val dataStore = InMemoryDataStore()
@@ -15,8 +14,6 @@ class DummyController : DefaultApi {
     }
 
     override fun insertData(body: String?): ResponseEntity<String> {
-        return ResponseEntity.ok(dataStore.insertDataSet(body ?:""))
+        return ResponseEntity.ok(dataStore.insertDataSet(body ?: ""))
     }
 }
-
-
