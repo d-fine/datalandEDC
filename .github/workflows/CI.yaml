@@ -49,14 +49,17 @@ jobs:
   run-checks:
     runs-on: ubuntu-latest
     #if: github.event_name != 'workflow_dispatch'
-    needs: build-and-push-docker-image    #delete later
     steps:
       - uses: actions/checkout@v2
       - name: Check formatting and code convention by using base image from GitHub Registry
         run: |
           docker run -v $(pwd):/app:rw ghcr.io/d-fine/datalandedc/temurinbase:latest \
           /app/gradlew -p /app ktlintcheck detekt --no-daemon
-
+      - name: Publish packages
+        run: ./gradlew publish --no-daemon
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: $GITHUB_ACTOR
   summary:
     runs-on: ubuntu-latest
     if: success()
