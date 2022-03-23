@@ -23,8 +23,6 @@ jobs:
           distribution: temurin
           java-version: 17
           cache: gradle
-      #- name: get submodule
-      #  run: git submodule update --init --recursive
       - name: Create the EDC spec
         run: ./gradlew dataland-connector:resolve --no-daemon
       - name: Copy the gradle cache into the workspace
