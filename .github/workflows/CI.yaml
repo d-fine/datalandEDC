@@ -21,6 +21,8 @@ jobs:
           distribution: temurin
           java-version: 17
           cache: gradle
+      - name: git?
+        run: git version
       - name: get submodule
         run: git submodule update --init --recursive
       - name: Create the EDC spec
