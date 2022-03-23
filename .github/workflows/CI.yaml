@@ -54,8 +54,6 @@ jobs:
   summary:
     runs-on: ubuntu-latest
     if: success()
-    needs:
-      - sonar
     steps:
       - name: Summary of this workflow's overall outcome
         run: exit 0
