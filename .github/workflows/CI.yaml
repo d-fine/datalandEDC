@@ -21,8 +21,8 @@ jobs:
           distribution: temurin
           java-version: 17
           cache: gradle
-      - name: Build all project outputs
-        run: ./gradlew assemble --no-daemon
+      - name: Create the EDC spec
+        run: ./gradlew dataland-connector:resolve --no-daemon
       - name: Copy the gradle cache into the workspace
         run: cp -r /home/runner/.gradle ./gradlecache
       - name: Login to Github Packages
