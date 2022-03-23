@@ -23,13 +23,12 @@ allprojects {
 extra["OpenApiSpec"] = "OpenApiSpec.json"
 
 subprojects {
-    //apply(plugin = "org.springframework.boot")
-    //apply(plugin = "io.spring.dependency-management")
-    //apply(plugin = "org.openapi.generator")
-    //apply(plugin = "java-library")
+    // apply(plugin = "org.springframework.boot")
+    // apply(plugin = "io.spring.dependency-management")
+    // apply(plugin = "org.openapi.generator")
+    // apply(plugin = "java-library")
     apply(plugin = "maven-publish")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
-
 }
 
 plugins {
