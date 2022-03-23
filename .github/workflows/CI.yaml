@@ -42,7 +42,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: ./baseDockerfiles/temurinBaseImageDockerfile
+          file: ./baseDockerfiles/temurinBaseImageDockerfileIncludingEdcCache
           tags: ghcr.io/d-fine/datalandedc/temurinbase:latest
           push: true
 
