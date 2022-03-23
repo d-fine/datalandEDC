@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 
-COPY ./local_gradlecache /root/.gradle
+COPY ./gradlecache /root/.gradle
 
 RUN apt-get update && apt-get install -y \
 	openjdk-17-jdk \
