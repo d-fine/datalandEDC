@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17.0.2_8-jre-alpine
+FROM ghcr.io/d-fine/datalandedc/temurinbase:latest
 
 COPY . /app
 EXPOSE 8080
