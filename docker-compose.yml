@@ -1,0 +1,6 @@
+services:
+  dataland-eurodat:
+    build:
+      context: ./dataland-eurodat-dummyserver
+    ports:
+      - "8085:8080"
