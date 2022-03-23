@@ -2,19 +2,33 @@ allprojects {
     repositories {
         mavenCentral()
     }
+    group = "org.datalandedc"
+    val releaseTagPrefix = "RELEASE-"
+    val refName = System.getenv("GITHUB_REF") ?: ""
+    val isRelease = (System.getenv("GITHUB_REF_TYPE") ?: "") == "tag" && refName.substringAfterLast("/")
+        .startsWith(releaseTagPrefix)
+    version = if (isRelease) {
+        val releaseVersion = refName.substringAfterLast("/").substring(releaseTagPrefix.length)
+        println("Running gradle in RELEASE mode for Version $releaseVersion")
+        releaseVersion
+    } else {
+        val devVersion = "0.0.1-SNAPSHOT"
+        println("Running gradle in non-release mode for Version $devVersion")
+        devVersion
+    }
 }
 
 extra["OpenApiSpec"] = "OpenApiSpec.json"
 
 subprojects {
-    apply(plugin = "org.springframework.boot")
-    apply(plugin = "io.spring.dependency-management")
-    apply(plugin = "org.openapi.generator")
-    apply(plugin = "java-library")
+    //apply(plugin = "org.springframework.boot")
+    //apply(plugin = "io.spring.dependency-management")
+    //apply(plugin = "org.openapi.generator")
+    //apply(plugin = "java-library")
     apply(plugin = "maven-publish")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
-    group = "org.dataland"
-    version = "0.0.1-SNAPSHOT"
+    //group = "org.dataland"
+    //version = "0.0.1-SNAPSHOT"
 }
 
 plugins {
