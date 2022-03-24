@@ -3,4 +3,5 @@ COPY . /app/
 EXPOSE 8080
 WORKDIR /app
 
-CMD tail -f /dev/null
+#COPY ./gradlecache /root/.gradle
+#CMD tail -f /dev/null
