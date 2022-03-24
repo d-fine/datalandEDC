@@ -30,10 +30,10 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     dependsOn(taskName)
 }
 
-val jsonFile = rootProject.extra["OpenApiSpecEuroDat"]
+val spec = rootProject.extra["OpenApiSpecEuroDat"]
 
 tasks.register(taskName, org.openapitools.generator.gradle.plugin.tasks.GenerateTask::class) {
-    input = "$projectDir/OpenApiEuroDat.json"
+    input = "$rootDir/resources/$spec"
     outputDir.set(serverOutputDir)
     modelPackage.set("$destinationPackage.model")
     apiPackage.set("$destinationPackage.api")
@@ -55,13 +55,4 @@ sourceSets {
 
 tasks.test {
     useJUnitPlatform()
-}
-
-val OpenApiSpecEuroDat by configurations.creating {
-    isCanBeConsumed = true
-    isCanBeResolved = false
-}
-
-artifacts {
-    add("OpenApiSpecEuroDat", project.file("$projectDir/$jsonFile"))
 }
