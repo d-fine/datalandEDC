@@ -37,6 +37,11 @@ subprojects {
                 }
             }
         }
+        publications {
+            register<MavenPublication>("gpr") {
+                from(components["java"])
+            }
+        }
     }
 }
 
