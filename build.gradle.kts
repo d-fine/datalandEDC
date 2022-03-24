@@ -24,7 +24,6 @@ extra["OpenApiSpec"] = "OpenApiSpec.json"
 
 subprojects {
     apply(plugin = "maven-publish")
-    apply(plugin = "org.openapi.generator")
     apply(plugin = "java-library")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
     configure<PublishingExtension> {
@@ -45,7 +44,6 @@ plugins {
     id("io.gitlab.arturbosch.detekt") version "1.19.0"
     id("org.jlleitschuh.gradle.ktlint") version "10.2.1"
     kotlin("jvm") version "1.6.10"
-    id("org.openapi.generator") version "5.4.0" apply false
 }
 
 dependencies {
