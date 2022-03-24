@@ -23,7 +23,15 @@ class DummyController : DefaultApi {
     }
 
     override fun registerAsset(providerRequest: ProviderRequest?): ResponseEntity<AssetResponse> {
-        val asset = Asset(mapOf("text1" to "text2"))
+        val asset = Asset(
+            mapOf(
+                "id" to "1",
+                "name" to "name1",
+                "description" to "description1",
+                "version" to "version1",
+                "contenttype" to "contenttype1"
+            )
+        )
         val contractDefinition = ContractDefinition()
         val assetResponse = AssetResponse(asset, contractDefinition)
         return ResponseEntity.ok(assetResponse)
