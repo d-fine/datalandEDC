@@ -131,12 +131,11 @@ jobs:
       - name: Check formatting and code convention by using edc server image from GitHub Registry
         run: |
           docker run -v $(pwd):/app:rw ghcr.io/d-fine/datalandedc/edcdummyserver:latest \
-          /app/gradlew -p /app ktlintcheck detekt --no-daemon 
-
-      #- name: Publish packages
-      #  run: |
-      #    docker run -v $(pwd):/app:rw ghcr.io/d-fine/datalandedc/temurinbase:latest \
-      #    /app/gradlew -p /app publish --no-daemon
+          /app/gradlew -p /app ktlintcheck detekt --no-daemon
+      - name: Check formatting and code convention by using eurodat dummy server image from GitHub Registry
+        run: |
+          docker run -v $(pwd):/app:rw ghcr.io/d-fine/datalandedc/eurodatdummyserver:latest \
+          /app/gradlew -p /app ktlintcheck detekt --no-daemon
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: $GITHUB_ACTOR
