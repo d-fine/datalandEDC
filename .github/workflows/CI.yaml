@@ -29,6 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     if: always()
 #    needs:
+    # delete comment
 #      - e2e-tests
 #      - unit-tests-backend
 #      - unit-tests-frontend
