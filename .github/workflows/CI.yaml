@@ -75,7 +75,7 @@ jobs:
 
   build-and-publish-eurodatdummy-server-image:
     runs-on: ubuntu-latest
-    #if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v2
         with:
@@ -114,6 +114,22 @@ jobs:
           cache: gradle
       - name: Publish packages
         run: ./gradlew dataland-edc-client:publish --no-daemon
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: $GITHUB_ACTOR
+
+  publish-eurodat-clients:
+    runs-on: ubuntu-latest
+    #if: github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v2
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+      - name: Publish packages
+        run: ./gradlew dataland-eurodat-client:publish --no-daemon
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: $GITHUB_ACTOR
