@@ -104,7 +104,7 @@ jobs:
 
   publish-edc-clients:
     runs-on: ubuntu-latest
-    if: github.event_name != 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-java@v2
@@ -127,14 +127,6 @@ jobs:
       - name: Check formatting and code convention by using base image from GitHub Registry
         run: |
           docker run -v $(pwd):/app:rw ghcr.io/d-fine/datalandedc/temurinbase:latest \
-          /app/gradlew -p /app ktlintcheck detekt --no-daemon
-      - name: Check formatting and code convention by using edc server image from GitHub Registry
-        run: |
-          docker run -v $(pwd):/app:rw ghcr.io/d-fine/datalandedc/edcdummyserver:latest \
-          /app/gradlew -p /app ktlintcheck detekt --no-daemon
-      - name: Check formatting and code convention by using eurodat dummy server image from GitHub Registry
-        run: |
-          docker run -v $(pwd):/app:rw ghcr.io/d-fine/datalandedc/eurodatdummyserver:latest \
           /app/gradlew -p /app ktlintcheck detekt --no-daemon
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
