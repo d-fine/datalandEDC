@@ -18,8 +18,10 @@ class DummyEuroDatTest(@Autowired var mockMvc: MockMvc) {
             MockMvcRequestBuilders.post("/prepare")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
+        ).andExpectAll(
+            MockMvcResultMatchers.status().isOk,
+            MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)
         )
-            .andExpect(MockMvcResultMatchers.status().isOk)
     }
 
     @Test
@@ -28,7 +30,9 @@ class DummyEuroDatTest(@Autowired var mockMvc: MockMvc) {
             MockMvcRequestBuilders.post("/asset/register")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
+        ).andExpectAll(
+            MockMvcResultMatchers.status().isOk,
+            MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)
         )
-            .andExpect(MockMvcResultMatchers.status().isOk)
     }
 }
