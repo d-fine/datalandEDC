@@ -46,7 +46,7 @@ jobs:
 
   build-and-publish-edc-server-image:
     runs-on: ubuntu-latest
-    # if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v2
         with:
@@ -77,21 +77,40 @@ jobs:
           tags: ghcr.io/d-fine/datalandedc/edcdummyserver:latest
           push: true
 
+  publish-edc-clients:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v2
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+      - name: Publish packages
+        run: ./gradlew dataland-edc-client:publish --no-daemon
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: $GITHUB_ACTOR
 
   run-checks:
     runs-on: ubuntu-latest
+    if: always()
     #if: github.event_name != 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v2
       - name: Check formatting and code convention by using base image from GitHub Registry
         run: |
           docker run -v $(pwd):/app:rw ghcr.io/d-fine/datalandedc/temurinbase:latest \
+          /app/gradlew -p /app ktlintcheck detekt --no-daemon
+      - name: Check formatting and code convention by using edc server image from GitHub Registry
+        run: |
+          docker run -v $(pwd):/app:rw ghcr.io/d-fine/datalandedc/edcdummyserver:latest \
           /app/gradlew -p /app ktlintcheck detekt --no-daemon 
 
-      - name: Publish packages
-        run: |
-          docker run -v $(pwd):/app:rw ghcr.io/d-fine/datalandedc/temurinbase:latest \
-          /app/gradlew -p /app publish --no-daemon
+      #- name: Publish packages
+      #  run: |
+      #    docker run -v $(pwd):/app:rw ghcr.io/d-fine/datalandedc/temurinbase:latest \
+      #    /app/gradlew -p /app publish --no-daemon
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: $GITHUB_ACTOR
