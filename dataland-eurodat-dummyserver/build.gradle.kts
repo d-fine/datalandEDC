@@ -23,8 +23,13 @@ dependencies {
 
 val serverOutputDir = "$buildDir/Server/euroDat"
 val destinationPackage = "org.dataland.euroDatDummyServer.openApiServer"
+val taskName = "generateEuroDatServer"
 
-tasks.register("generateEuroDatServer", org.openapitools.generator.gradle.plugin.tasks.GenerateTask::class) {
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    dependsOn(taskName)
+}
+
+tasks.register(taskName, org.openapitools.generator.gradle.plugin.tasks.GenerateTask::class) {
     input = "$projectDir/OpenApiEuroDat.json"
     outputDir.set(serverOutputDir)
     modelPackage.set("$destinationPackage.model")
