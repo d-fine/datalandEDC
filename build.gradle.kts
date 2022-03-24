@@ -21,6 +21,7 @@ allprojects {
 }
 
 extra["OpenApiSpec"] = "OpenApiSpec.json"
+extra["OpenApiSpecEuroDat"] = "OpenApiEuroDat.json"
 
 subprojects {
     apply(plugin = "maven-publish")
