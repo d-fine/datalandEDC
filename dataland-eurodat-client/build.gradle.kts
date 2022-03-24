@@ -12,19 +12,19 @@ dependencies {
         project(
             mapOf(
                 "path" to ":dataland-eurodat-dummyserver",
-                "configuration" to "openApiSpecEuroDat"
+                "configuration" to "OpenApiSpecEuroDat"
             )
         )
     )
 }
 
-tasks.register<Copy>("openApiSpecEuroDat") {
+tasks.register<Copy>("OpenApiSpecEuroDat") {
     from(openApiSpecConfig)
     into("$buildDir")
 }
 
 val destinationPackage = "org.dataland.datalandbackend.euroDatClient"
-val jsonFile = rootProject.extra["openApiSpecEuroDat"]
+val jsonFile = rootProject.extra["OpenApiSpecEuroDat"]
 
 tasks.register("generateEuroDatClient", org.openapitools.generator.gradle.plugin.tasks.GenerateTask::class) {
     input = "$buildDir/$jsonFile"
@@ -39,5 +39,5 @@ tasks.register("generateEuroDatClient", org.openapitools.generator.gradle.plugin
             "useTags" to "true"
         )
     )
-    dependsOn("openApiSpecEuroDat")
+    dependsOn("OpenApiSpecEuroDat")
 }
