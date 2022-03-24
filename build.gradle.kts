@@ -25,6 +25,7 @@ extra["OpenApiSpec"] = "OpenApiSpec.json"
 subprojects {
     apply(plugin = "maven-publish")
     apply(plugin = "org.openapi.generator")
+    apply(plugin = "java-library")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
     configure<PublishingExtension> {
         repositories {
