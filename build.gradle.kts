@@ -4,7 +4,7 @@ allprojects {
     repositories {
         mavenCentral()
     }
-    /*group = "org.dataland"
+    group = "org.dataland"
     val releaseTagPrefix = "RELEASE-"
     val refName = System.getenv("GITHUB_REF") ?: ""
     val isRelease = (System.getenv("GITHUB_REF_TYPE") ?: "") == "tag" && refName.substringAfterLast("/")
@@ -17,15 +17,14 @@ allprojects {
         val devVersion = "0.0.1-SNAPSHOT"
         println("Running gradle in non-release mode for Version $devVersion")
         devVersion
-    }*/
-    group = "org.dataland"
-    version = "0.0.1-SNAPSHOT"
+    }
 }
 
 extra["OpenApiSpec"] = "OpenApiSpec.json"
 
 subprojects {
     apply(plugin = "maven-publish")
+    apply(plugin = "org.openapi.generator")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
     configure<PublishingExtension> {
         repositories {
