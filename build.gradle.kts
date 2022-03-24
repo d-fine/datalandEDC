@@ -50,6 +50,22 @@ plugins {
     id("io.gitlab.arturbosch.detekt") version "1.19.0"
     id("org.jlleitschuh.gradle.ktlint") version "10.2.1"
     kotlin("jvm") version "1.6.10"
+    id("org.sonarqube") version "3.3"
+}
+
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "d-fine_datalandEDC")
+        property("sonar.organization", "d-fine")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.qualitygate.wait", true)
+        property("sonar.coverage.exclusions", "/dataland-connector/*")
+        property(
+            "sonar.sources",
+            subprojects.flatMap { project -> project.properties["sonarSources"] as Iterable<*> }
+        )
+    }
 }
 
 dependencies {

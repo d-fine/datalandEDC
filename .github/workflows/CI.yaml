@@ -7,132 +7,9 @@ on:
   pull_request:
     branches:
       - 'main'
-  workflow_dispatch:
+
 
 jobs:
-
-  build-and-push-base-image:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch'
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: true
-      - uses: actions/setup-java@v2
-        with:
-          distribution: temurin
-          java-version: 17
-          cache: gradle
-      - name: Create the EDC spec
-        run: ./gradlew dataland-connector:resolve --no-daemon
-      - name: Copy the gradle cache into the workspace
-        run: cp -r /home/runner/.gradle ./gradlecache
-      - name: Login to Github Packages
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v1
-      - name: Build an eclipse temurin base image and push it to GitHub Container Registry
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: ./baseDockerfiles/temurinBaseImageDockerfile
-          tags: ghcr.io/d-fine/datalandedc/temurinbase:latest
-          push: true
-
-  build-and-publish-edc-server-image:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch'
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: true
-      - uses: actions/setup-java@v2
-        with:
-          distribution: temurin
-          java-version: 17
-          cache: gradle
-      - name: Login to Github Packages
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v1
-      - name: Build the edc dummer server image and push it to GitHub Container Registry
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: ./dataland-edc-dummyserver/Dockerfile
-          tags: ghcr.io/d-fine/datalandedc/edcdummyserver:latest
-          push: true
-
-  build-and-publish-eurodatdummy-server-image:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch'
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: true
-      - uses: actions/setup-java@v2
-        with:
-          distribution: temurin
-          java-version: 17
-          cache: gradle
-      - name: Login to Github Packages
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v1
-      - name: Build the eurodat dummer server image and push it to GitHub Container Registry
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: ./dataland-eurodat-dummyserver/Dockerfile
-          tags: ghcr.io/d-fine/datalandedc/eurodatdummyserver:latest
-          push: true
-
-  publish-edc-clients:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch'
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-java@v2
-        with:
-          distribution: temurin
-          java-version: 17
-          cache: gradle
-      - name: Publish packages
-        run: ./gradlew dataland-edc-client:publish --no-daemon
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_ACTOR: $GITHUB_ACTOR
-
-  publish-eurodat-clients:
-    runs-on: ubuntu-latest
-    #if: github.event_name == 'workflow_dispatch'
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-java@v2
-        with:
-          distribution: temurin
-          java-version: 17
-          cache: gradle
-      - name: Publish packages
-        run: ./gradlew dataland-eurodat-client:publish --no-daemon
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_ACTOR: $GITHUB_ACTOR
 
   run-checks:
     runs-on: ubuntu-latest
@@ -147,6 +24,46 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: $GITHUB_ACTOR
+
+  sonar:
+    runs-on: ubuntu-latest
+    if: always()
+#    needs:
+#      - e2e-tests
+#      - unit-tests-backend
+#      - unit-tests-frontend
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v2
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+      - name: Build project
+        run: ./gradlew assemble --no-daemon
+#      - uses: actions/download-artifact@v2
+#        with:
+#          name: JaCoCoResultsUnitTests
+#      - uses: actions/download-artifact@v2
+#        with:
+#          name: JaCoCoResultsE2ETest
+#      - uses: actions/download-artifact@v2
+#        with:
+#          name: lcovResultsUnit
+#          path: fe-coverage/unit
+#      - uses: actions/download-artifact@v2
+#        with:
+#          name: lcovResultsE2E
+#          path: fe-coverage/e2e
+      - name: Generate jacocoTestReport and run Sonar
+        if: always()
+        run: ./gradlew sonarqube --no-daemon
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
   summary:
     runs-on: ubuntu-latest
     if: success()

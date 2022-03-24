@@ -1,3 +1,5 @@
+val sonarSources by extra(sourceSets.asMap.values.flatMap { sourceSet -> sourceSet.allSource })
+
 plugins {
     id("org.openapi.generator") version "5.4.0"
 }
