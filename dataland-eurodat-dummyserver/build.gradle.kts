@@ -1,5 +1,7 @@
 // server
 val sonarSources by extra(emptyList<File>())
+val jacocoSources by extra(emptyList<File>())
+val jacocoClasses by extra(emptyList<File>())
 
 plugins {
     id("org.springframework.boot") version "2.6.4"

@@ -21,11 +21,32 @@
  *
  */
 val sonarSources by extra(sourceSets.asMap.values.flatMap { sourceSet -> sourceSet.allSource })
+val jacocoSources by extra(sonarSources)
+val jacocoClasses by extra(
+    sourceSets.asMap.values.flatMap { sourceSet ->
+        sourceSet.output.classesDirs.flatMap {
+            fileTree(it).files
+        }
+    }
+)
 plugins {
     `java-library`
     id("application")
+    jacoco
 }
 
+jacoco {
+    toolVersion = "0.8.7"
+}
+
+
+tasks.test {
+    useJUnitPlatform()
+
+    extensions.configure(JacocoTaskExtension::class) {
+        setDestinationFile(file("$buildDir/jacoco/jacoco.exec"))
+    }
+}
 val rsApi: String by project
 
 repositories {

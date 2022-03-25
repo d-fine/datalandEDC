@@ -54,6 +54,7 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "10.2.1"
     kotlin("jvm") version "1.6.10"
     id("org.sonarqube") version "3.3"
+    jacoco
 }
 
 sonarqube {
@@ -68,6 +69,26 @@ sonarqube {
             subprojects.flatMap { project -> project.properties["sonarSources"] as Iterable<*> }
         )
     }
+}
+
+jacoco {
+    toolVersion = "0.8.7"
+}
+
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.build)
+    sourceDirectories.setFrom(
+        subprojects.flatMap { project -> project.properties["jacocoSources"] as Iterable<*> }
+    )
+    classDirectories.setFrom(
+        subprojects.flatMap { project -> project.properties["jacocoClasses"] as Iterable<*> }
+    )
+    reports {
+        xml.required.set(true)
+        csv.required.set(false)
+    }
+    executionData.setFrom(fileTree(projectDir).include("*.exec"))
 }
 
 dependencies {
