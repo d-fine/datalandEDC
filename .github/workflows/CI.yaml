@@ -64,9 +64,9 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: JaCoCoEDCDummyUnitTests
-#      - uses: actions/download-artifact@v2
-#        with:
-#          name: JaCoCoAPIUnitTests
+      - uses: actions/download-artifact@v2
+        with:
+          name: JaCoCoAPIUnitTests
       - name: Generate jacocoTestReport and run Sonar
         if: always()
         run: ./gradlew dataland-edc-dummyserver:jacocoTestReport sonarqube --no-daemon
