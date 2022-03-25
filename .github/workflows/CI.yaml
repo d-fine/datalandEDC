@@ -22,7 +22,7 @@ jobs:
       - name: Check formatting and code convention by using base image from GitHub Registry
         run: |
           docker run -v $(pwd):/app:rw ghcr.io/d-fine/datalandedc/edcdummyserver:latest \
-          /app/gradlew -p /app ktlintcheck detekt dataland-edc-dummyserver:test --no-daemon
+          /app/gradlew -p /app ktlintcheck detekt dataland-edc-dummyserver:test api:test --no-daemon
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: $GITHUB_ACTOR
@@ -38,12 +38,12 @@ jobs:
         with:
           name: JaCoCoEDCDummyUnitTests
           path: ./dataland-edc-dummyserver/build/jacoco/*.exec
-#      - name: Upload JaCoCo API Results
-#        if: always()
-#        uses: actions/upload-artifact@v2
-#        with:
-#          name: JaCoCoAPIUnitTests
-#          path: ./api/build/jacoco/*.exec
+      - name: Upload JaCoCo API Results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: JaCoCoAPIUnitTests
+          path: ./api/build/jacoco/*.exec
   sonar:
     runs-on: ubuntu-latest
     if: always()
