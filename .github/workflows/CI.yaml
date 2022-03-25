@@ -20,7 +20,7 @@ jobs:
       - name: Check formatting and code convention by using base image from GitHub Registry
         run: |
           docker run -v $(pwd):/app:rw ghcr.io/d-fine/datalandedc/temurinbase:latest \
-          /app/gradlew -p /app ktlintcheck detekt test --no-daemon
+          /app/gradlew -p /app ktlintcheck detekt dataland-edc-dummyserver:test --no-daemon
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: $GITHUB_ACTOR
@@ -36,19 +36,17 @@ jobs:
         with:
           name: JaCoCoEDCDummyUnitTests
           path: ./dataland-edc-dummyserver/build/jacoco/*.exec
-      - name: Upload JaCoCo API Results
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: JaCoCoAPIUnitTests
-          path: ./api/build/jacoco/*.exec
+#      - name: Upload JaCoCo API Results
+#        if: always()
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: JaCoCoAPIUnitTests
+#          path: ./api/build/jacoco/*.exec
   sonar:
     runs-on: ubuntu-latest
     if: always()
-#    needs:
-#      - e2e-tests
-#      - unit-tests-backend
-#      - unit-tests-frontend
+    needs:
+      - unit-tests
     steps:
       - uses: actions/checkout@v2
         with:
@@ -64,17 +62,9 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: JaCoCoEDCDummyUnitTests
-      - uses: actions/download-artifact@v2
-        with:
-          name: JaCoCoAPIUnitTests
 #      - uses: actions/download-artifact@v2
 #        with:
-#          name: lcovResultsUnit
-#          path: fe-coverage/unit
-#      - uses: actions/download-artifact@v2
-#        with:
-#          name: lcovResultsE2E
-#          path: fe-coverage/e2e
+#          name: JaCoCoAPIUnitTests
       - name: Generate jacocoTestReport and run Sonar
         if: always()
         run: ./gradlew jacocoTestReport sonarqube --no-daemon
