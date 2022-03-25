@@ -20,7 +20,7 @@
  *       Fraunhofer Institute for Software and Systems Engineering - added dependencies
  *
  */
-val sonarSources by extra(emptyList<File>())
+val sonarSources by extra(sourceSets.asMap.values.flatMap { sourceSet -> sourceSet.allSource })
 plugins {
     `java-library`
     id("application")

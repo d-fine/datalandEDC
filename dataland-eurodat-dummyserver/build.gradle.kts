@@ -1,5 +1,5 @@
 // server
-val sonarSources by extra(sourceSets.asMap.values.flatMap { sourceSet -> sourceSet.allSource })
+val sonarSources by extra(emptyList<File>())
 
 plugins {
     id("org.springframework.boot") version "2.6.4"
