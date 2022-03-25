@@ -44,6 +44,8 @@ jobs:
     #if: github.event_name == 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v2
+        with:
+          submodules: true
       - uses: actions/setup-java@v2
         with:
           distribution: temurin
