@@ -9,6 +9,10 @@ val openApiSpecConfig by configurations.creating {
     isCanBeResolved = true
 }
 
+tasks.withType<Jar> {
+    dependsOn("generateEdcClient")
+}
+
 dependencies {
     openApiSpecConfig(project(mapOf("path" to ":dataland-connector", "configuration" to "openApiSpec")))
 }
@@ -20,10 +24,11 @@ tasks.register<Copy>("getOpenApiSpec") {
 
 val destinationPackage = "org.dataland.datalandbackend.edcClient"
 val jsonFile = rootProject.extra["OpenApiSpec"]
+val clientOutputDir = "$buildDir/Clients"
 
 tasks.register("generateEdcClient", org.openapitools.generator.gradle.plugin.tasks.GenerateTask::class) {
     input = "$buildDir/$jsonFile"
-    outputDir.set("$buildDir/Clients")
+    outputDir.set(clientOutputDir)
     modelPackage.set("$destinationPackage.model")
     apiPackage.set("$destinationPackage.api")
     packageName.set(destinationPackage)
@@ -35,4 +40,9 @@ tasks.register("generateEdcClient", org.openapitools.generator.gradle.plugin.tas
         )
     )
     dependsOn("getOpenApiSpec")
+}
+
+sourceSets {
+    val main by getting
+    main.java.srcDir("$clientOutputDir/src/main/kotlin")
 }
