@@ -57,5 +57,7 @@ dependencies {
     implementation("org.eclipse.dataspaceconnector:util")
     implementation("org.eclipse.dataspaceconnector:spi")
     implementation("io.swagger.core.v3:swagger-annotations:2.1.13")
+    testImplementation("org.mockito:mockito-junit-jupiter:3.12.4")
+    implementation("org.junit.jupiter:junit-jupiter:5.8.2")
     api("jakarta.ws.rs:jakarta.ws.rs-api:$rsApi")
 }
