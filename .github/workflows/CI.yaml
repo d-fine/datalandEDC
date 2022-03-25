@@ -17,10 +17,12 @@ jobs:
     #if: github.event_name != 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v2
+      - with:
+          submodules: true
       - name: Check formatting and code convention by using base image from GitHub Registry
         run: |
           docker run -v $(pwd):/app:rw ghcr.io/d-fine/datalandedc/edcdummyserver:latest \
-          /app/gradlew -p /app assemble ktlintcheck detekt dataland-edc-dummyserver:test --no-daemon
+          /app/gradlew -p /app ktlintcheck detekt dataland-edc-dummyserver:test --no-daemon
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: $GITHUB_ACTOR
