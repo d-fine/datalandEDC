@@ -11,7 +11,7 @@ on:
 
 jobs:
 
-  run-checks:
+  unit-tests:
     runs-on: ubuntu-latest
     #if: always()
     #if: github.event_name != 'workflow_dispatch'
@@ -20,11 +20,28 @@ jobs:
       - name: Check formatting and code convention by using base image from GitHub Registry
         run: |
           docker run -v $(pwd):/app:rw ghcr.io/d-fine/datalandedc/temurinbase:latest \
-          /app/gradlew -p /app ktlintcheck detekt --no-daemon
+          /app/gradlew -p /app ktlintcheck detekt test --no-daemon
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: $GITHUB_ACTOR
-
+      - name: Upload Test Reports
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: TestReport
+          path: ./**/build/reports
+      - name: Upload JaCoCo EDC Dummy Server Results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: JaCoCoEDCDummyUnitTests
+          path: ./dataland-edc-dummyserver/build/jacoco/*.exec
+      - name: Upload JaCoCo API Results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: JaCoCoAPIUnitTests
+          path: ./api/build/jacoco/*.exec
   sonar:
     runs-on: ubuntu-latest
     if: always()
@@ -44,12 +61,12 @@ jobs:
           cache: gradle
       - name: Build project
         run: ./gradlew assemble --no-daemon
-#      - uses: actions/download-artifact@v2
-#        with:
-#          name: JaCoCoResultsUnitTests
-#      - uses: actions/download-artifact@v2
-#        with:
-#          name: JaCoCoResultsE2ETest
+      - uses: actions/download-artifact@v2
+        with:
+          name: JaCoCoEDCDummyUnitTests
+      - uses: actions/download-artifact@v2
+        with:
+          name: JaCoCoAPIUnitTests
 #      - uses: actions/download-artifact@v2
 #        with:
 #          name: lcovResultsUnit
@@ -60,7 +77,7 @@ jobs:
 #          path: fe-coverage/e2e
       - name: Generate jacocoTestReport and run Sonar
         if: always()
-        run: ./gradlew sonarqube --no-daemon
+        run: ./gradlew jacocoTestReport sonarqube --no-daemon
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
