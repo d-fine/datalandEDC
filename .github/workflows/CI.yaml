@@ -69,7 +69,7 @@ jobs:
 #          name: JaCoCoAPIUnitTests
       - name: Generate jacocoTestReport and run Sonar
         if: always()
-        run: ./gradlew jacocoTestReport sonarqube --no-daemon
+        run: ./gradlew dataland-edc-dummyserver:jacocoTestReport sonarqube --no-daemon
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
