@@ -63,7 +63,7 @@ sonarqube {
         property("sonar.organization", "d-fine")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.qualitygate.wait", true)
-        property("sonar.coverage.exclusions", "/DataSpaceConnector/**")
+        property("sonar.coverage.exclusions", "**/test/**, /DataSpaceConnector/**")
         property("sonar.java.binaries", "api/build")
         property(
             "sonar.sources",
