@@ -9,7 +9,16 @@ val openApiSpecConfig by configurations.creating {
     isCanBeResolved = true
 }
 
+java.sourceCompatibility = JavaVersion.VERSION_17
+
 dependencies {
+    implementation("org.springdoc:springdoc-openapi-ui:1.6.6")
+    implementation("org.springframework:spring-context")
+    implementation("org.springframework.boot:spring-boot")
+    implementation("com.fasterxml.jackson.core:jackson-annotations")
+    implementation("com.squareup.moshi:moshi-kotlin:1.13.0")
+    implementation("com.squareup.moshi:moshi-adapters:1.13.0")
+    implementation("com.squareup.okhttp3:okhttp:4.9.3")
     openApiSpecConfig(project(mapOf("path" to ":dataland-connector", "configuration" to "openApiSpec")))
 }
 
