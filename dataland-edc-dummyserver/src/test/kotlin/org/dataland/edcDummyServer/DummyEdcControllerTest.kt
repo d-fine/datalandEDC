@@ -16,7 +16,7 @@ class DummyEdcControllerTest(
 ) {
 
     @Test
-    fun `check selectDataById`() {
+    fun `check select data by id`() {
         mockMvc.perform(
             MockMvcRequestBuilders.get("/dataland/data/1")
         ).andExpectAll(
@@ -26,7 +26,7 @@ class DummyEdcControllerTest(
     }
 
     @Test
-    fun `check insertData`() {
+    fun `check insert data`() {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/dataland/data")
                 .accept(MediaType.APPLICATION_JSON)
