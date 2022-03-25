@@ -21,7 +21,7 @@
  *       Fraunhofer Institute for Software and Systems Engineering - added dependencies
  *
  */
-
+val sonarSources by extra(emptyList<File>())
 val swaggerJaxrs2Version: String by project
 val rsApi: String by project
 

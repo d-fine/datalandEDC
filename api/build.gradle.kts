@@ -20,7 +20,7 @@
  *       Fraunhofer Institute for Software and Systems Engineering - added dependencies
  *
  */
-
+val sonarSources by extra(emptyList<File>())
 plugins {
     `java-library`
     id("application")
