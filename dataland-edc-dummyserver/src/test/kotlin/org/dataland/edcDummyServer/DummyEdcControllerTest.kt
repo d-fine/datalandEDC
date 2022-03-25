@@ -36,5 +36,4 @@ class DummyEdcControllerTest(
             MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)
         )
     }
-
 }
