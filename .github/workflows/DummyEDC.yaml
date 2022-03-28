@@ -22,6 +22,8 @@ jobs:
           distribution: temurin
           java-version: 17
           cache: gradle
+      - name: Build boot jar
+        run: ./gradlew :dataland-edc-dummyserver:bootJar --no-daemon
       - name: Login to Github Packages
         uses: docker/login-action@v1
         with:
@@ -34,8 +36,7 @@ jobs:
       - name: Build the edc dummer server image and push it to GitHub Container Registry
         uses: docker/build-push-action@v2
         with:
-          context: .
-          file: ./dataland-edc-dummyserver/Dockerfile
+          context: ./dataland-edc-dummyserver
           tags: ghcr.io/d-fine/datalandedc/edcdummyserver:latest
           push: true
 

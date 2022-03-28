@@ -1,5 +1,5 @@
-FROM ghcr.io/d-fine/datalandedc/temurinbase:latest
-COPY . /app/
+FROM eclipse-temurin:17.0.2_8-jre-alpine
+COPY ./build/libs/dataland-edc-dummyserver-*.jar /app/edc-dummyserver.jar
 EXPOSE 8080
 WORKDIR /app
-CMD ./gradlew dataland-edc-dummyserver:bootRun --no-daemon
+CMD ["java","-jar","edc-dummyserver.jar"]
