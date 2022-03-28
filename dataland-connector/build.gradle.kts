@@ -29,7 +29,6 @@ val swaggerJaxrs2Version: String by project
 val rsApi: String by project
 
 plugins {
-    `java-library`
     id("application")
     id("io.swagger.core.v3.swagger-gradle-plugin") version "2.1.13"
 }
