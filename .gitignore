@@ -31,4 +31,3 @@ hs_err_pid*
 !/gradle/wrapper/gradle-wrapper.jar
 **/build/
 **/node_modules/
-**/DataSpaceConnector
