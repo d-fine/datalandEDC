@@ -21,61 +21,62 @@ jobs:
           submodules: true
       - name: Check formatting and code convention by using base image from GitHub Registry
         run: |
-          docker run -v $(pwd):/app:rw ghcr.io/d-fine/datalandedc/edcdummyserver:latest \
-          /app/gradlew -p /app ktlintcheck detekt dataland-edc-dummyserver:test api:test --no-daemon
+          docker run -v -e SONAR_TOKEN=$SONAR_TOKEN $(pwd):/app:rw ghcr.io/d-fine/datalandedc/edcdummyserver:latest \
+          /app/gradlew -p /app ktlintcheck detekt dataland-edc-dummyserver:test api:test jacocoTestReport sonarqube --no-daemon
+          ls -R
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_ACTOR: $GITHUB_ACTOR
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Upload Test Reports
         if: always()
         uses: actions/upload-artifact@v2
         with:
           name: TestReport
           path: ./**/build/reports
-      - name: Upload JaCoCo EDC Dummy Server Results
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: JaCoCoEDCDummyUnitTests
-          path: ./dataland-edc-dummyserver/build/jacoco/*.exec
-      - name: Upload JaCoCo API Results
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: JaCoCoAPIUnitTests
-          path: ./api/build/jacoco/*.exec
-  sonar:
-    runs-on: ubuntu-latest
-    if: always()
-    needs:
-      - unit-tests
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-          submodules: true
-      - uses: actions/setup-java@v2
-        with:
-          distribution: temurin
-          java-version: 17
-          cache: gradle
-      - name: Build project
-        run: ./gradlew assemble --no-daemon
-      - uses: actions/download-artifact@v2
-        with:
-          name: JaCoCoEDCDummyUnitTests
-      - uses: actions/download-artifact@v2
-        with:
-          name: JaCoCoAPIUnitTests
-      - name: Generate jacocoTestReport and run Sonar
-        if: always()
-        run: |
-          ./gradlew jacocoTestReport --no-daemon
-          ls -R
-          ./gradlew sonarqube --no-daemon
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+#      - name: Upload JaCoCo EDC Dummy Server Results
+#        if: always()
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: JaCoCoEDCDummyUnitTests
+#          path: ./*/build/jacoco/*.exec
+#      - name: Upload JaCoCo API Results
+#        if: always()
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: JaCoCoAPIUnitTests
+#          path: ./api/build/jacoco/*.exec
+#  sonar:
+#    runs-on: ubuntu-latest
+#    if: always()
+#    needs:
+#      - unit-tests
+#    steps:
+#      - uses: actions/checkout@v2
+#        with:
+#          fetch-depth: 0
+#          submodules: true
+#      - uses: actions/setup-java@v2
+#        with:
+#          distribution: temurin
+#          java-version: 17
+#          cache: gradle
+#      - name: Build project
+#        run: ./gradlew assemble --no-daemon
+#      - uses: actions/download-artifact@v2
+#        with:
+#          name: JaCoCoEDCDummyUnitTests
+#      - uses: actions/download-artifact@v2
+#        with:
+#          name: JaCoCoAPIUnitTests
+#      - name: Generate jacocoTestReport and run Sonar
+#        if: always()
+#        run: |
+#          ./gradlew jacocoTestReport --no-daemon
+#          ls -R
+#          ./gradlew sonarqube --no-daemon
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   summary:
     runs-on: ubuntu-latest
