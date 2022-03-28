@@ -58,3 +58,9 @@ sourceSets {
 tasks.test {
     useJUnitPlatform()
 }
+
+ktlint {
+    filter {
+        exclude("**/openApiServer/**")
+    }
+}

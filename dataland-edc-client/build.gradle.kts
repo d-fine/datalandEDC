@@ -68,3 +68,9 @@ tasks.getByName("sourcesJar") {
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     dependsOn(taskName)
 }
+
+ktlint {
+    filter {
+        exclude("**/edcClient/**")
+    }
+}
