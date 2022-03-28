@@ -30,7 +30,8 @@ val jacocoClasses by extra(
     }
 )
 plugins {
-    `java-library`
+    kotlin("jvm")
+    kotlin("kapt")
     id("application")
     jacoco
 }
@@ -60,4 +61,5 @@ dependencies {
     testImplementation("org.mockito:mockito-junit-jupiter:3.12.4")
     implementation("org.junit.jupiter:junit-jupiter:5.8.2")
     api("jakarta.ws.rs:jakarta.ws.rs-api:$rsApi")
+    implementation(kotlin("stdlib-jdk8"))
 }
