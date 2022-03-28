@@ -25,7 +25,6 @@ import org.eclipse.dataspaceconnector.spi.WebService
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtension
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
 
-
 @OpenAPIDefinition(info = Info(title = "Dataland EDC OpenAPI Spec", version = "1.0.0-SNAPSHOT"))
 
 class ApiEndpointExtension : ServiceExtension {
