@@ -1,5 +1,6 @@
 package org.dataland.datalandbackend.edcClient
 
+import org.dataland.datalandbackend.edcClient.api.DefaultApi
 import org.dataland.datalandbackend.edcClient.infrastructure.ApiClient
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -19,8 +20,8 @@ open class Configuration {
      */
     @Bean
     open fun getApiClient(): ApiClient {
-        return ApiClient(
-            baseUrl = baseUrl!!
+        return DefaultApi(
+            basePath = baseUrl!!
         )
     }
 }
