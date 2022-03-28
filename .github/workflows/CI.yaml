@@ -21,7 +21,7 @@ jobs:
           submodules: true
       - name: Check formatting and code convention by using base image from GitHub Registry
         run: |
-          docker run -v -e SONAR_TOKEN=$SONAR_TOKEN $(pwd):/app:rw ghcr.io/d-fine/datalandedc/edcdummyserver:latest \
+          docker run -e SONAR_TOKEN=$SONAR_TOKEN -v $(pwd):/app:rw ghcr.io/d-fine/datalandedc/edcdummyserver:latest \
           /app/gradlew -p /app ktlintcheck detekt dataland-edc-dummyserver:test api:test jacocoTestReport sonarqube --no-daemon
           ls -R
         env:
