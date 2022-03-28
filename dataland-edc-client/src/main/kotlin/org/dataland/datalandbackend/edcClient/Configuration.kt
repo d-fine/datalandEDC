@@ -15,7 +15,7 @@ open class Configuration {
     var baseUrl: String? = null
 
     /**
-     * The bean to configure the SkyminderConnectorInterface
+     * The bean to configure the EDCConnectorInterface
      */
     @Bean
     open fun getApiClient(): ApiClient {
