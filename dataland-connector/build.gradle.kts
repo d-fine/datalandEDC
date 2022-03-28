@@ -29,8 +29,6 @@ val swaggerJaxrs2Version: String by project
 val rsApi: String by project
 
 plugins {
-    kotlin("jvm")
-    kotlin("kapt")
     id("application")
     id("io.swagger.core.v3.swagger-gradle-plugin") version "2.1.13"
 }
@@ -53,9 +51,6 @@ dependencies {
     implementation("org.eclipse.dataspaceconnector:ids")
     implementation("io.swagger.core.v3:swagger-jaxrs2-jakarta:$swaggerJaxrs2Version")
     implementation("jakarta.ws.rs:jakarta.ws.rs-api:$rsApi")
-    implementation("org.eclipse.dataspaceconnector:util")
-    implementation("org.eclipse.dataspaceconnector:spi")
-    implementation("io.swagger.core.v3:swagger-annotations:2.1.13")
     implementation(project(":api"))
 }
 
