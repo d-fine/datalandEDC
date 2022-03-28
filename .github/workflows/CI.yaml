@@ -11,19 +11,20 @@ on:
 
 jobs:
 
-  unit-tests:
+  unit-tests-sonar:
     runs-on: ubuntu-latest
-    #if: always()
-    #if: github.event_name != 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v2
         with:
+          fetch-depth: 0
           submodules: true
-      - name: Check formatting and code convention by using base image from GitHub Registry
-        run: |
-          docker run -e SONAR_TOKEN=$SONAR_TOKEN -v $(pwd):/app:rw ghcr.io/d-fine/datalandedc/edcdummyserver:latest \
-          /app/gradlew -p /app ktlintcheck detekt dataland-edc-dummyserver:test api:test jacocoTestReport sonarqube --no-daemon
-          ls -R
+      - uses: actions/setup-java@v2
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+      - name: Build and test project
+        run: ./gradlew assemble test jacocoTestReport sonarqube --no-daemon
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Upload Test Reports
