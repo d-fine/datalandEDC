@@ -64,3 +64,7 @@ java {
 tasks.getByName("sourcesJar") {
     dependsOn(taskName)
 }
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    dependsOn(taskName)
+}
