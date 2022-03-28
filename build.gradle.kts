@@ -109,7 +109,7 @@ detekt {
     baseline = file("$projectDir/config/baseline.xml")
     val detektFileTree = fileTree("$projectDir")
     detektFileTree.exclude("**/build/**").exclude("**/node_modules/**")
-        .exclude(".gradle").exclude("**/DataSpaceConnector/**")
+        .exclude(".gradle").exclude("**/DataSpaceConnector/**").exclude("api")
     source = files(detektFileTree)
 }
 
