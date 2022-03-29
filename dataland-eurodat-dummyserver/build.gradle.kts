@@ -4,12 +4,12 @@ val jacocoSources by extra(emptyList<File>())
 val jacocoClasses by extra(emptyList<File>())
 
 plugins {
-    id("org.springframework.boot") version "2.6.4"
+    id("org.springframework.boot")
     kotlin("jvm")
-    kotlin("plugin.spring") version "1.6.10"
+    kotlin("plugin.spring")
     id("com.github.johnrengelman.processes") version "0.5.0"
     id("org.springdoc.openapi-gradle-plugin") version "1.3.3"
-    id("io.spring.dependency-management") version "1.0.11.RELEASE"
+    id("io.spring.dependency-management")
     id("org.openapi.generator") version "5.4.0"
 }
 
