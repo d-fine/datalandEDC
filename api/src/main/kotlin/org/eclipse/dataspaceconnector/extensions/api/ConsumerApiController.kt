@@ -33,6 +33,13 @@ class ConsumerApiController(monitor: Monitor) {
     }
 
     @GET
+    @Path("health")
+    fun checkHealth(): String {
+        monitor.info("%s :: Received a health request")
+        return "{\"response\":\"I'm alive!\"}"
+    }
+
+    @GET
     @Path("dataland/data/{dataId}")
     fun selectDataById(@PathParam("dataId") dataId: String?): String {
         return "Not implemented."
