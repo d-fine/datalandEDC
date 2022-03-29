@@ -6,8 +6,6 @@ plugins {
     kotlin("jvm")
     kotlin("plugin.spring") version "1.6.10"
     id("org.openapi.generator") version "5.4.0"
-    id("io.spring.dependency-management")
-    id("org.springframework.boot")
 }
 
 val openApiSpecConfig by configurations.creating {

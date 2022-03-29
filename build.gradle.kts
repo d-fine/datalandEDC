@@ -61,8 +61,6 @@ plugins {
     kotlin("jvm") version "1.6.10"
     id("org.sonarqube") version "3.3"
     jacoco
-    kotlin("plugin.spring") version "1.6.10" apply false
-    id("org.springframework.boot") version "2.6.4" apply false
 }
 
 sonarqube {
