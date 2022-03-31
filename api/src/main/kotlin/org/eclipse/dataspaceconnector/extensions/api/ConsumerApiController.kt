@@ -51,5 +51,3 @@ class ConsumerApiController(monitor: Monitor) {
         return "Not implemented."
     }
 }
-
-//dummycomment
