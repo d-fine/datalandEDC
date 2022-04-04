@@ -16,24 +16,55 @@ class DummyEdcControllerTest(
 ) {
 
     @Test
-    fun `checks if data can be selected by id`() {
+    fun `check if an empty string is returned by get request when the data id does not exist`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/dataland/data/0")
+        ).andExpectAll(
+            MockMvcResultMatchers.status().isOk,
+            MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON),
+            MockMvcResultMatchers.content().string("")
+        )
+    }
+
+    @Test
+    fun `check if the selected data is the same as the inserted data`() {
+        val body = "{\"key\":\"value\"}"
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/dataland/data")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body)
+        ).andExpectAll(
+            MockMvcResultMatchers.status().isOk,
+            MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)
+        )
+
         mockMvc.perform(
             MockMvcRequestBuilders.get("/dataland/data/1")
         ).andExpectAll(
             MockMvcResultMatchers.status().isOk,
             MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON),
+            MockMvcResultMatchers.content().string(body)
         )
     }
 
     @Test
-    fun `checks if data can be inserted`() {
-        mockMvc.perform(
-            MockMvcRequestBuilders.post("/dataland/data")
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-        ).andExpectAll(
-            MockMvcResultMatchers.status().isOk,
-            MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)
-        )
+    fun `abcd`() {
+        println(1)
+    }
+
+    @Test
+    fun `check abcd`() {
+        println(2)
+    }
+
+    @Test
+    fun abcdef() {
+        println(3)
+    }
+
+    @Test
+    fun `post a dummy company and a dummy data set for it and check if that dummy data set can be retrieved`() {
+        println(4)
     }
 }

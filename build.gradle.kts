@@ -69,8 +69,7 @@ sonarqube {
         property("sonar.organization", "d-fine")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.qualitygate.wait", true)
-        property("sonar.coverage.exclusions", "**/test/**, **/DataSpaceConnector/**")
-        // property("sonar.java.binaries", "api/build")
+        property("sonar.coverage.exclusions", "**/test/**, **/DataSpaceConnector/**, **/extensions/**, **/DummyEdc.kt")
         property(
             "sonar.sources",
             subprojects.flatMap { project -> project.properties["sonarSources"] as Iterable<*> }
