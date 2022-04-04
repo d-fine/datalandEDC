@@ -14,8 +14,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 class DummyEdcControllerTest(
     @Autowired var mockMvc: MockMvc
 ) {
+
     @Test
-    fun `checks if an empty string is by get request returned when the data id does not exist`() {
+    fun `check selectDataById`() {
         mockMvc.perform(
             MockMvcRequestBuilders.get("/dataland/data/0")
         ).andExpectAll(
@@ -26,9 +27,8 @@ class DummyEdcControllerTest(
     }
 
     @Test
-    fun `checks if the selected data is the same as the inserted data`() {
+    fun `check insertData`() {
         val body = "{\"key\":\"value\"}"
-
         mockMvc.perform(
             MockMvcRequestBuilders.post("/dataland/data")
                 .accept(MediaType.APPLICATION_JSON)
