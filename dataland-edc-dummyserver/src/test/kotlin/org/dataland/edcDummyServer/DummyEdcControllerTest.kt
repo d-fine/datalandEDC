@@ -14,26 +14,37 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 class DummyEdcControllerTest(
     @Autowired var mockMvc: MockMvc
 ) {
+    @Test
+    fun `checks if data can be selected by non-existing id`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/dataland/data/0")
+        ).andExpectAll(
+            MockMvcResultMatchers.status().isOk,
+            MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON),
+            MockMvcResultMatchers.content().string("")
+        )
+    }
 
     @Test
-    fun `checks if data can be selected by id`() {
+    fun `checks if data can be inserted and retrieved`() {
+        val body = "{\"key\":\"value\"}"
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/dataland/data")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body)
+        ).andExpectAll(
+            MockMvcResultMatchers.status().isOk,
+            MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)
+        )
+
         mockMvc.perform(
             MockMvcRequestBuilders.get("/dataland/data/1")
         ).andExpectAll(
             MockMvcResultMatchers.status().isOk,
             MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON),
-        )
-    }
-
-    @Test
-    fun `checks if data can be inserted`() {
-        mockMvc.perform(
-            MockMvcRequestBuilders.post("/dataland/data")
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-        ).andExpectAll(
-            MockMvcResultMatchers.status().isOk,
-            MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)
+            MockMvcResultMatchers.content().string(body)
         )
     }
 }
