@@ -15,7 +15,7 @@ class DummyEdcControllerTest(
     @Autowired var mockMvc: MockMvc
 ) {
     @Test
-    fun `get the data by non-existing id and check if an empty string is returned`() {
+    fun `check if an empty string is by get request returned when the data id does not exist`() {
         mockMvc.perform(
             MockMvcRequestBuilders.get("/dataland/data/0")
         ).andExpectAll(
@@ -26,7 +26,7 @@ class DummyEdcControllerTest(
     }
 
     @Test
-    fun `post data and check if the same data can be retrieved`() {
+    fun `check if the selected data is the same as the inserted data`() {
         val body = "{\"key\":\"value\"}"
 
         mockMvc.perform(
