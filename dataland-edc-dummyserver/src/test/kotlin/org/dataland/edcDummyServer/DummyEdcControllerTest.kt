@@ -16,7 +16,7 @@ class DummyEdcControllerTest(
 ) {
 
     @Test
-    fun `check if an empty string is by get request returned when the data id does not exist`() {
+    fun `check if an empty string is returned by get request when the data id does not exist`() {
         mockMvc.perform(
             MockMvcRequestBuilders.get("/dataland/data/0")
         ).andExpectAll(
@@ -50,16 +50,21 @@ class DummyEdcControllerTest(
 
     @Test
     fun `abcd`() {
-
+        println(1)
     }
 
     @Test
     fun `check abcd`() {
-
+        println(2)
     }
 
     @Test
     fun abcdef() {
+        println(3)
+    }
 
+    @Test
+    fun `post a dummy company and a dummy data set for it and check if that dummy data set can be retrieved`() {
+        println(4)
     }
 }
