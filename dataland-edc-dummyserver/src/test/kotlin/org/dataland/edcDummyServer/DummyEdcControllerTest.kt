@@ -26,7 +26,7 @@ class DummyEdcControllerTest(
     }
 
     @Test
-    fun`checks if the selected data is the same as the inserted data`() {
+    fun `checks if the selected data is the same as the inserted data`() {
         val body = "{\"key\":\"value\"}"
 
         mockMvc.perform(
