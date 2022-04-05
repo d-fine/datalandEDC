@@ -4,12 +4,10 @@ on:
   push:
     tags:
       - 'RELEASE-**'
-  workflow_dispatch:
 
 jobs:
   build-and-publish-edc-server-image:
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v2
         with:
@@ -39,7 +37,6 @@ jobs:
 
   publish-edc-clients:
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v2
         with:
