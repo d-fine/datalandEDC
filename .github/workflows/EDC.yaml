@@ -1,6 +1,9 @@
 name: EDC
 
 on:
+  push:
+    tags:
+      - 'RELEASE-**'
   workflow_dispatch:
 
 jobs:
