@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - 'main'
+
+jobs:
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - uses: actions/setup-java@v2
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+      - name: Build, check and test project
+        run: ./gradlew assemble ktlintCheck detekt test --no-daemon
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: Upload Test Reports
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: TestReport
+          path: ./**/build/reports
+      - name: Upload JaCoCo EDC Dummy Server Results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: JaCoCoEDCDummyUnitTests
+          path: ./*/build/jacoco/*.exec
+  sonar:
+    runs-on: ubuntu-latest
+    if: always()
+    needs:
+      - unit-tests
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          submodules: true
+      - uses: actions/setup-java@v2
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+      - name: Build project
+        run: ./gradlew assemble --no-daemon
+      - uses: actions/download-artifact@v2
+        with:
+          name: JaCoCoEDCDummyUnitTests
+      - name: Generate jacocoTestReport and run Sonar
+        if: always()
+        run: ./gradlew jacocoTestReport sonarqube --no-daemon
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  summary:
+    runs-on: ubuntu-latest
+    if: success()
+    steps:
+      - name: Summary of this workflow's overall outcome
+        run: exit 0
