@@ -47,24 +47,4 @@ class DummyEdcControllerTest(
             MockMvcResultMatchers.content().string(body)
         )
     }
-
-    @Test
-    fun `abcd`() {
-        println(1)
-    }
-
-    @Test
-    fun `check abcd`() {
-        println(2)
-    }
-
-    @Test
-    fun abcdef() {
-        println(3)
-    }
-
-    @Test
-    fun `post a dummy company and a dummy data set for it and check if that dummy data set can be retrieved`() {
-        println(4)
-    }
 }

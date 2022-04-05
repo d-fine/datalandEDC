@@ -1,4 +1,4 @@
-name: DummyEDC
+name: EDC
 
 on:
   workflow_dispatch:
