@@ -38,12 +38,6 @@ jobs:
         with:
           name: JaCoCoEDCDummyUnitTests
           path: ./*/build/jacoco/*.exec
-      - name: Upload JaCoCo API Results
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: JaCoCoAPIUnitTests
-          path: ./api/build/jacoco/*.exec
   sonar:
     runs-on: ubuntu-latest
     if: always()
@@ -64,9 +58,6 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: JaCoCoEDCDummyUnitTests
-      - uses: actions/download-artifact@v2
-        with:
-          name: JaCoCoAPIUnitTests
       - name: Generate jacocoTestReport and run Sonar
         if: always()
         run: ./gradlew jacocoTestReport sonarqube --no-daemon
