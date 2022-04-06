@@ -4,7 +4,7 @@ val jacocoClasses by extra(emptyList<File>())
 
 plugins {
     kotlin("jvm")
-    kotlin("plugin.spring") version "1.6.10"
+    kotlin("plugin.spring") version "1.6.20"
     id("org.openapi.generator") version "5.4.0"
 }
 
