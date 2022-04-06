@@ -1,3 +1,8 @@
+# Downloading the Repository
+
+Clone the repository by running `git clone --recurse-submodules git@github.com:d-fine/datalandEDC.git`
+Alternatively you could run `git submodule update --init --recursive` to initialize EDC after cloning datalandEDC.
+
 # License
 This project is free and open-source software licensed under the [GNU Affero General Public License v3](LICENSE) (AGPL-3.0). Commercial use of this software is allowed. If derivative works are distributed, you need to be published the derivative work under the same license. Here, derivative works includes web publications. That means, if you build a web service using this software, you need to publish your source code under the same license (AGPL-3.0)
 
