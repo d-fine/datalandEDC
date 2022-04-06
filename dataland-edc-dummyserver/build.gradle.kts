@@ -19,9 +19,10 @@ plugins {
     kotlin("plugin.spring") version "1.6.20"
     id("com.github.johnrengelman.processes") version "0.5.0"
     id("org.springdoc.openapi-gradle-plugin") version "1.3.4"
-    id("io.spring.dependency-management")
     id("org.openapi.generator") version "5.4.0"
 }
+
+apply(plugin = "io.spring.dependency-management")
 
 jacoco {
     toolVersion = "0.8.7"
