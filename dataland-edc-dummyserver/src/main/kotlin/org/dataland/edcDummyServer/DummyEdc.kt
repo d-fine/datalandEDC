@@ -4,7 +4,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 /**
- * Class for running the euroDaT dummy server
+ * Class for running the edc dummy server
  */
 @SpringBootApplication
 class DummyEdc

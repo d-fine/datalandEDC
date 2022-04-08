@@ -21,7 +21,6 @@ allprojects {
 }
 
 extra["OpenApiSpec"] = "OpenApiSpec.json"
-extra["OpenApiSpecEuroDat"] = "OpenApiEuroDat.json"
 
 subprojects {
     sonarqube {
