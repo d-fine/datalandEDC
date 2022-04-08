@@ -4,8 +4,11 @@ val jacocoClasses by extra(emptyList<File>())
 
 plugins {
     kotlin("jvm")
-    kotlin("plugin.spring") version "1.6.20"
+    kotlin("plugin.spring")
+    kotlin("kapt")
     id("org.openapi.generator") version "5.4.0"
+    id("org.springframework.boot")
+    id("io.spring.dependency-management")
 }
 
 val openApiSpecConfig by configurations.creating {
@@ -23,6 +26,7 @@ dependencies {
     implementation("com.squareup.moshi:moshi-kotlin:1.13.0")
     implementation("com.squareup.moshi:moshi-adapters:1.13.0")
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
+    kapt("org.springframework.boot:spring-boot-configuration-processor")
     openApiSpecConfig(project(mapOf("path" to ":dataland-connector", "configuration" to "openApiSpec")))
 }
 
@@ -59,6 +63,10 @@ sourceSets {
 
 java {
     withSourcesJar()
+}
+
+tasks.bootJar {
+    enabled = false
 }
 
 tasks.getByName("sourcesJar") {

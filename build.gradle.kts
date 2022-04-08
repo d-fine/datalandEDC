@@ -14,14 +14,13 @@ allprojects {
         println("Running gradle in RELEASE mode for Version $releaseVersion")
         releaseVersion
     } else {
-        val devVersion = "0.0.1-SNAPSHOT"
+        val devVersion = "0.0.2-SNAPSHOT"
         println("Running gradle in non-release mode for Version $devVersion")
         devVersion
     }
 }
 
 extra["OpenApiSpec"] = "OpenApiSpec.json"
-extra["OpenApiSpecEuroDat"] = "OpenApiEuroDat.json"
 
 subprojects {
     sonarqube {
@@ -56,9 +55,11 @@ subprojects {
 }
 
 plugins {
+    id("org.springframework.boot") version "2.6.6" apply false
     id("io.gitlab.arturbosch.detekt") version "1.19.0"
     id("org.jlleitschuh.gradle.ktlint") version "10.2.1"
     kotlin("jvm") version "1.6.10"
+    kotlin("plugin.spring") version "1.6.20" apply false
     id("org.sonarqube") version "3.3"
     jacoco
 }
