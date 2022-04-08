@@ -51,10 +51,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: $GITHUB_ACTOR
-
-  summary:
-    runs-on: ubuntu-latest
-    if: success()
-    steps:
-      - name: Summary of this workflow's overall outcome
-        run: exit 0

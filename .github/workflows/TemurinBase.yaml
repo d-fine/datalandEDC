@@ -36,10 +36,3 @@ jobs:
           file: ./baseDockerfiles/temurinBaseImageDockerfile
           tags: ghcr.io/d-fine/datalandedc/temurinbase:latest
           push: true
-
-  summary:
-    runs-on: ubuntu-latest
-    if: success()
-    steps:
-      - name: Summary of this workflow's overall outcome
-        run: exit 0
