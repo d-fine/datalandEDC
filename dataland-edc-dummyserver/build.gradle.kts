@@ -13,10 +13,10 @@ repositories {
 }
 
 plugins {
-    id("org.springframework.boot") version "2.6.6"
+    id("org.springframework.boot")
     kotlin("jvm")
     jacoco
-    kotlin("plugin.spring") version "1.6.20"
+    kotlin("plugin.spring")
     id("com.github.johnrengelman.processes") version "0.5.0"
     id("org.springdoc.openapi-gradle-plugin") version "1.3.4"
     id("org.openapi.generator") version "5.4.0"
