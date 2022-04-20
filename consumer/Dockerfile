@@ -6,7 +6,7 @@ RUN apt update && apt install curl -y
 
 WORKDIR /app
 COPY ./build/libs/consumer.jar /app
-COPY ./config.properties /app/dataspaceconnector-configuration.properties
+COPY ./src/main/jib/app/config.properties /app/dataspaceconnector-configuration.properties
 
 EXPOSE 9191
 

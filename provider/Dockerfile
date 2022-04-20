@@ -6,7 +6,7 @@ RUN apt update && apt install curl -y
 
 WORKDIR /app
 COPY ./build/libs/provider.jar /app
-COPY ./config.properties /app
+COPY ./src/main/jib/app/config.properties /app
 
 EXPOSE 8181
 

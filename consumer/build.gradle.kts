@@ -52,7 +52,6 @@ dependencies {
     implementation("org.eclipse.dataspaceconnector:transfer-functions-core")
     implementation("org.eclipse.dataspaceconnector:data-plane-framework")
     implementation("org.eclipse.dataspaceconnector:data-plane-api")
-
     implementation("org.eclipse.dataspaceconnector:dataloading:$connectorVersion")
     implementation(project(":transfer-file"))
     implementation(project(":api"))
