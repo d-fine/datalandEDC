@@ -59,7 +59,9 @@ dependencies {
 
 application {
     mainClass.set("org.eclipse.dataspaceconnector.boot.system.runtime.BaseRuntime")
+    applicationDefaultJvmArgs = listOf("-Dedc.fs.config=config.properties", "-Dids.webhook.address=http://localhost:9191")
 }
+/*
 
 jib {
     val tag = System.getenv("CI_PIPELINE_ID")
@@ -77,3 +79,4 @@ jib {
         ports = listOf("9191")
     }
 }
+*/

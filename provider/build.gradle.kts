@@ -56,8 +56,10 @@ dependencies {
 
 application {
     mainClass.set("org.eclipse.dataspaceconnector.boot.system.runtime.BaseRuntime")
+    applicationDefaultJvmArgs = listOf("-Dedc.fs.config=config.properties")
 }
 
+/*
 jib {
     var tag = System.getenv("CI_PIPELINE_ID")
     var registry = System.getenv("ACR_INSTANCE")
@@ -73,4 +75,4 @@ jib {
         jvmFlags = listOf("-Dedc.fs.config=app/config.properties")
         ports = listOf("8181")
     }
-}
+}*/
