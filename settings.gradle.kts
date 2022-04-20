@@ -1,5 +1,5 @@
 rootProject.name = "connector"
-includeBuild("DataSpaceConnector")
+includeBuild("trustee-platform/services/edc")
 include("api")
 include("dataland-connector")
 include("dataland-edc-dummyserver")
