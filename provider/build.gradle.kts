@@ -26,12 +26,11 @@
 plugins {
     `java-library`
     id("application")
-    id("com.google.cloud.tools.jib") version "3.1.4"
 }
 
 val jupiterVersion: String by project
 val rsApi: String by project
-val connectorVersion = "0.0.1"
+val connectorVersion: String by project
 
 repositories {
     mavenCentral()
@@ -39,6 +38,9 @@ repositories {
 }
 
 dependencies {
+    //implementation(project(":transfer-file"))
+    //implementation(project(":api"))
+
     implementation("org.eclipse.dataspaceconnector:core")
     implementation("org.eclipse.dataspaceconnector:in-memory:assetindex-memory")
     implementation("org.eclipse.dataspaceconnector:in-memory:transfer-store-memory")
@@ -46,9 +48,8 @@ dependencies {
     implementation("org.eclipse.dataspaceconnector:in-memory:contractdefinition-store-memory")
     implementation("org.eclipse.dataspaceconnector:http")
     implementation("org.eclipse.dataspaceconnector:configuration-fs")
-    implementation("org.eclipse.dataspaceconnector:iam-mock") //added manually by me (Emanuel)
-    //implementation("org.eclipse.dataspaceconnector:vault-fs:$connectorVersion")
-    //implementation("org.eclipse.dataspaceconnector:oauth2-core:$connectorVersion")
+    implementation("org.eclipse.dataspaceconnector:vault-fs:${connectorVersion}")
+    implementation("org.eclipse.dataspaceconnector:oauth2-core:${connectorVersion}")
     implementation("org.eclipse.dataspaceconnector:control")
     implementation("org.eclipse.dataspaceconnector:ids")
     implementation(project(":transfer-file"))
@@ -57,23 +58,6 @@ dependencies {
 
 application {
     mainClass.set("org.eclipse.dataspaceconnector.boot.system.runtime.BaseRuntime")
-    applicationDefaultJvmArgs = listOf("-Dedc.fs.config=config.properties")
+    applicationDefaultJvmArgs = listOf("-Dedc.fs.config=config.properties", "-Dedc.keystore=keystore.jks",
+        "-Dedc.vault=vault.properties")
 }
-
-/*
-jib {
-    var tag = System.getenv("CI_PIPELINE_ID")
-    var registry = System.getenv("ACR_INSTANCE")
-
-    from {
-        image = "openjdk:11-jre-slim-buster"
-    }
-    to {
-        image = "$registry/eurodat/edc-provider:$tag"
-    }
-    container {
-        mainClass = "org.eclipse.dataspaceconnector.boot.system.runtime.BaseRuntime"
-        jvmFlags = listOf("-Dedc.fs.config=app/config.properties")
-        ports = listOf("8181")
-    }
-}*/

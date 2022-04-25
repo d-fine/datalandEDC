@@ -52,5 +52,9 @@ dependencies {
     implementation("org.eclipse.dataspaceconnector:util")
     implementation("org.eclipse.dataspaceconnector:spi")
     implementation("io.swagger.core.v3:swagger-annotations:2.1.13")
+    implementation("org.eurodat:broker:controller")
+    //implementation(project(":trustee-platform:services:broker"))
     api("jakarta.ws.rs:jakarta.ws.rs-api:$rsApi")
+
+
 }

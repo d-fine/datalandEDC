@@ -48,6 +48,6 @@ class ConsumerApiController(monitor: Monitor) {
     @POST
     @Path("dataland/data")
     fun insertData(data: String?): String {
-        return "Not implemented."
+        return "todo"//CustomAssetController.registerAsset(data) o.Ä. => returnt eine dataId als String
     }
 }
