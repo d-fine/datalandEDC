@@ -27,13 +27,14 @@ import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
 
 @OpenAPIDefinition(info = Info(title = "Dataland EDC OpenAPI Spec", version = "1.0.0-SNAPSHOT"))
 
-class ApiEndpointExtension : ServiceExtension {
+class DatalandApiEndpointExtension : ServiceExtension {
     override fun name(): String {
         return "API Endpoint"
     }
 
     override fun initialize(context: ServiceExtensionContext) {
         val webService: WebService = context.getService(WebService::class.java)
-        webService.registerResource(ConsumerApiController(context.monitor))
+        val consumerApiController = context.getService(ConsumerApiController::class.java)
+        webService.registerResource(DatalandApiController(context.monitor, consumerApiController))
     }
 }

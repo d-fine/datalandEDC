@@ -25,12 +25,7 @@ import org.eclipse.dataspaceconnector.spi.monitor.Monitor
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Path("/")
-class ConsumerApiController(monitor: Monitor) {
-    private val monitor: Monitor
-
-    init {
-        this.monitor = monitor
-    }
+class DatalandApiController(val monitor: Monitor, val consumerApiController: ConsumerApiController) {
 
     @GET
     @Path("health")
@@ -48,6 +43,6 @@ class ConsumerApiController(monitor: Monitor) {
     @POST
     @Path("dataland/data")
     fun insertData(data: String?): String {
-        return "todo"//CustomAssetController.registerAsset(data) o.Ä. => returnt eine dataId als String
+        return "todo" // consumerApiController.registerAsset
     }
 }

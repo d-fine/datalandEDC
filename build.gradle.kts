@@ -3,6 +3,7 @@
 allprojects {
     repositories {
         mavenCentral()
+        maven("https://maven.iais.fraunhofer.de/artifactory/eis-ids-public")
     }
     group = "org.dataland"
     val releaseTagPrefix = "RELEASE-"
@@ -98,7 +99,7 @@ tasks.jacocoTestReport {
 }
 
 dependencies {
-    detekt("io.gitlab.arturbosch.detekt:detekt-cli:1.19.0")
+    detekt("io.gitlab.arturbosch.detekt:detekt-cli:1.20.0")
     detekt("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.6.10")
 }
 

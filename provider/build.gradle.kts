@@ -53,6 +53,7 @@ dependencies {
     implementation("org.eclipse.dataspaceconnector:control")
     implementation("org.eclipse.dataspaceconnector:ids")
     implementation(project(":transfer-file"))
+    implementation("org.eurodat.connector:api")
     implementation(project(":api"))
 }
 
