@@ -49,10 +49,11 @@ tasks.test {
 val rsApi: String by project
 
 dependencies {
-    implementation("org.eclipse.dataspaceconnector:util")
-    implementation("org.eclipse.dataspaceconnector:spi")
+    implementation("org.eclipse.dataspaceconnector:test") //klappt nicht
+    implementation("org.eclipse.dataspaceconnector:util") //klappt nicht
+    implementation("org.eclipse.dataspaceconnector:spi") //klappt
     implementation("io.swagger.core.v3:swagger-annotations:2.1.13")
-    implementation("org.eurodat:broker:controller")
+    implementation("org.eurodat.broker:controller") //klappt nicht
     //implementation(project(":trustee-platform:services:broker"))
     api("jakarta.ws.rs:jakarta.ws.rs-api:$rsApi")
 
