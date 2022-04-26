@@ -37,12 +37,12 @@ class DatalandApiController(val monitor: Monitor, val consumerApiController: Con
     @GET
     @Path("dataland/data/{dataId}")
     fun selectDataById(@PathParam("dataId") dataId: String?): String {
-        return "Not implemented."
+        return consumerApiController.getAsset(dataId).toString() //returnt leider nur eine Log-Messsage
     }
 
     @POST
     @Path("dataland/data")
     fun insertData(data: String?): String {
-        return "todo" // consumerApiController.registerAsset
+        return "todo"
     }
 }
