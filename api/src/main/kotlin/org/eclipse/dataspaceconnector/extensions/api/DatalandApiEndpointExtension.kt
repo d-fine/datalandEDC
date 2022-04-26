@@ -22,11 +22,13 @@ package org.eclipse.dataspaceconnector.extensions.api
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.info.Info
 import org.eclipse.dataspaceconnector.spi.WebService
+import org.eclipse.dataspaceconnector.spi.system.Requires
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtension
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
 
 @OpenAPIDefinition(info = Info(title = "Dataland EDC OpenAPI Spec", version = "1.0.0-SNAPSHOT"))
 
+@Requires( WebService::class, ConsumerApiController::class )
 class DatalandApiEndpointExtension : ServiceExtension {
     override fun name(): String {
         return "API Endpoint"

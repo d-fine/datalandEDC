@@ -21,6 +21,8 @@ allprojects {
     }
 }
 
+val connectorVersion = "0.0.1"
+
 extra["OpenApiSpec"] = "OpenApiSpec.json"
 
 subprojects {
