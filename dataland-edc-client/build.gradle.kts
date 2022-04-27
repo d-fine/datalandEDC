@@ -19,7 +19,7 @@ val openApiSpecConfig by configurations.creating {
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 dependencies {
-    implementation("org.springdoc:springdoc-openapi-ui:1.6.6")
+    implementation("org.springdoc:springdoc-openapi-ui:1.6.8")
     implementation("org.springframework:spring-context")
     implementation("org.springframework.boot:spring-boot")
     implementation("com.fasterxml.jackson.core:jackson-annotations")
