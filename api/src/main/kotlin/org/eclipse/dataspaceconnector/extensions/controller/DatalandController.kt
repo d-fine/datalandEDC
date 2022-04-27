@@ -10,7 +10,7 @@ import java.net.URI
 
 class DatalandController() {
 
-    val basepathToTrustee = "http://20.31.200.61"
+    val basepathToTrustee = "http://20.31.200.61:9292"
     val defaultApi = DefaultApi(basepathToTrustee)
 
     fun registerDataAsAsset(data: String?): String {
@@ -50,42 +50,4 @@ class DatalandController() {
 
         return assetId
     }
-
-/*
-    fun registerDataAsAsset(data: String?): String {
-
-        val action = Action.Builder.newInstance()
-            .type("USE")
-            .build()
-        val permission = Permission.Builder.newInstance()
-            .target("test-asset")
-            .action(action)
-            .build()
-        val asset = Asset.Builder.newInstance()
-            .id("test-asset")
-            .property("endpoint", "https://filesamples.com/samples/code/json/sample2.json")
-            .build()
-        val policy = Policy.Builder.newInstance()
-            .id("956e172f-2de1-4501-8881-057a57fd0e60")
-            .permission(permission)
-            .build()
-
-        val providerRequest = ProviderRequest(
-            "eurodat-connector-test",
-            "$providerIdsURL/api/v1/ids/data",
-            "owner-ID",
-            "persistent",
-            asset,
-            policy,
-            URI("urn:connector:provider"),
-            URI("urn:connector:consumer")
-        )
-        val providerRequestString = jsonMapper.writeValueAsString(providerRequest)
-
-        val assetResponse = trusteeClient.post("/api/asset/register", providerRequestString)
-        val assetId = assetResponse["asset"]["properties"]["asset:prop:id"].asText()
-        val contractDefinitionId = assetResponse["contractDefinition"]["id"].asText()
-
-        return assetId
-    }*/
 }

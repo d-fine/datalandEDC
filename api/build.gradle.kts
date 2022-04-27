@@ -68,7 +68,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 val euroDatOpenApiJson = "OpenApiEuroDat.json"
 val taskName = "generateEuroDatBrokerExtensionClient"
 val clientOutputDir = "$buildDir/Clients/broker-extension"
-val apiSpecLocation = "$buildDir/$euroDatOpenApiJson"
+val apiSpecLocation = "$projectDir/$euroDatOpenApiJson"
 val destinationPackage = "org.eurodat.brokerextension.openApiClient"
 
 tasks.register(taskName, org.openapitools.generator.gradle.plugin.tasks.GenerateTask::class) {
