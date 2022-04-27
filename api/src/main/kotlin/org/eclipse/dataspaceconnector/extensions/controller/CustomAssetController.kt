@@ -1,3 +1,0 @@
-package org.eclipse.dataspaceconnector.extensions.controller
-
-class CustomAssetController
