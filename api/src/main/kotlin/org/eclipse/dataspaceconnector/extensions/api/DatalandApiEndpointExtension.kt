@@ -21,6 +21,7 @@ package org.eclipse.dataspaceconnector.extensions.api
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.info.Info
+import org.eclipse.dataspaceconnector.extensions.controller.DatalandController
 import org.eclipse.dataspaceconnector.spi.WebService
 import org.eclipse.dataspaceconnector.spi.system.Requires
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtension
@@ -37,6 +38,7 @@ class DatalandApiEndpointExtension : ServiceExtension {
     override fun initialize(context: ServiceExtensionContext) {
         val webService: WebService = context.getService(WebService::class.java)
         val consumerApiController = context.getService(ConsumerApiController::class.java)
-        webService.registerResource(DatalandApiController(context.monitor, consumerApiController))
+        val datalandController = DatalandController()
+        webService.registerResource(DatalandApi(context.monitor, consumerApiController, datalandController))
     }
 }
