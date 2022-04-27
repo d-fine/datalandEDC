@@ -6,8 +6,6 @@ import org.eurodat.brokerextension.openApiClient.model.Asset
 import org.eurodat.brokerextension.openApiClient.model.Permission
 import org.eurodat.brokerextension.openApiClient.model.Policy
 import org.eurodat.brokerextension.openApiClient.model.ProviderRequest
-
-
 import java.net.URI
 
 class DatalandController() {
@@ -39,7 +37,6 @@ class DatalandController() {
                     permissions = listOf(Permission(target = "test-asset", action = Action(type = "USE")))
                 ),
 
-
                 provider = URI("urn:connector:provider"),
 
                 consumer = URI("urn:connector:provider"),
@@ -48,11 +45,10 @@ class DatalandController() {
 
         val assetId = assetResponse.asset?.properties?.get("asset:prop:id").toString()
 
-        //["asset"]["properties"]["asset:prop:id"].asText()
-        //val contractDefinitionId = assetResponse["contractDefinition"]["id"].asText()
+        // ["asset"]["properties"]["asset:prop:id"].asText()
+        // val contractDefinitionId = assetResponse["contractDefinition"]["id"].asText()
 
         return assetId
-
     }
 
 /*

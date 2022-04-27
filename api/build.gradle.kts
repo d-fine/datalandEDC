@@ -59,7 +59,6 @@ dependencies {
     api("jakarta.ws.rs:jakarta.ws.rs-api:$rsApi")
 
     implementation("org.eurodat.connector:api")
-
 }
 
 val euroDatOpenApiJson = "OpenApiEuroDat.json"

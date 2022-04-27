@@ -32,7 +32,6 @@ class DatalandApi(
     val datalandController: DatalandController
 ) {
 
-
     @GET
     @Path("health")
     fun checkHealth(): String {
@@ -45,7 +44,6 @@ class DatalandApi(
     fun selectDataById(@PathParam("dataId") dataId: String?): String {
         return "todo"
     }
-
 
     @POST
     @Path("dataland/data")
