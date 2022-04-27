@@ -51,6 +51,7 @@ val rsApi: String by project
 dependencies {
     implementation("org.eclipse.dataspaceconnector:spi")
     implementation("io.swagger.core.v3:swagger-annotations:2.2.0")
+    implementation("com.squareup.okhttp3:okhttp:4.9.3")
     implementation("org.eurodat:broker-extension")
     implementation("org.eurodat:common")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
