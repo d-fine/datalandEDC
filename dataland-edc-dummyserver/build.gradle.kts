@@ -46,7 +46,7 @@ val openApiSpecConfig by configurations.creating {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("org.springdoc:springdoc-openapi-ui:1.6.6")
+    implementation("org.springdoc:springdoc-openapi-ui:1.6.8")
     implementation("org.junit.jupiter:junit-jupiter:5.8.2")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     openApiSpecConfig(project(mapOf("path" to ":dataland-connector", "configuration" to "openApiSpec")))

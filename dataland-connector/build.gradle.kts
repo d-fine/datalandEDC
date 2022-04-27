@@ -30,7 +30,7 @@ val rsApi: String by project
 
 plugins {
     id("application")
-    id("io.swagger.core.v3.swagger-gradle-plugin") version "2.1.13"
+    id("io.swagger.core.v3.swagger-gradle-plugin") version "2.2.0"
 }
 
 repositories {
@@ -63,7 +63,7 @@ val jsonFile = rootProject.extra["OpenApiSpec"]
 
 buildscript {
     dependencies {
-        classpath("io.swagger.core.v3:swagger-gradle-plugin:2.1.13")
+        classpath("io.swagger.core.v3:swagger-gradle-plugin:2.2.0")
     }
 }
 
