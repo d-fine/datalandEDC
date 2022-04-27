@@ -58,11 +58,11 @@ subprojects {
 }
 
 plugins {
-    id("org.springframework.boot") version "2.6.6" apply false
-    id("io.gitlab.arturbosch.detekt") version "1.19.0"
+    id("org.springframework.boot") version "2.6.7" apply false
+    id("io.gitlab.arturbosch.detekt") version "1.20.0"
     id("org.jlleitschuh.gradle.ktlint") version "10.2.1"
-    kotlin("jvm") version "1.6.10"
-    kotlin("plugin.spring") version "1.6.20" apply false
+    kotlin("jvm") version "1.6.21"
+    kotlin("plugin.spring") version "1.6.21" apply false
     id("org.sonarqube") version "3.3"
     jacoco
 }
@@ -102,7 +102,7 @@ tasks.jacocoTestReport {
 
 dependencies {
     detekt("io.gitlab.arturbosch.detekt:detekt-cli:1.20.0")
-    detekt("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.6.10")
+    detekt("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.6.21")
 }
 
 detekt {
