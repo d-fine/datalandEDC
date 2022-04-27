@@ -17,7 +17,6 @@ plugins {
     kotlin("jvm")
     jacoco
     kotlin("plugin.spring")
-    id("com.github.johnrengelman.processes") version "0.5.0"
     id("org.springdoc.openapi-gradle-plugin") version "1.3.4"
     id("org.openapi.generator") version "5.4.0"
 }
