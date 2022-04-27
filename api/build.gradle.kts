@@ -50,10 +50,16 @@ tasks.test {
 val rsApi: String by project
 
 dependencies {
+    implementation("org.eclipse.dataspaceconnector:spi")
+
     implementation("io.swagger.core.v3:swagger-annotations:2.2.0")
+    implementation("com.squareup.okhttp3:okhttp:4.9.3")
+    implementation("com.squareup.moshi:moshi-kotlin:1.13.0")
+
+
     implementation("org.junit.jupiter:junit-jupiter:5.8.2")
     api("jakarta.ws.rs:jakarta.ws.rs-api:$rsApi")
-
+/*
     implementation("org.eclipse.dataspaceconnector:core")
     implementation("org.eclipse.dataspaceconnector:in-memory")
     implementation("org.eclipse.dataspaceconnector:http")
@@ -66,9 +72,10 @@ dependencies {
     implementation("org.eclipse.dataspaceconnector:transfer-functions-core")
     implementation("org.eclipse.dataspaceconnector:data-plane-framework")
     implementation("org.eclipse.dataspaceconnector:data-plane-api")
+
+ */
     implementation("org.eurodat.connector:api")
 
-    implementation("com.squareup.moshi:moshi-kotlin:1.13.0")
 }
 
 val euroDatOpenApiJson = "OpenApiEuroDat.json"
