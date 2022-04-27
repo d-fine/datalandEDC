@@ -67,7 +67,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 
 val euroDatOpenApiJson = "OpenApiEuroDat.json"
 val taskName = "generateEuroDatBrokerExtensionClient"
-val clientOutputDir = "$buildDir/Clients/broker-extension"
+val clientOutputDir = "$buildDir/Clients/brokerextension"
 val apiSpecLocation = "$projectDir/$euroDatOpenApiJson"
 val destinationPackage = "org.eurodat.brokerextension.openApiClient"
 
@@ -95,4 +95,10 @@ tasks.test {
     extensions.configure(JacocoTaskExtension::class) {
         setDestinationFile(file("$buildDir/jacoco/jacoco.exec"))
     }*/
+}
+
+ktlint {
+    filter {
+        exclude("**/brokerextension/**")
+    }
 }

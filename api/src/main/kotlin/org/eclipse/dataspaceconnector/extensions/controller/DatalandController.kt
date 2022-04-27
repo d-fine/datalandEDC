@@ -10,14 +10,14 @@ import java.net.URI
 
 class DatalandController() {
 
-    val basepathToTrustee = "http://20.31.200.61:9292"
+    val basepathToTrustee = "http://20.31.200.61:80/api"
     val defaultApi = DefaultApi(basepathToTrustee)
 
     fun registerDataAsAsset(data: String?): String {
 
         val assetResponse = defaultApi.registerAsset(
             ProviderRequest(
-                participantId = "eurodat-connector-test",
+                participantId = "dataland-test",
 
                 participantConnectorAddress = "localhost:9292/api/v1/ids/data",
 
