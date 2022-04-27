@@ -61,6 +61,10 @@ dependencies {
     implementation("org.eurodat.connector:api")
 }
 
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    dependsOn("generateEuroDatBrokerExtensionClient")
+}
+
 val euroDatOpenApiJson = "OpenApiEuroDat.json"
 val taskName = "generateEuroDatBrokerExtensionClient"
 val clientOutputDir = "$buildDir/Clients/broker-extension"
