@@ -33,7 +33,6 @@ plugins {
     kotlin("jvm")
     kotlin("kapt")
     jacoco
-    id("org.openapi.generator") version "5.4.0"
 }
 
 jacoco {
@@ -53,14 +52,13 @@ dependencies {
     implementation("org.eclipse.dataspaceconnector:spi")
 
     implementation("io.swagger.core.v3:swagger-annotations:2.2.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
-    implementation("com.squareup.okhttp3:okhttp:4.9.3")
-    implementation("com.squareup.moshi:moshi-kotlin:1.13.0")
     implementation("org.junit.jupiter:junit-jupiter:5.8.2")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("com.squareup.okhttp3:okhttp:4.9.3")
     api("jakarta.ws.rs:jakarta.ws.rs-api:$rsApi")
 
-    implementation("org.eurodat.connector:api")
     implementation("org.eurodat.broker:broker-rest-model")
+    implementation("org.eurodat.connector:api")
 }
 
 tasks.test {
@@ -69,10 +67,4 @@ tasks.test {
     extensions.configure(JacocoTaskExtension::class) {
         setDestinationFile(file("$buildDir/jacoco/jacoco.exec"))
     }*/
-}
-
-ktlint {
-    filter {
-        exclude("**/brokerextension/**")
-    }
 }
