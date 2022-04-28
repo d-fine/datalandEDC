@@ -36,7 +36,7 @@ class DatalandApi(
     @Path("health")
     fun checkHealth(): String {
         //monitor.info("%s :: Received a health request")
-        datalandController.registerDataAsAsset("dummydata")
+        //datalandController.registerDataAsAsset("dummydata")
         return "{\"response\":\"I'm alive!\"}"
     }
 

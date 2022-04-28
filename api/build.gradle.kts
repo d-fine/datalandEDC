@@ -62,34 +62,6 @@ dependencies {
     implementation("org.eurodat.connector:api")
 }
 
-//tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-//    dependsOn("generateEuroDatBrokerExtensionClient")
-//}
-
-val euroDatOpenApiJson = "OpenApiEuroDat.json"
-val taskName = "generateEuroDatBrokerExtensionClient"
-val clientOutputDir = "$buildDir/Clients/brokerextension"
-val apiSpecLocation = "$projectDir/$euroDatOpenApiJson"
-val destinationPackage = "org.eurodat.brokerextension.openApiClient"
-
-//tasks.register(taskName, org.openapitools.generator.gradle.plugin.tasks.GenerateTask::class) {
-//    input = project.file(apiSpecLocation).path
-//    outputDir.set(clientOutputDir)
-//    modelPackage.set("$destinationPackage.model")
-//    apiPackage.set("$destinationPackage.api")
-//    packageName.set(destinationPackage)
-//    generatorName.set("kotlin")
-//    configOptions.set(
-//        mapOf(
-//            "dateLibrary" to "java17",
-//            "useTags" to "true"
-//        )
-//    )
-//}
-sourceSets {
-    val main by getting
-    main.java.srcDir("$clientOutputDir/src/main/kotlin")
-}
 tasks.test {
     useJUnitPlatform()
 /*
