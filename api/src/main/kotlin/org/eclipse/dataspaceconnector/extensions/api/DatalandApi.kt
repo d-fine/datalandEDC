@@ -48,6 +48,7 @@ class DatalandApi(
     @POST
     @Path("dataland/data")
     fun insertData(data: String?): String {
-        return datalandController.registerDataAsAsset(data)
+        val providerRequest = datalandController.buildProviderRequest()
+        return datalandController.registerAsset(providerRequest)["assetId"] ?:"Error: assetId is null"
     }
 }
