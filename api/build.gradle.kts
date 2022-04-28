@@ -60,6 +60,7 @@ dependencies {
     api("jakarta.ws.rs:jakarta.ws.rs-api:$rsApi")
 
     implementation("org.eurodat.connector:api")
+    implementation("org.eurodat.broker:broker-rest-model")
 }
 
 tasks.test {
