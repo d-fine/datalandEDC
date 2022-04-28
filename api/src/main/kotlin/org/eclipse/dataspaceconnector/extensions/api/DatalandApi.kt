@@ -53,6 +53,8 @@ class DatalandApi(
     @Path("dataland/data")
     fun insertData(data: String?): String {
         val providerRequest = datalandController.buildProviderRequest()
-        return datalandController.registerAsset(providerRequest)["assetId"] ?:"Error: assetId is null"
+        val mapOfAssetIdAndContractDefinitionId = datalandController.registerAsset(providerRequest)
+        return ("assetId: " + mapOfAssetIdAndContractDefinitionId["assetId"] +
+                ", contractDefinitionId: " + mapOfAssetIdAndContractDefinitionId["contractDefinitionId"])
     }
 }
