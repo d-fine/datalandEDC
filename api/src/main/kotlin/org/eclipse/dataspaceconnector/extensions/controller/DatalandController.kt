@@ -20,8 +20,6 @@ class DatalandController() {
 
     private val trusteeURL = "http://20.31.200.61:80/api"
     private val providerIdsURL = "http://dataland-tunnel.duckdns.org:9292"
-
-
     //private val consumerIdsURL = providerIdsURL
 
     val testCredentials = "password"
@@ -63,7 +61,7 @@ class DatalandController() {
         )
         val providerRequestString = jsonMapper.writeValueAsString(providerRequest)
 
-        val assetResponse = trusteeClient.post("/api/asset/register", providerRequestString)
+        val assetResponse = trusteeClient.post("/asset/register", providerRequestString)
         val assetId = assetResponse["asset"]["properties"]["asset:prop:id"].asText()
         val contractDefinitionId = assetResponse["contractDefinition"]["id"].asText()
 
