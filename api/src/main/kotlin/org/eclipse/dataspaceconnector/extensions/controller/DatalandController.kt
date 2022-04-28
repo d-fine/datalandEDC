@@ -19,7 +19,7 @@ class DatalandController() {
             ProviderRequest(
                 participantId = "dataland-test",
 
-                participantConnectorAddress = "emanuel-dfine.duckdns.org:9292/api/v1/ids",
+                participantConnectorAddress = "http://emanuel-dfine.duckdns.org:9292/api/v1/ids",
 
                 ownerId = "owner-ID",
 
