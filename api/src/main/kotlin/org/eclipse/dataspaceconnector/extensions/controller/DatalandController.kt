@@ -23,7 +23,7 @@ class DatalandController() {
     private val jsonMapper = jacksonObjectMapper()
 
     private val trusteeURL = "http://20.31.200.61:80/api"
-    private val trusteeIdsPort = "" //TODO
+    private val trusteeIdsURL = "" //TODO
 
     private val providerURL = "http://dataland-tunnel.duckdns.org:9191"
     private val providerIdsURL = "http://dataland-tunnel.duckdns.org:9292"
@@ -37,7 +37,8 @@ class DatalandController() {
         DALADefaultOkHttpClientFactoryImpl.create(false), trusteeURL, "APIKey", testCredentials
     )
     private val consumerClient = DALAHttpClient(
-        DALADefaultOkHttpClientFactoryImpl.create(false), consumerURL, "APIKey", testCredentials)
+        DALADefaultOkHttpClientFactoryImpl.create(false), consumerURL, "APIKey", testCredentials
+    )
 
 
     fun buildProviderRequest(
@@ -83,8 +84,21 @@ class DatalandController() {
 
         return mapOf("assetId" to assetId, "contractDefinitionId" to contractDefinitionId)
     }
-    /*
-    fun a(assetId: String, contractDefinitionId: String): String {
+
+
+    fun getAsset(
+        assetId: String,
+        contractDefinitionId: String,
+        actionType: String = "USE",
+        policyUid: String = "956e172f-2de1-4501-8881-057a57fd0e60"
+    ): String {
+        val action = Action.Builder.newInstance()
+            .type(actionType)
+            .build()
+        val asset = Asset.Builder.newInstance()
+            .id("test-asset")
+            .property("endpoint", "https://filesamples.com/samples/code/json/sample2.json")
+            .build()
 
         // Consumer negotiates contract to consume asset
         val newPermission = Permission.Builder.newInstance()
@@ -104,7 +118,6 @@ class DatalandController() {
             .build()
 
         val consumerRequestString = jsonMapper.writeValueAsString(newContractOffer)
-
         val params = mapOf("Content-Type" to "application/json", "connectorAddress" to "$trusteeIdsURL/api/v1/ids/data")
         val negotiationResponse = consumerClient.post("/api/negotiation", consumerRequestString, params)
         val negotiationId = negotiationResponse["id"].asText()
@@ -149,6 +162,7 @@ class DatalandController() {
                 if (timeout > 0) timeout -= 5 else break
             }
         }
-
-    }*/
+        return "done"
+    }
 }
+

@@ -19,6 +19,7 @@ import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
+import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.MediaType
 import org.eclipse.dataspaceconnector.extensions.controller.DatalandController
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor
@@ -40,9 +41,12 @@ class DatalandApi(
     }
 
     @GET
-    @Path("dataland/data/{dataId}")
-    fun selectDataById(@PathParam("dataId") dataId: String?): String {
-        return "todo"
+    @Path("dataland/data/{dataId}/{contractDefinitionId}")
+    fun selectDataById(
+        @PathParam("dataId") dataId: String,
+        @PathParam("contractDefinitionId") contractDefinitionId: String
+    ): String {
+        return datalandController.getAsset(assetId = dataId, contractDefinitionId = contractDefinitionId)
     }
 
     @POST
