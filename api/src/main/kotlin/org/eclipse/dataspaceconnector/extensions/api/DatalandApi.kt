@@ -43,12 +43,12 @@ class DatalandApi(
     }
 
     @GET
-    @Path("dataland/data/{dataId}/{contractDefinitionId}")
+    @Path("dataland/data/{assetId}/{contractDefinitionId}")
     fun selectDataById(
-        @PathParam("dataId") dataId: String,
+        @PathParam("assetId") assetId: String,
         @PathParam("contractDefinitionId") contractDefinitionId: String
     ): String {
-        val response = mapOf("response" to datalandController.getAsset(assetId = dataId, contractDefinitionId = contractDefinitionId))
+        val response = mapOf("response" to datalandController.getAsset(assetId = assetId, contractDefinitionId = contractDefinitionId))
         return objectMapper.writeValueAsString(response)
     }
 

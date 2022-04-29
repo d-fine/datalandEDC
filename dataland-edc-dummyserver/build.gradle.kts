@@ -33,6 +33,8 @@ tasks.test {
     extensions.configure(JacocoTaskExtension::class) {
         setDestinationFile(file("$buildDir/jacoco/jacoco.exec"))
     }
+
+    dependsOn("generateEdcServer")
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_17
