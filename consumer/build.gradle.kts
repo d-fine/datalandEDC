@@ -53,7 +53,7 @@ dependencies {
     implementation("org.eclipse.dataspaceconnector:data-plane-framework")
     implementation("org.eclipse.dataspaceconnector:data-plane-api")
     implementation("org.eclipse.dataspaceconnector:dataloading:$connectorVersion")
-    implementation(project(":transfer-file"))
+    implementation("org.eurodat.connector:transfer-file")
     implementation(project(":api"))
 }
 
