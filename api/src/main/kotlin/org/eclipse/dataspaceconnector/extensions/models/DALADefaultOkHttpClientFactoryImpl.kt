@@ -8,7 +8,7 @@ import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLContext
 import javax.net.ssl.X509TrustManager
 
-object DALADefaultOkHttpClientFactoryImpl: DALAOkHttpClientFactory {
+object DALADefaultOkHttpClientFactoryImpl : DALAOkHttpClientFactory {
     override fun create(isSecure: Boolean): OkHttpClient = if (isSecure) {
         OkHttpClient.Builder()
     } else {

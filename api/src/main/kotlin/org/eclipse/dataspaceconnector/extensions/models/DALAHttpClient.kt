@@ -10,7 +10,6 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.internal.EMPTY_REQUEST
-
 import java.io.IOException
 import java.util.Base64
 import java.util.concurrent.TimeoutException
@@ -27,8 +26,10 @@ class DALAHttpClient(private val client: OkHttpClient, private val baseURL: Stri
 
     fun post(endpoint: String, body: String? = null, params: Map<String, String>? = null) = sendRequest(
         Request.Builder().post(
-            body?.toRequestBody("application/json".toMediaType()) ?: EMPTY_REQUEST)
-            .url(buildURL(endpoint, params)))
+            body?.toRequestBody("application/json".toMediaType()) ?: EMPTY_REQUEST
+        )
+            .url(buildURL(endpoint, params))
+    )
 
     private fun canConnectToContainer(endpoint: String): Boolean {
         return try {
@@ -53,7 +54,7 @@ class DALAHttpClient(private val client: OkHttpClient, private val baseURL: Stri
         throw TimeoutException("Client at URL $baseURL could not start properly")
     }
 
-    private fun buildURL(endpoint:String, params: Map<String, String>?): HttpUrl {
+    private fun buildURL(endpoint: String, params: Map<String, String>?): HttpUrl {
         val httpBuilder = (baseURL + endpoint).toHttpUrl().newBuilder()
         params?.forEach { httpBuilder.addQueryParameter(it.key, it.value) }
         return httpBuilder.build()
@@ -69,9 +70,11 @@ class DALAHttpClient(private val client: OkHttpClient, private val baseURL: Stri
             } catch (e: JsonParseException) {
                 toJsonMapper.readTree("""{"content": "$responseBody"}""")
             }
-            println("""Sent '${response.request.method}' request to URL : ${response.request.url}
+            println(
+                """Sent '${response.request.method}' request to URL : ${response.request.url}
                        Response Code : ${response.code}
-                       Response Body : $jsonBody""")
+                       Response Body : $jsonBody"""
+            )
             return jsonBody
         }
     }

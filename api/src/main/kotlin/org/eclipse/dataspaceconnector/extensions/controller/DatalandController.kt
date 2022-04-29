@@ -1,22 +1,19 @@
 package org.eclipse.dataspaceconnector.extensions.controller
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.eclipse.dataspaceconnector.extensions.models.DALADefaultOkHttpClientFactoryImpl
 import org.eclipse.dataspaceconnector.extensions.models.DALAHttpClient
 import org.eclipse.dataspaceconnector.policy.model.Action
 import org.eclipse.dataspaceconnector.policy.model.Permission
 import org.eclipse.dataspaceconnector.policy.model.Policy
-import org.eclipse.dataspaceconnector.spi.types.domain.asset.Asset
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.eclipse.dataspaceconnector.spi.types.domain.DataAddress
+import org.eclipse.dataspaceconnector.spi.types.domain.asset.Asset
 import org.eclipse.dataspaceconnector.spi.types.domain.contract.offer.ContractOffer
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataRequest
 import org.eurodat.broker.model.ProviderRequest
 import java.io.IOException
-
-
 import java.net.URI
-
 
 class DatalandController() {
 
@@ -39,7 +36,6 @@ class DatalandController() {
     private val consumerClient = DALAHttpClient(
         DALADefaultOkHttpClientFactoryImpl.create(false), consumerURL, "APIKey", testCredentials
     )
-
 
     fun buildProviderRequest(
         assetId: String = "test-asset",
@@ -73,7 +69,6 @@ class DatalandController() {
             URI("urn:connector:provider"),
             URI("urn:connector:consumer")
         )
-
     }
 
     fun registerAsset(providerRequest: ProviderRequest): Map<String, String> {
@@ -84,7 +79,6 @@ class DatalandController() {
 
         return mapOf("assetId" to assetId, "contractDefinitionId" to contractDefinitionId)
     }
-
 
     fun getAsset(
         assetId: String,
@@ -137,7 +131,7 @@ class DatalandController() {
             .property("endpoint", "$consumerURL/api/transferdestination")
             .build()
         val dataRequest = DataRequest.Builder.newInstance()
-            .id("process-id:$agreementId")  // Use agreementId as the processId for repeatability and ensuring one process per asset and test
+            .id("process-id:$agreementId") // Use agreementId as the processId for repeatability and ensuring one process per asset and test
             .connectorAddress("$trusteeIdsURL/api/v1/ids/data")
             .protocol("ids-multipart")
             .connectorId("consumer")
@@ -149,7 +143,7 @@ class DatalandController() {
         val dataRequestString = jsonMapper.writeValueAsString(dataRequest)
         consumerClient.post("/api/control/transfer", dataRequestString)
 
-        //Check that the data was received on Consumer side
+        // Check that the data was received on Consumer side
         var transferResponse: JsonNode? = null
         var timeout = 60
         while (transferResponse == null) {
@@ -165,4 +159,3 @@ class DatalandController() {
         return "done"
     }
 }
-
