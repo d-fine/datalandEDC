@@ -9,6 +9,5 @@ class DatalandApiControllerTest {
     @Test
     fun `asfasf a`() {
         val testData = "Content: 10"
-        datalandController.registerDataAsAsset(testData)
     }
 }

@@ -79,7 +79,9 @@ sonarqube {
         property("sonar.organization", "d-fine")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.qualitygate.wait", true)
-        property("sonar.coverage.exclusions", "**/test/**, **/trustee-platform/**, **/dataland-eurodat-dummyserver/**, **/dataland-eurodat-client/**, **/extensions/**, **/DummyEdc.kt")
+        property("sonar.coverage.exclusions",
+            "**/test/**, **/trustee-platform/**, **/dataland-eurodat-dummyserver/**, " +
+                    "**/dataland-eurodat-client/**, **/extensions/**, **/DummyEdc.kt")
         property(
             "sonar.sources",
             subprojects.flatMap { project -> project.properties["sonarSources"] as Iterable<*> }
@@ -116,8 +118,14 @@ detekt {
     allRules = false
     config = files("$projectDir/config/detekt.yml")
     val detektFileTree = fileTree("$projectDir")
-    detektFileTree.exclude("**/build/**").exclude("**/node_modules/**")
-        .exclude(".gradle").exclude("**/DataSpaceConnector/**").exclude("api")
+    detektFileTree
+        .exclude("**/build/**")
+        .exclude("**/trustee-platform/**")
+        .exclude("**/dataland-eurodat-dummyserver/**")
+        .exclude("**/dataland-eurodat-client/**")
+        .exclude("**/node_modules/**")
+        .exclude("api/**")
+        .exclude(".gradle")
     source = files(detektFileTree)
 }
 

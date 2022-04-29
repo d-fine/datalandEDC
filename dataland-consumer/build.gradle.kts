@@ -59,7 +59,8 @@ dependencies {
 
 application {
     mainClass.set("org.eclipse.dataspaceconnector.boot.system.runtime.BaseRuntime")
-    applicationDefaultJvmArgs = listOf("-Dedc.fs.config=config.properties", "-Dids.webhook.address=http://localhost:9191")
+    applicationDefaultJvmArgs = listOf("-Dedc.fs.config=config.properties",
+        "-Dids.webhook.address=http://localhost:9191")
 }
 /*
 
