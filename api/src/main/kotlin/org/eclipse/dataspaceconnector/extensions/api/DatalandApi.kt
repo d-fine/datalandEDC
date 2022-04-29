@@ -51,7 +51,9 @@ class DatalandApi(
     @POST
     @Path("dataland/data")
     fun insertData(data: String?): String {
+        monitor.info("%s :: Received a POST request to register asset")
         val providerRequest = datalandController.buildProviderRequest()
+        monitor.info("%s :: ProviderRequest was built")
         val mapOfAssetIdAndContractDefinitionId = datalandController.registerAsset(providerRequest)
         return "{\"assetId\":\"${mapOfAssetIdAndContractDefinitionId["assetId"]}\"" + System.lineSeparator() +
                 "\"contractDefinitionId\":\"${mapOfAssetIdAndContractDefinitionId["contractDefinitionId"]}\"}"
