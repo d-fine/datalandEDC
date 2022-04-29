@@ -40,6 +40,12 @@ jobs:
         with:
           name: JaCoCoEDCDummyUnitTests
           path: ./*/build/jacoco/*.exec
+      - name: Upload JaCoCo API Results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: JaCoCoAPIUnitTests
+          path: ./api/build/jacoco/*.exec
   sonar:
     runs-on: ubuntu-latest
     if: always()
@@ -62,9 +68,16 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: JaCoCoEDCDummyUnitTests
+      - uses: actions/download-artifact@v2
+        with:
+          name: JaCoCoAPIUnitTests
       - name: Generate jacocoTestReport and run Sonar
         if: always()
-        run: ./gradlew jacocoTestReport sonarqube --no-daemon
+        run: |
+          ./gradlew jacocoTestReport --no-daemon
+          find . -type f -iname "*.exec";
+          ./gradlew sonarqube --no-daemon
+          find . -type f -name jacocoTestReport.xml;
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
