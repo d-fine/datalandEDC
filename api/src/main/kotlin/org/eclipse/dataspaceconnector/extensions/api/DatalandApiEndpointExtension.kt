@@ -19,6 +19,7 @@
  */
 package org.eclipse.dataspaceconnector.extensions.api
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.info.Info
 import org.eclipse.dataspaceconnector.extensions.controller.DatalandController
@@ -39,6 +40,7 @@ class DatalandApiEndpointExtension : ServiceExtension {
         val webService: WebService = context.getService(WebService::class.java)
         val consumerApiController = context.getService(ConsumerApiController::class.java)
         val datalandController = DatalandController()
-        webService.registerResource(DatalandApi(context.monitor, consumerApiController, datalandController))
+        val objectMapper = ObjectMapper()
+        webService.registerResource(DatalandApi(context.monitor, objectMapper, consumerApiController, datalandController))
     }
 }

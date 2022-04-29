@@ -13,6 +13,7 @@
  */
 package org.eclipse.dataspaceconnector.extensions.api
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
@@ -28,6 +29,7 @@ import org.eclipse.dataspaceconnector.spi.monitor.Monitor
 @Path("/")
 class DatalandApi(
     val monitor: Monitor,
+    val objectMapper: ObjectMapper,
     val consumerApiController: ConsumerApiController,
     val datalandController: DatalandController
 ) {
@@ -36,7 +38,8 @@ class DatalandApi(
     @Path("health")
     fun checkHealth(): String {
         monitor.info("%s :: Received a health request")
-        return "{\"response\":\"I'm alive!\"}"
+        val response = mapOf("response" to "I'm alive")
+        return objectMapper.writeValueAsString(response)
     }
 
     @GET
@@ -45,7 +48,8 @@ class DatalandApi(
         @PathParam("dataId") dataId: String,
         @PathParam("contractDefinitionId") contractDefinitionId: String
     ): String {
-        return datalandController.getAsset(assetId = dataId, contractDefinitionId = contractDefinitionId)
+        val response = mapOf("response" to datalandController.getAsset(assetId = dataId, contractDefinitionId = contractDefinitionId))
+        return objectMapper.writeValueAsString(response)
     }
 
     @POST
@@ -55,7 +59,6 @@ class DatalandApi(
         val providerRequest = datalandController.buildProviderRequest()
         monitor.info("%s :: ProviderRequest was built")
         val mapOfAssetIdAndContractDefinitionId = datalandController.registerAsset(providerRequest)
-        return "{\"assetId\":\"${mapOfAssetIdAndContractDefinitionId["assetId"]}\"" + System.lineSeparator() +
-                "\"contractDefinitionId\":\"${mapOfAssetIdAndContractDefinitionId["contractDefinitionId"]}\"}"
+        return objectMapper.writeValueAsString(mapOfAssetIdAndContractDefinitionId)
     }
 }

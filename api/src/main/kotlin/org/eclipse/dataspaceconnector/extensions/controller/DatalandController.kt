@@ -118,7 +118,7 @@ class DatalandController() {
             .build()
 
         val consumerRequestString = jsonMapper.writeValueAsString(newContractOffer)
-        val params = mapOf("Content-Type" to "application/json", "connectorAddress" to "$trusteeIdsURL/api/v1/ids/data")
+        val params = mapOf("Content-Type" to "application/json", "connectorAddress" to "$trusteeIdsURL/v1/ids/data")
         val negotiationResponse = consumerClient.post("/api/negotiation", consumerRequestString, params)
         val negotiationId = negotiationResponse["id"].asText()
 
