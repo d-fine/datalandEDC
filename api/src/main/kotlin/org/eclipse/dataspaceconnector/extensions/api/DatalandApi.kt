@@ -19,7 +19,6 @@ import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
-import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.MediaType
 import org.eclipse.dataspaceconnector.extensions.controller.DatalandController
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor
@@ -54,7 +53,7 @@ class DatalandApi(
     fun insertData(data: String?): String {
         val providerRequest = datalandController.buildProviderRequest()
         val mapOfAssetIdAndContractDefinitionId = datalandController.registerAsset(providerRequest)
-        return ("assetId: " + mapOfAssetIdAndContractDefinitionId["assetId"] +
-                ", contractDefinitionId: " + mapOfAssetIdAndContractDefinitionId["contractDefinitionId"])
+        return "{\"assetId\":\"${mapOfAssetIdAndContractDefinitionId["assetId"]}\"" + System.lineSeparator() +
+                "\"contractDefinitionId\":\"${mapOfAssetIdAndContractDefinitionId["contractDefinitionId"]}\"}"
     }
 }

@@ -23,7 +23,7 @@ class DatalandController() {
     private val jsonMapper = jacksonObjectMapper()
 
     private val trusteeURL = "http://20.31.200.61:80/api"
-    private val trusteeIdsURL = "" //TODO
+    private val trusteeIdsURL = "http://20.31.200.61:80/api"
 
     private val providerURL = "http://dataland-tunnel.duckdns.org:9191"
     private val providerIdsURL = "http://dataland-tunnel.duckdns.org:9292"
