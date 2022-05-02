@@ -18,7 +18,7 @@ class DummyEdcControllerTest(
     @Test
     fun `check if an empty string is returned by get request when the data id does not exist`() {
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/dataland/data/0:bla")
+            MockMvcRequestBuilders.get("/dataland/data/0")
         ).andExpectAll(
             MockMvcResultMatchers.status().isOk,
             MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON),
@@ -38,15 +38,13 @@ class DummyEdcControllerTest(
             MockMvcResultMatchers.status().isOk,
             MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)
         )
-
-        /*
+        
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/dataland/data/1:bla")
+            MockMvcRequestBuilders.get("/dataland/data/1")
         ).andExpectAll(
             MockMvcResultMatchers.status().isOk,
             MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON),
             MockMvcResultMatchers.content().string(body)
         )
-        */
     }
 }
