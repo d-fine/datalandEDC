@@ -60,7 +60,7 @@ class DatalandApi(
     fun uploadData(
         @PathParam("assetId") assetId: String
     ): String {
-        return datalandController.provideData(assetId)
+        return datalandController.uploadAsset(assetId)
     }
 
     @GET

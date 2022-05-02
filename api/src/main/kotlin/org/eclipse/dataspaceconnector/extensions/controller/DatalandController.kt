@@ -167,7 +167,7 @@ class DatalandController() {
         receivedAssets[id] = decodedData
     }
 
-    fun provideData(assetId: String): String {
+    fun uploadAsset(assetId: String): String {
         return uploadedAssets[assetId] ?: "No data with assetId $assetId found"
     }
 }
