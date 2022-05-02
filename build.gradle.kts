@@ -73,6 +73,13 @@ ktlint {
     }
 }
 
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+}
+
 sonarqube {
     properties {
         property("sonar.projectKey", "d-fine_datalandEDC")
