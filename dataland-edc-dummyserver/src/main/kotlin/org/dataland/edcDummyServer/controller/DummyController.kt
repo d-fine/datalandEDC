@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController
 class DummyController : DefaultApi {
     val dataStore = InMemoryDataStore()
 
-    override fun selectDataById(assetId: String, contractDefinitionId: String): ResponseEntity<String> {
-        return ResponseEntity.ok(dataStore.selectDataSet(assetId))
+    override fun selectDataById(dataId: String): ResponseEntity<String> {
+        return ResponseEntity.ok(dataStore.selectDataSet(dataId))
     }
 
     override fun insertData(body: String?): ResponseEntity<String> {

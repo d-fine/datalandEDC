@@ -161,7 +161,6 @@ class DatalandController() {
         return receivedAssets[assetId] ?: "Data not found"
     }
 
-
     fun storeAsset(id: String, decodedData: String) {
         println("Transferdestination endpoint has received a request")
         receivedAssets[id] = decodedData
