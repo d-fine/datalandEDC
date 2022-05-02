@@ -73,7 +73,6 @@ ktlint {
     }
 }
 
-
 sonarqube {
     properties {
         property("sonar.projectKey", "d-fine_datalandEDC")
