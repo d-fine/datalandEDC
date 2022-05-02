@@ -14,6 +14,7 @@
 package org.eclipse.dataspaceconnector.extensions.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
@@ -21,6 +22,7 @@ import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
+import jakarta.ws.rs.core.Response
 import org.eclipse.dataspaceconnector.extensions.controller.DatalandController
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor
 
@@ -42,23 +44,46 @@ class DatalandApi(
         return objectMapper.writeValueAsString(response)
     }
 
-    @GET
-    @Path("dataland/data/{assetId}/{contractDefinitionId}")
-    fun selectDataById(
-        @PathParam("assetId") assetId: String,
-        @PathParam("contractDefinitionId") contractDefinitionId: String
-    ): String {
-        val response = mapOf("response" to datalandController.getAsset(assetId = assetId, contractDefinitionId = contractDefinitionId))
-        return objectMapper.writeValueAsString(response)
-    }
-
     @POST
     @Path("dataland/data")
-    fun insertData(data: String?): String {
+    fun insertData(data: String): String {
         monitor.info("%s :: Received a POST request to register asset")
-        val providerRequest = datalandController.buildProviderRequest()
+        val providerRequest = datalandController.buildProviderRequest(data)
         monitor.info("%s :: ProviderRequest was built")
         val mapOfAssetIdAndContractDefinitionId = datalandController.registerAsset(providerRequest)
-        return objectMapper.writeValueAsString(mapOfAssetIdAndContractDefinitionId)
+        return mapOfAssetIdAndContractDefinitionId.values.joinToString(":")
+    }
+
+    @Produces(MediaType.APPLICATION_JSON)
+    @GET
+    @Path("dataland/upload/{assetId}")
+    fun uploadData(
+        @PathParam("assetId") assetId: String
+    ): String {
+        return datalandController.provideData(assetId)
+    }
+
+    @GET
+    @Path("dataland/data/{dataId}")
+    fun selectDataById(
+        @PathParam("dataId") dataId: String,
+    ): String {
+        val splitDataId = dataId.split(":")
+        if (splitDataId.size != 2) throw IllegalArgumentException("The data ID $dataId has an invalid format.")
+        monitor.info("%s :: Getting asset with asset ID ${splitDataId[0]} and contract definition ID ${splitDataId[1]}")
+        return datalandController.getAsset(
+            assetId = splitDataId[0],
+            contractDefinitionId = splitDataId[1]
+        )
+    }
+
+    @Consumes(MediaType.APPLICATION_OCTET_STREAM)
+    @Produces(MediaType.APPLICATION_JSON)
+    @POST
+    @Path("dataland/transferdestination/{id}")
+    fun saveTransferedData(@PathParam("id") id: String, data: ByteArray): Response {
+        val x: Map<String, String> = objectMapper.readValue(data.decodeToString())
+        datalandController.storeAsset(id, x["content"]!!)
+        return Response.ok("I received data with asset ID $id").build()
     }
 }

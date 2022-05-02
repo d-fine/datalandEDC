@@ -1,6 +1,5 @@
 package org.eclipse.dataspaceconnector.extensions.controller
 
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.eclipse.dataspaceconnector.extensions.models.DALADefaultOkHttpClientFactoryImpl
 import org.eclipse.dataspaceconnector.extensions.models.DALAHttpClient
@@ -12,7 +11,6 @@ import org.eclipse.dataspaceconnector.spi.types.domain.asset.Asset
 import org.eclipse.dataspaceconnector.spi.types.domain.contract.offer.ContractOffer
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataRequest
 import org.eurodat.broker.model.ProviderRequest
-import java.io.IOException
 import java.net.URI
 
 class DatalandController() {
@@ -37,11 +35,17 @@ class DatalandController() {
         DALADefaultOkHttpClientFactoryImpl.create(false), consumerURL, "APIKey", testCredentials
     )
 
+    private val receivedAssets: MutableMap<String, String> = mutableMapOf()
+    private val uploadedAssets: MutableMap<String, String> = mutableMapOf()
+
     fun buildProviderRequest(
+        data: String,
         assetId: String = "test-asset",
         policyUid: String = "956e172f-2de1-4501-8881-057a57fd0e60",
         actionType: String = "USE"
     ): ProviderRequest {
+
+        uploadedAssets[assetId] = data
 
         val action = Action.Builder.newInstance()
             .type(actionType)
@@ -52,7 +56,7 @@ class DatalandController() {
             .build()
         val asset = Asset.Builder.newInstance()
             .id(assetId)
-            .property("endpoint", "https://filesamples.com/samples/code/json/sample2.json")
+            .property("endpoint", "$providerURL/api/dataland/upload/$assetId")
             .build()
         val policy = Policy.Builder.newInstance()
             .id(policyUid)
@@ -76,7 +80,6 @@ class DatalandController() {
         val assetResponse = trusteeClient.post("/asset/register", providerRequestString)
         val assetId = assetResponse["asset"]["properties"]["asset:prop:id"].asText()
         val contractDefinitionId = assetResponse["contractDefinition"]["id"].asText()
-
         return mapOf("assetId" to assetId, "contractDefinitionId" to contractDefinitionId)
     }
 
@@ -128,11 +131,11 @@ class DatalandController() {
         // After successful negotiation consumer request data transfer
         val dataDestination = DataAddress.Builder.newInstance()
             .property("type", "HttpFV")
-            .property("endpoint", "$consumerURL/api/transferdestination")
+            .property("endpoint", "$consumerURL/api/dataland/transferdestination")
             .build()
         val dataRequest = DataRequest.Builder.newInstance()
             .id("process-id:$agreementId") // Use agreementId as the processId for repeatability and ensuring one process per asset and test
-            .connectorAddress("$trusteeIdsURL/api/v1/ids/data")
+            .connectorAddress("$trusteeIdsURL/v1/ids/data")
             .protocol("ids-multipart")
             .connectorId("consumer")
             .assetId(assetId)
@@ -144,18 +147,27 @@ class DatalandController() {
         consumerClient.post("/api/control/transfer", dataRequestString)
 
         // Check that the data was received on Consumer side
-        var transferResponse: JsonNode? = null
+        return returnAsset(assetId)
+    }
+
+    fun returnAsset(assetId: String): String {
+        // Check that the data was received on Consumer side
         var timeout = 60
-        while (transferResponse == null) {
-            try {
-                transferResponse = consumerClient.get("/api/checkasset/$assetId")
-            } catch (exception: IOException) {
-                println(exception.message)
-                println("Waiting 5 seconds...")
-                Thread.sleep(5000)
-                if (timeout > 0) timeout -= 5 else break
-            }
+        while (!receivedAssets.containsKey(assetId)) {
+            println("Waiting 5 seconds...")
+            Thread.sleep(5000)
+            if (timeout > 0) timeout -= 5 else break
         }
-        return "done"
+        return receivedAssets[assetId] ?: "Data not found"
+    }
+
+
+    fun storeAsset(id: String, decodedData: String) {
+        println("Transferdestination endpoint has received a request")
+        receivedAssets[id] = decodedData
+    }
+
+    fun provideData(assetId: String): String {
+        return uploadedAssets[assetId] ?: "No data with assetId $assetId found"
     }
 }
