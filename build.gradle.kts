@@ -126,7 +126,6 @@ detekt {
         .exclude("**/dataland-eurodat-dummyserver/**")
         .exclude("**/dataland-eurodat-client/**")
         .exclude("**/node_modules/**")
-        .exclude("api/**")
         .exclude(".gradle")
     source = files(detektFileTree)
 }
