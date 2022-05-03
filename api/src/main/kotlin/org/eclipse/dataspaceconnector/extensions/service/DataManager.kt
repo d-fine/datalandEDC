@@ -19,8 +19,8 @@ class DataManager {
     private val trusteeURL = "http://20.31.200.61:80/api"
     private val trusteeIdsURL = "http://20.31.200.61:80/api"
 
-    private val datalandConnectorURL = "http://dataland-tunnel.duckdns.org:9191"
-    private val datalandConnectorIdsURL = "http://dataland-tunnel.duckdns.org:9292"
+    private val datalandEdcServerUrl = "http://dataland-tunnel.duckdns.org:9191"
+    private val datalandEdcServerIdsURL = "http://dataland-tunnel.duckdns.org:9292"
 
     private val testCredentials = "password"
 
@@ -28,7 +28,7 @@ class DataManager {
         DALADefaultOkHttpClientFactoryImpl.create(false), trusteeURL, "APIKey", testCredentials
     )
     private val datalandConnectorClient = DALAHttpClient(
-        DALADefaultOkHttpClientFactoryImpl.create(false), datalandConnectorURL, "APIKey", testCredentials
+        DALADefaultOkHttpClientFactoryImpl.create(false), datalandEdcServerUrl, "APIKey", testCredentials
     )
 
     private val receivedAssets: MutableMap<String, String> = mutableMapOf()
@@ -63,11 +63,11 @@ class DataManager {
         val permission = Permission.Builder.newInstance().target(providerAssetId).action(action).build()
         providedAssets[providerAssetId] = data
         val asset = Asset.Builder.newInstance().id(providerAssetId)
-            .property("endpoint", "$datalandConnectorURL/api/dataland/provideAsset/$providerAssetId").build()
+            .property("endpoint", "$datalandEdcServerUrl/api/dataland/provideAsset/$providerAssetId").build()
         val policy = Policy.Builder.newInstance().id(policyUid).permission(permission).build()
         return ProviderRequest(
             "eurodat-connector-test",
-            "$datalandConnectorIdsURL/api/v1/ids/data",
+            "$datalandEdcServerIdsURL/api/v1/ids/data",
             "owner-ID",
             "persistent",
             asset, policy, URI("urn:connector:provider"), URI("urn:connector:consumer")
@@ -152,7 +152,7 @@ class DataManager {
         // After successful negotiation consumer request data transfer
         val dataDestination = DataAddress.Builder.newInstance()
             .property("type", "HttpFV")
-            .property("endpoint", "$datalandConnectorURL/api/dataland/receiveAsset")
+            .property("endpoint", "$datalandEdcServerUrl/api/dataland/receiveAsset")
             .build()
         val dataRequest = DataRequest.Builder.newInstance()
             .id("process-id:$agreementId") // Use agreementId as the processId for repeatability and ensuring one process per asset and test
