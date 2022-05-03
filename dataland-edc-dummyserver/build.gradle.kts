@@ -47,7 +47,7 @@ val openApiSpecConfig by configurations.creating {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation(libs.srpingdoc.openapi.ui)
+    implementation(libs.springdoc.openapi.ui)
     implementation(libs.junit.jupiter)
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     openApiSpecConfig(project(mapOf("path" to ":dataland-edc-server", "configuration" to "openApiSpec")))
