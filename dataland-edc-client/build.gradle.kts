@@ -27,7 +27,7 @@ dependencies {
     implementation("com.squareup.moshi:moshi-adapters:1.13.0")
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
     kapt("org.springframework.boot:spring-boot-configuration-processor")
-    openApiSpecConfig(project(mapOf("path" to ":dataland-connector", "configuration" to "openApiSpec")))
+    openApiSpecConfig(project(mapOf("path" to ":dataland-edc-server", "configuration" to "openApiSpec")))
 }
 
 tasks.register<Copy>("getOpenApiSpec") {

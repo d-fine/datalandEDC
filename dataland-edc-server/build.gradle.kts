@@ -29,7 +29,7 @@ val jacocoClasses by extra(emptyList<File>())
 plugins {
     `java-library`
     id("application")
-    id("io.swagger.core.v3.swagger-gradle-plugin") version "2.1.13"
+    id("io.swagger.core.v3.swagger-gradle-plugin") version "2.2.0"
 }
 
 val connectorVersion: String by project
@@ -53,6 +53,8 @@ dependencies {
     implementation("org.eclipse.dataspaceconnector:ids")
     implementation("org.eurodat.connector:api")
     implementation("org.eurodat.connector:transfer-file")
+    implementation("io.swagger.core.v3:swagger-jaxrs2-jakarta:2.2.0")
+    implementation("jakarta.ws.rs:jakarta.ws.rs-api:3.1.0")
     implementation(project(":api"))
 }
 
@@ -62,4 +64,40 @@ application {
         "-Dedc.fs.config=config.properties", "-Dedc.keystore=keystore.jks", "-Dedc.keystore.password=123456",
         "-Dedc.vault=vault.properties"
     )
+}
+
+val jsonOutputDir = buildDir
+val jsonFile = rootProject.extra["OpenApiSpec"]
+
+buildscript {
+    dependencies {
+        classpath("io.swagger.core.v3:swagger-gradle-plugin:2.2.0")
+    }
+}
+
+pluginManager.withPlugin("io.swagger.core.v3.swagger-gradle-plugin") {
+    tasks.withType<io.swagger.v3.plugins.gradle.tasks.ResolveTask> {
+        outputFileName = jsonFile.toString().substringBeforeLast('.')
+        prettyPrint = true
+        classpath = java.sourceSets["main"].runtimeClasspath
+        buildClasspath = classpath
+        resourcePackages = setOf("org.eclipse.dataspaceconnector")
+        outputDir = file(jsonOutputDir)
+    }
+    configurations {
+        all {
+            exclude(group = "com.fasterxml.jackson.jaxrs", module = "jackson-jaxrs-json-provider")
+        }
+    }
+}
+
+val openApiSpec by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+}
+
+artifacts {
+    add("openApiSpec", project.file("$jsonOutputDir/$jsonFile")) {
+        builtBy("resolve")
+    }
 }

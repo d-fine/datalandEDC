@@ -50,7 +50,7 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-ui:1.6.8")
     implementation("org.junit.jupiter:junit-jupiter:5.8.2")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    openApiSpecConfig(project(mapOf("path" to ":dataland-connector", "configuration" to "openApiSpec")))
+    openApiSpecConfig(project(mapOf("path" to ":dataland-edc-server", "configuration" to "openApiSpec")))
 }
 
 tasks.register<Copy>("getOpenApiSpec") {
