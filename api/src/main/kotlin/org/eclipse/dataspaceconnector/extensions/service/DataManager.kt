@@ -38,8 +38,8 @@ class DataManager {
     private var counter = 0
 
     private fun generateProviderAssetId(): String {
-        //counter += 1
-        //return counter.toString()
+        // counter += 1
+        // return counter.toString()
         return "test-asset"
     }
 
@@ -87,7 +87,6 @@ class DataManager {
         return providedAssets[assetId] ?: "No data with assetId $assetId found"
     }
 
-
     fun getAssetFromEuroDaT(
         assetId: String,
         contractDefinitionId: String,
@@ -97,8 +96,8 @@ class DataManager {
     ): String {
         val action = Action.Builder.newInstance().type(actionType).build()
         val asset = Asset.Builder.newInstance()
-            //.id("test-asset")
-            //.property("endpoint", "https://filesamples.com/samples/code/json/sample2.json")
+            // .id("test-asset")
+            // .property("endpoint", "https://filesamples.com/samples/code/json/sample2.json")
             .build()
 
         // Consumer negotiates contract to consume asset
@@ -140,8 +139,6 @@ class DataManager {
         println("id is " + id)
         println("______________________________________________________________________________________________")
 */
-
-
 
         var agreementId: String? = null
         while (agreementId == null) {
