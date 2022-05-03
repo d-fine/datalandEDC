@@ -64,6 +64,9 @@ plugins {
     kotlin("jvm") version "1.6.21"
     kotlin("plugin.spring") version "1.6.21" apply false
     id("org.sonarqube") version "3.3"
+    id("org.openapi.generator") version "5.4.0" apply false
+    id("org.springdoc.openapi-gradle-plugin") version "1.3.4" apply false
+    id("io.swagger.core.v3.swagger-gradle-plugin") version "2.2.0" apply false
     jacoco
 }
 

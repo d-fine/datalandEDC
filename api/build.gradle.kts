@@ -51,10 +51,10 @@ val rsApi: String by project
 dependencies {
     implementation("org.eclipse.dataspaceconnector:spi")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("io.swagger.core.v3:swagger-annotations:2.2.0")
-    implementation("org.junit.jupiter:junit-jupiter:5.8.2")
-    implementation("com.squareup.okhttp3:okhttp:4.9.3")
-    api("jakarta.ws.rs:jakarta.ws.rs-api:$rsApi")
+    implementation(libs.swagger.annotations)
+    implementation(libs.junit.jupiter)
+    implementation(libs.okhttp)
+    api(libs.rs.api)
 
     implementation("org.eurodat.broker:broker-rest-model")
     implementation("org.eurodat.connector:api")
@@ -62,8 +62,4 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
-/*
-    extensions.configure(JacocoTaskExtension::class) {
-        setDestinationFile(file("$buildDir/jacoco/jacoco.exec"))
-    }*/
 }

@@ -17,8 +17,8 @@ plugins {
     kotlin("jvm")
     jacoco
     kotlin("plugin.spring")
-    id("org.springdoc.openapi-gradle-plugin") version "1.3.4"
-    id("org.openapi.generator") version "5.4.0"
+    id("org.springdoc.openapi-gradle-plugin")
+    id("org.openapi.generator")
 }
 
 apply(plugin = "io.spring.dependency-management")
@@ -47,8 +47,8 @@ val openApiSpecConfig by configurations.creating {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("org.springdoc:springdoc-openapi-ui:1.6.8")
-    implementation("org.junit.jupiter:junit-jupiter:5.8.2")
+    implementation(libs.openapi.ui)
+    implementation(libs.junit.jupiter)
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     openApiSpecConfig(project(mapOf("path" to ":dataland-edc-server", "configuration" to "openApiSpec")))
 }

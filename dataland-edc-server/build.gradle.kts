@@ -29,7 +29,7 @@ val jacocoClasses by extra(emptyList<File>())
 plugins {
     `java-library`
     id("application")
-    id("io.swagger.core.v3.swagger-gradle-plugin") version "2.2.0"
+    id("io.swagger.core.v3.swagger-gradle-plugin")
 }
 
 val connectorVersion: String by project
@@ -53,8 +53,8 @@ dependencies {
     implementation("org.eclipse.dataspaceconnector:ids")
     implementation("org.eurodat.connector:api")
     implementation("org.eurodat.connector:transfer-file")
-    implementation("io.swagger.core.v3:swagger-jaxrs2-jakarta:2.2.0")
-    implementation("jakarta.ws.rs:jakarta.ws.rs-api:3.1.0")
+    implementation(libs.swagger.jaxrs2.jakarta)
+    implementation(libs.rs.api)
     implementation(project(":api"))
 }
 
@@ -71,7 +71,7 @@ val jsonFile = rootProject.extra["OpenApiSpec"]
 
 buildscript {
     dependencies {
-        classpath("io.swagger.core.v3:swagger-gradle-plugin:2.2.0")
+        classpath(libs.swagger.gradle.plugin)
     }
 }
 
