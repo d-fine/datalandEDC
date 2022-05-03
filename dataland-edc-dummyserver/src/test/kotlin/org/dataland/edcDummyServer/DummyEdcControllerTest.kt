@@ -38,7 +38,7 @@ class DummyEdcControllerTest(
             MockMvcResultMatchers.status().isOk,
             MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)
         )
-        
+
         mockMvc.perform(
             MockMvcRequestBuilders.get("/dataland/data/1")
         ).andExpectAll(
