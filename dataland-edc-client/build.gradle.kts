@@ -6,7 +6,7 @@ plugins {
     kotlin("jvm")
     kotlin("plugin.spring")
     kotlin("kapt")
-    id("org.openapi.generator") version "5.4.0"
+    id("org.openapi.generator")
     id("org.springframework.boot")
     id("io.spring.dependency-management")
 }
@@ -19,15 +19,15 @@ val openApiSpecConfig by configurations.creating {
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 dependencies {
-    implementation("org.springdoc:springdoc-openapi-ui:1.6.8")
+    implementation(libs.springdoc.openapi.ui)
     implementation("org.springframework:spring-context")
     implementation("org.springframework.boot:spring-boot")
     implementation("com.fasterxml.jackson.core:jackson-annotations")
-    implementation("com.squareup.moshi:moshi-kotlin:1.13.0")
-    implementation("com.squareup.moshi:moshi-adapters:1.13.0")
-    implementation("com.squareup.okhttp3:okhttp:4.9.3")
+    implementation(libs.moshi.kotlin)
+    implementation(libs.moshi.adapters)
+    implementation(libs.okhttp)
     kapt("org.springframework.boot:spring-boot-configuration-processor")
-    openApiSpecConfig(project(mapOf("path" to ":dataland-connector", "configuration" to "openApiSpec")))
+    openApiSpecConfig(project(mapOf("path" to ":dataland-edc-server", "configuration" to "openApiSpec")))
 }
 
 tasks.register<Copy>("getOpenApiSpec") {
