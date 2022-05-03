@@ -39,51 +39,44 @@ class DatalandApi(
     @GET
     @Path("health")
     fun checkHealth(): String {
-        monitor.info("%s :: Received a health request")
-        val response = mapOf("response" to "I'm alive")
-        return objectMapper.writeValueAsString(response)
+        monitor.info("Received a health request")
+        return objectMapper.writeValueAsString(mapOf("response" to "I'm alive"))
     }
 
     @POST
     @Path("dataland/data")
     fun insertData(data: String): String {
-        monitor.info("%s :: Received a POST request to register asset")
-        val providerRequest = datalandController.buildProviderRequest(data)
-        monitor.info("%s :: ProviderRequest was built")
-        val mapOfAssetIdAndContractDefinitionId = datalandController.registerAsset(providerRequest)
-        return mapOfAssetIdAndContractDefinitionId.values.joinToString(":")
+        monitor.info("Received a POST request to register asset to EuroDaT")
+        return datalandController.uploadAssetToEuroDaT(data)
     }
 
     @Produces(MediaType.APPLICATION_JSON)
     @GET
-    @Path("dataland/upload/{assetId}")
-    fun uploadData(
-        @PathParam("assetId") assetId: String
+    @Path("dataland/provideAsset/{assetId}")
+    fun provideAsset(
+        @PathParam("assetId") providerAssetId: String
     ): String {
-        return datalandController.getUploadedAsset(assetId)
+        monitor.info("Providing asset with provider asset ID $providerAssetId")
+        return datalandController.getProvidedAsset(providerAssetId)
     }
 
     @GET
     @Path("dataland/data/{dataId}")
     fun selectDataById(
-        @PathParam("dataId") dataId: String,
+        @PathParam("dataId") dataId: String
     ): String {
-        val splitDataId = dataId.split(":")
-        if (splitDataId.size != 2) throw IllegalArgumentException("The data ID $dataId has an invalid format.")
-        monitor.info("%s :: Getting asset with asset ID ${splitDataId[0]} and contract definition ID ${splitDataId[1]}")
-        return datalandController.getAsset(
-            assetId = splitDataId[0],
-            contractDefinitionId = splitDataId[1]
-        )
+        monitor.info("Getting asset with data ID $dataId")
+        return datalandController.getAssetFromEuroDaT(dataId, consumerApiController)
     }
 
     @Consumes(MediaType.APPLICATION_OCTET_STREAM)
     @Produces(MediaType.APPLICATION_JSON)
     @POST
-    @Path("dataland/transferdestination/{id}")
-    fun saveTransferedData(@PathParam("id") id: String, data: ByteArray): Response {
+    @Path("dataland/receiveAsset/{id}")
+    fun storeReceivedData(@PathParam("id") assetId: String, data: ByteArray): Response {
+        monitor.info("ReceiveAsset endpoint has received a POST request by EuroDaT with an asset to store")
         val x: Map<String, String> = objectMapper.readValue(data.decodeToString())
-        datalandController.storeAsset(id, x["content"]!!)
-        return Response.ok("I received data with asset ID $id").build()
+        datalandController.storeReceivedAsset(assetId, x["content"]!!)
+        return Response.ok("Dataland-connector received asset with asset ID $assetId").build()
     }
 }
