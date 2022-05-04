@@ -58,6 +58,7 @@ dependencies {
 
     implementation("org.eurodat.broker:broker-rest-model")
     implementation("org.eurodat.connector:api")
+    implementation("org.eclipse.dataspaceconnector:dataloading")
 }
 
 tasks.test {

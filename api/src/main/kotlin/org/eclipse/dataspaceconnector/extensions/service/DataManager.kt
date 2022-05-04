@@ -1,20 +1,27 @@
 package org.eclipse.dataspaceconnector.extensions.service
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import org.eclipse.dataspaceconnector.dataloading.AssetLoader
 import org.eclipse.dataspaceconnector.extensions.api.ConsumerApiController
 import org.eclipse.dataspaceconnector.extensions.models.DALADefaultOkHttpClientFactoryImpl
 import org.eclipse.dataspaceconnector.extensions.models.DALAHttpClient
 import org.eclipse.dataspaceconnector.policy.model.Action
 import org.eclipse.dataspaceconnector.policy.model.Permission
 import org.eclipse.dataspaceconnector.policy.model.Policy
+import org.eclipse.dataspaceconnector.spi.system.Inject
 import org.eclipse.dataspaceconnector.spi.types.domain.DataAddress
 import org.eclipse.dataspaceconnector.spi.types.domain.asset.Asset
 import org.eclipse.dataspaceconnector.spi.types.domain.contract.offer.ContractOffer
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataRequest
 import org.eurodat.broker.model.ProviderRequest
 import java.net.URI
+import java.nio.file.Path
+
 
 class DataManager {
+
+    @Inject
+    private val loader: AssetLoader? = null
 
     private val trusteeURL = "http://20.31.200.61:80/api"
     private val trusteeIdsURL = "http://20.31.200.61:80/api"
@@ -64,6 +71,15 @@ class DataManager {
         providedAssets[providerAssetId] = data
         val asset = Asset.Builder.newInstance().id(providerAssetId)
             .property("endpoint", "$datalandEdcServerUrl/api/dataland/provideAsset/$providerAssetId").build()
+
+
+        val assetPath = Path.of("/tmp/provider/test-document.txt")
+        val dataAddress = DataAddress.Builder.newInstance()
+            .type("HttpData")
+            .property("endpoint", "$datalandEdcServerUrl/api/dataland/provideAsset/$providerAssetId")
+            .build()
+        println("Try to load asset.")
+        loader!!.accept(asset, dataAddress)
         val policy = Policy.Builder.newInstance().id(policyUid).permission(permission).build()
         return ProviderRequest(
             "eurodat-connector-test",
@@ -74,9 +90,9 @@ class DataManager {
         )
     }
 
-    fun uploadAssetToEuroDaT(data: String): String {
+    fun uploadAssetToEuroDaT(data: String, assetLoader: AssetLoader): String {
         val providerRequestString =
-            jsonMapper.writeValueAsString(buildProviderRequest(data, providerAssetId = generateProviderAssetId()))
+            jsonMapper.writeValueAsString(buildProviderRequest(data, providerAssetId = generateProviderAssetId(), ))
         val assetResponse = trusteeClient.post("/asset/register", providerRequestString)
         val assetId = assetResponse["asset"]["properties"]["asset:prop:id"].asText()
         val contractDefinitionId = assetResponse["contractDefinition"]["id"].asText()
