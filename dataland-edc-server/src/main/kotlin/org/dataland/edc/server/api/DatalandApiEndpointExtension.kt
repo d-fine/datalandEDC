@@ -41,11 +41,10 @@ class DatalandApiEndpointExtension : ServiceExtension {
 
     override fun initialize(context: ServiceExtensionContext) {
         val webService: WebService = context.getService(WebService::class.java)
-        val consumerApiController = context.getService(ConsumerApiController::class.java)
         val assetLoader = context.getService(AssetLoader::class.java)
         val contractDefinitionStore = context.getService(ContractDefinitionStore::class.java)
         val dataManager = DataManager(assetLoader, contractDefinitionStore, context)
-        val datalandController = DatalandController(dataManager)
+        val datalandController = DatalandController(dataManager, context)
         webService.registerResource(DatalandApi(
             context.monitor,
             datalandController

@@ -25,8 +25,6 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import org.dataland.edc.server.controller.DatalandController
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor
-import org.dataland.edc.server.controller.DatalandController
-import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
 
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
