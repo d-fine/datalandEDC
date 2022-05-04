@@ -46,6 +46,8 @@ class DataManager(val context:ServiceExtensionContext) {
 
     private var counter = 0
 
+    private val jsonMapper = jacksonObjectMapper()
+
     private val dummyProviderAssetId = "test-asset"
     private val dummyPolicyUid = "956e172f-2de1-4501-8881-057a57fd0e60"
     private val dummyActionType = "USE"
