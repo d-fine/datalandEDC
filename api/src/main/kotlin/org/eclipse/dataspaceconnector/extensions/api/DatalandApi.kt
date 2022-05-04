@@ -25,6 +25,7 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import org.eclipse.dataspaceconnector.dataloading.AssetLoader
 import org.eclipse.dataspaceconnector.extensions.controller.DatalandController
+import org.eclipse.dataspaceconnector.spi.contract.offer.store.ContractDefinitionStore
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor
 
 @Consumes(MediaType.APPLICATION_JSON)
@@ -35,7 +36,8 @@ class DatalandApi(
     val objectMapper: ObjectMapper,
     val consumerApiController: ConsumerApiController,
     val datalandController: DatalandController,
-    val assetLoader: AssetLoader
+    val assetLoader: AssetLoader,
+    val contractDefinitionStore: ContractDefinitionStore
 ) {
 
     @GET
@@ -49,7 +51,7 @@ class DatalandApi(
     @Path("dataland/data")
     fun insertData(data: String): String {
         monitor.info("Received a POST request to register asset to EuroDaT")
-        return datalandController.uploadAssetToEuroDaT(data, assetLoader)
+        return datalandController.uploadAssetToEuroDaT(data, assetLoader, contractDefinitionStore)
     }
 
     @Produces(MediaType.APPLICATION_JSON)

@@ -25,6 +25,7 @@ import io.swagger.v3.oas.annotations.info.Info
 import org.eclipse.dataspaceconnector.dataloading.AssetLoader
 import org.eclipse.dataspaceconnector.extensions.controller.DatalandController
 import org.eclipse.dataspaceconnector.spi.WebService
+import org.eclipse.dataspaceconnector.spi.contract.offer.store.ContractDefinitionStore
 import org.eclipse.dataspaceconnector.spi.system.Requires
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtension
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
@@ -41,8 +42,9 @@ class DatalandApiEndpointExtension : ServiceExtension {
         val webService: WebService = context.getService(WebService::class.java)
         val consumerApiController = context.getService(ConsumerApiController::class.java)
         val assetLoader = context.getService(AssetLoader::class.java)
+        val contractDefinitionStore = context.getService(ContractDefinitionStore::class.java)
         val datalandController = DatalandController()
         val objectMapper = ObjectMapper()
-        webService.registerResource(DatalandApi(context.monitor, objectMapper, consumerApiController, datalandController, assetLoader))
+        webService.registerResource(DatalandApi(context.monitor, objectMapper, consumerApiController, datalandController, assetLoader, contractDefinitionStore))
     }
 }

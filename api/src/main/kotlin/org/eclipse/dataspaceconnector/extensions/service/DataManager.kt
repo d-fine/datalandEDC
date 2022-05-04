@@ -8,20 +8,21 @@ import org.eclipse.dataspaceconnector.extensions.models.DALAHttpClient
 import org.eclipse.dataspaceconnector.policy.model.Action
 import org.eclipse.dataspaceconnector.policy.model.Permission
 import org.eclipse.dataspaceconnector.policy.model.Policy
-import org.eclipse.dataspaceconnector.spi.system.Inject
+import org.eclipse.dataspaceconnector.spi.asset.AssetSelectorExpression
+import org.eclipse.dataspaceconnector.spi.contract.offer.store.ContractDefinitionStore
 import org.eclipse.dataspaceconnector.spi.types.domain.DataAddress
 import org.eclipse.dataspaceconnector.spi.types.domain.asset.Asset
+import org.eclipse.dataspaceconnector.spi.types.domain.contract.offer.ContractDefinition
 import org.eclipse.dataspaceconnector.spi.types.domain.contract.offer.ContractOffer
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataRequest
 import org.eurodat.broker.model.ProviderRequest
 import java.net.URI
-import java.nio.file.Path
 
 
 class DataManager {
 
-    @Inject
-    private val loader: AssetLoader? = null
+    //@Inject
+    //private val loader: AssetLoader? = null
 
     private val trusteeURL = "http://20.31.200.61:80/api"
     private val trusteeIdsURL = "http://20.31.200.61:80/api"
@@ -47,7 +48,8 @@ class DataManager {
     private fun generateProviderAssetId(): String {
         // counter += 1
         // return counter.toString()
-        return "test-asset"
+        //return "test-asset"
+        return "another-asset"
     }
 
     private fun getReceivedAsset(assetId: String): String {
@@ -64,23 +66,43 @@ class DataManager {
         data: String,
         providerAssetId: String = "test-asset",
         policyUid: String = "956e172f-2de1-4501-8881-057a57fd0e60",
-        actionType: String = "USE"
+        actionType: String = "USE",
+        assetLoader: AssetLoader,
+        contractDefinitionStore: ContractDefinitionStore
     ): ProviderRequest {
+        println("Process $providerAssetId")
         val action = Action.Builder.newInstance().type(actionType).build()
+
+
         val permission = Permission.Builder.newInstance().target(providerAssetId).action(action).build()
         providedAssets[providerAssetId] = data
+
         val asset = Asset.Builder.newInstance().id(providerAssetId)
             .property("endpoint", "$datalandEdcServerUrl/api/dataland/provideAsset/$providerAssetId").build()
 
 
-        val assetPath = Path.of("/tmp/provider/test-document.txt")
+        //val assetPath = Path.of("/tmp/provider/test-document.txt")
         val dataAddress = DataAddress.Builder.newInstance()
             .type("HttpData")
-            .property("endpoint", "$datalandEdcServerUrl/api/dataland/provideAsset/$providerAssetId")
+            .property("endpoint", "https://filesamples.com/samples/code/json/sample2.json")//"$datalandEdcServerUrl/api/dataland/provideAsset/$providerAssetId")
             .build()
         println("Try to load asset.")
-        loader!!.accept(asset, dataAddress)
+        assetLoader.accept(asset, dataAddress)
+
         val policy = Policy.Builder.newInstance().id(policyUid).permission(permission).build()
+
+        println("Try to save contract.")
+        val contractDefinition = ContractDefinition.Builder.newInstance()
+            .id("1")
+            .accessPolicy(policy)
+            .contractPolicy(policy)
+            .selectorExpression(
+                AssetSelectorExpression.Builder.newInstance().whenEquals(Asset.PROPERTY_ID, providerAssetId).build()
+            )
+            .build()
+        contractDefinitionStore.save(contractDefinition)
+        println("Saved contract.")
+
         return ProviderRequest(
             "eurodat-connector-test",
             "$datalandEdcServerIdsURL/api/v1/ids/data",
@@ -90,9 +112,9 @@ class DataManager {
         )
     }
 
-    fun uploadAssetToEuroDaT(data: String, assetLoader: AssetLoader): String {
+    fun uploadAssetToEuroDaT(data: String, assetLoader: AssetLoader, contractDefinitionStore: ContractDefinitionStore): String {
         val providerRequestString =
-            jsonMapper.writeValueAsString(buildProviderRequest(data, providerAssetId = generateProviderAssetId(), ))
+            jsonMapper.writeValueAsString(buildProviderRequest(data, providerAssetId = generateProviderAssetId(), assetLoader = assetLoader, contractDefinitionStore = contractDefinitionStore))
         val assetResponse = trusteeClient.post("/asset/register", providerRequestString)
         val assetId = assetResponse["asset"]["properties"]["asset:prop:id"].asText()
         val contractDefinitionId = assetResponse["contractDefinition"]["id"].asText()
