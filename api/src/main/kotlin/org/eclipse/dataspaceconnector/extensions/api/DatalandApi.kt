@@ -40,7 +40,7 @@ class DatalandApi(
     @Path("health")
     fun checkHealth(): String {
         monitor.info("Received a health request")
-        return objectMapper.writeValueAsString(mapOf("response" to "I'm alive"))
+        return objectMapper.writeValueAsString(mapOf("response" to "I am alive!"))
     }
 
     @POST
