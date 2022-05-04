@@ -1,8 +1,9 @@
 package org.dataland.edc.server.controller
 
 import org.dataland.edc.server.service.DataManager
+import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
 
-class DatalandController(private val dataManager: DataManager) {
+class DatalandController(private val dataManager: DataManager, val context: ServiceExtensionContext) {
 
     fun uploadAssetToEuroDaT(data: String): String {
         return dataManager.uploadAssetToEuroDaT(data)

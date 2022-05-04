@@ -9,6 +9,8 @@ import org.eclipse.dataspaceconnector.policy.model.Permission
 import org.eclipse.dataspaceconnector.policy.model.Policy
 import org.eclipse.dataspaceconnector.spi.asset.AssetSelectorExpression
 import org.eclipse.dataspaceconnector.spi.contract.offer.store.ContractDefinitionStore
+import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
+import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
 import org.eclipse.dataspaceconnector.spi.types.domain.DataAddress
 import org.eclipse.dataspaceconnector.spi.types.domain.asset.Asset
 import org.eclipse.dataspaceconnector.spi.types.domain.contract.offer.ContractDefinition
@@ -17,13 +19,13 @@ import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataRequest
 import org.eurodat.broker.model.ProviderRequest
 import java.net.URI
 
-class DataManager(private val assetLoader: AssetLoader, private val contractDefinitionStore: ContractDefinitionStore) {
+class DataManager(private val assetLoader: AssetLoader, private val contractDefinitionStore: ContractDefinitionStore, val context: ServiceExtensionContext) {
 
     private val trusteeURL = "http://20.31.200.61:80/api"
     private val trusteeIdsURL = "http://20.31.200.61:80/api"
 
-    private val datalandEdcServerUrl = "http://dataland-tunnel.duckdns.org:9191"
-    private val datalandEdcServerIdsURL = "http://dataland-tunnel.duckdns.org:9292"
+    private val datalandEdcServerUrl = "http://"+context.getSetting("TUNNEL_URI", "default")+":9191"
+    private val datalandEdcServerIdsURL = "http://"+context.getSetting("TUNNEL_URI", "default")+":9292"
 
     private val testCredentials = "password"
 
@@ -40,6 +42,8 @@ class DataManager(private val assetLoader: AssetLoader, private val contractDefi
     private val providedAssets: MutableMap<String, String> = mutableMapOf()
 
     private var counter = 0
+
+    private val jsonMapper = jacksonObjectMapper()
 
     private val dummyProviderAssetId = "test-asset"
     private val dummyPolicyUid = "956e172f-2de1-4501-8881-057a57fd0e60"
