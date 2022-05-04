@@ -1,5 +1,6 @@
 package org.dataland.edcDummyServer
 
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -18,7 +19,7 @@ class DummyEdcControllerTest(
     @Test
     fun `check if an empty string is returned by get request when the data id does not exist`() {
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/dataland/data/0")
+            MockMvcRequestBuilders.get("/dataland/data/0:0")
         ).andExpectAll(
             MockMvcResultMatchers.status().isOk,
             MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON),
@@ -29,7 +30,7 @@ class DummyEdcControllerTest(
     @Test
     fun `check if the selected data is the same as the inserted data`() {
         val body = "{\"key\":\"value\"}"
-        mockMvc.perform(
+        val request = mockMvc.perform(
             MockMvcRequestBuilders.post("/dataland/data")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -37,10 +38,13 @@ class DummyEdcControllerTest(
         ).andExpectAll(
             MockMvcResultMatchers.status().isOk,
             MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)
-        )
+        ).andReturn()
+
+        val dataId = request.response.contentAsString
+        assertTrue(dataId.contains(":"))
 
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/dataland/data/1")
+            MockMvcRequestBuilders.get("/dataland/data/$dataId")
         ).andExpectAll(
             MockMvcResultMatchers.status().isOk,
             MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON),
