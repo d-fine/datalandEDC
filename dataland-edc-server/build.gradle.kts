@@ -21,18 +21,35 @@
  *       Fraunhofer Institute for Software and Systems Engineering - added dependencies
  *
  */
-val sonarSources by extra(emptyList<File>())
-val jacocoSources by extra(emptyList<File>())
-val jacocoClasses by extra(emptyList<File>())
-
+val sonarSources by extra(sourceSets.asMap.values.flatMap { sourceSet -> sourceSet.allSource })
+val jacocoSources by extra(sonarSources)
+val jacocoClasses by extra(
+    sourceSets.asMap.values.flatMap { sourceSet ->
+        sourceSet.output.classesDirs.flatMap {
+            fileTree(it).files
+        }
+    }
+)
 plugins {
     `java-library`
     id("application")
     id("io.swagger.core.v3.swagger-gradle-plugin")
     kotlin("jvm")
     kotlin("kapt")
+    jacoco
 }
 
+jacoco {
+    toolVersion = "0.8.7"
+}
+
+tasks.test {
+    useJUnitPlatform()
+
+    extensions.configure(JacocoTaskExtension::class) {
+        setDestinationFile(file("$buildDir/jacoco/jacoco.exec"))
+    }
+}
 val connectorVersion: String by project
 
 repositories {
@@ -57,10 +74,13 @@ dependencies {
     implementation("org.eurodat.connector:transfer-file")
     implementation(libs.swagger.jaxrs2.jakarta)
     implementation(libs.rs.api)
-    implementation(project(":api"))
 
     implementation("org.eurodat.broker:broker-rest-model")
     implementation("org.eclipse.dataspaceconnector:dataloading")
+    implementation("org.eclipse.dataspaceconnector:spi")
+    implementation(libs.swagger.annotations)
+    implementation(libs.junit.jupiter)
+    implementation(libs.okhttp)
 }
 
 application {
