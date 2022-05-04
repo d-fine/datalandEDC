@@ -17,7 +17,7 @@ import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataRequest
 import org.eurodat.broker.model.ProviderRequest
 import java.net.URI
 
-class DataManager {
+class DataManager(private val assetLoader: AssetLoader, private val contractDefinitionStore: ContractDefinitionStore) {
 
     private val trusteeURL = "http://20.31.200.61:80/api"
     private val trusteeIdsURL = "http://20.31.200.61:80/api"
@@ -49,29 +49,25 @@ class DataManager {
     private val dummyPolicy = Policy.Builder.newInstance().id(dummyPolicyUid).permission(dummyPermission).build()
     private val dummyAsset = Asset.Builder.newInstance().build()
 
+    private val dummyContractDefinition = ContractDefinition.Builder.newInstance()
+        .id("1")
+        .accessPolicy(dummyPolicy)
+        .contractPolicy(dummyPolicy)
+        .selectorExpression(
+            AssetSelectorExpression.Builder.newInstance().whenEquals(Asset.PROPERTY_ID, dummyProviderAssetId).build()
+        )
+        .build()
+
+    init {
+        contractDefinitionStore.save(dummyContractDefinition)
+    }
+
     private fun generateProviderAssetId(): String {
         counter += 1
         return counter.toString()
     }
 
-    private fun buildProviderRequest(
-        data: String,
-        assetLoader: AssetLoader,
-        contractDefinitionStore: ContractDefinitionStore
-    ): ProviderRequest {
-
-        val asset = registerAsset(data, assetLoader)
-
-        val contractDefinition = ContractDefinition.Builder.newInstance()
-            .id("1")
-            .accessPolicy(dummyPolicy)
-            .contractPolicy(dummyPolicy)
-            .selectorExpression(
-                AssetSelectorExpression.Builder.newInstance().whenEquals(Asset.PROPERTY_ID, dummyProviderAssetId).build()
-            )
-            .build()
-        contractDefinitionStore.save(contractDefinition)
-
+    private fun buildProviderRequest(asset: Asset): ProviderRequest {
         return ProviderRequest(
             "eurodat-connector-test",
             "$datalandEdcServerIdsURL/api/v1/ids/data",
@@ -82,8 +78,7 @@ class DataManager {
     }
 
     private fun registerAsset(
-        data: String,
-        assetLoader: AssetLoader
+        data: String
     ): Asset {
         val providerAssetId = generateProviderAssetId()
         providedAssets[providerAssetId] = data
@@ -99,15 +94,9 @@ class DataManager {
         return asset
     }
 
-    fun uploadAssetToEuroDaT(data: String, assetLoader: AssetLoader, contractDefinitionStore: ContractDefinitionStore): String {
-        val providerRequestString =
-            jsonMapper.writeValueAsString(
-                buildProviderRequest(
-                    data,
-                    assetLoader = assetLoader,
-                    contractDefinitionStore = contractDefinitionStore
-                )
-            )
+    fun uploadAssetToEuroDaT(data: String): String {
+        val asset = registerAsset(data)
+        val providerRequestString = jsonMapper.writeValueAsString(buildProviderRequest(asset))
         val assetResponse = trusteeClient.post("/asset/register", providerRequestString)
         val assetId = assetResponse["asset"]["properties"]["asset:prop:id"].asText()
         val contractDefinitionId = assetResponse["contractDefinition"]["id"].asText()

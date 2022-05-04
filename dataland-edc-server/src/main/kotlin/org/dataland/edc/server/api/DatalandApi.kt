@@ -13,7 +13,7 @@
  */
 package org.dataland.edc.server.api
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.GET
@@ -24,8 +24,6 @@ import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import org.dataland.edc.server.controller.DatalandController
-import org.eclipse.dataspaceconnector.dataloading.AssetLoader
-import org.eclipse.dataspaceconnector.spi.contract.offer.store.ContractDefinitionStore
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor
 
 @Consumes(MediaType.APPLICATION_JSON)
@@ -33,11 +31,10 @@ import org.eclipse.dataspaceconnector.spi.monitor.Monitor
 @Path("/")
 class DatalandApi(
     private val monitor: Monitor,
-    private val objectMapper: ObjectMapper,
-    private val datalandController: DatalandController,
-    private val assetLoader: AssetLoader,
-    private val contractDefinitionStore: ContractDefinitionStore
+    private val datalandController: DatalandController
 ) {
+
+    private val objectMapper = jacksonObjectMapper()
 
     @GET
     @Path("health")
@@ -50,7 +47,7 @@ class DatalandApi(
     @Path("dataland/data")
     fun insertData(data: String): String {
         monitor.info("Received a POST request to register asset to EuroDaT")
-        return datalandController.uploadAssetToEuroDaT(data, assetLoader, contractDefinitionStore)
+        return datalandController.uploadAssetToEuroDaT(data)
     }
 
     @Produces(MediaType.APPLICATION_JSON)
