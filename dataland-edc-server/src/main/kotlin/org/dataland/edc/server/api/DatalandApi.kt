@@ -23,21 +23,26 @@ import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
-import org.dataland.edc.server.controller.DatalandController
 import org.eclipse.dataspaceconnector.dataloading.AssetLoader
+import org.eclipse.dataspaceconnector.extensions.api.ConsumerApiController
 import org.eclipse.dataspaceconnector.spi.contract.offer.store.ContractDefinitionStore
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor
+import org.dataland.edc.server.controller.DatalandController
+import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
 
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Path("/")
 class DatalandApi(
-    private val monitor: Monitor,
-    private val objectMapper: ObjectMapper,
-    private val datalandController: DatalandController,
-    private val assetLoader: AssetLoader,
-    private val contractDefinitionStore: ContractDefinitionStore
+    val monitor: Monitor,
+    val objectMapper: ObjectMapper,
+    val consumerApiController: ConsumerApiController,
+    val assetLoader: AssetLoader,
+    val contractDefinitionStore: ContractDefinitionStore,
+    val context: ServiceExtensionContext
 ) {
+
+    val datalandController = DatalandController(context)
 
     @GET
     @Path("health")
@@ -69,7 +74,7 @@ class DatalandApi(
         @PathParam("dataId") dataId: String
     ): String {
         monitor.info("Getting asset with data ID $dataId")
-        return datalandController.getAssetFromEuroDaT(dataId)
+        return datalandController.getAssetFromEuroDaT(dataId, consumerApiController)
     }
 
     @Consumes(MediaType.APPLICATION_OCTET_STREAM)

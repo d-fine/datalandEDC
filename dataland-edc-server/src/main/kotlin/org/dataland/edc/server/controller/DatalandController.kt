@@ -3,10 +3,11 @@ package org.dataland.edc.server.controller
 import org.dataland.edc.server.service.DataManager
 import org.eclipse.dataspaceconnector.dataloading.AssetLoader
 import org.eclipse.dataspaceconnector.spi.contract.offer.store.ContractDefinitionStore
+import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
 
-class DatalandController() {
+class DatalandController(val context: ServiceExtensionContext) {
 
-    private val dataManager = DataManager()
+    private val dataManager = DataManager(context)
 
     fun uploadAssetToEuroDaT(data: String, assetLoader: AssetLoader, contractDefinitionStore: ContractDefinitionStore): String {
         return dataManager.uploadAssetToEuroDaT(data, assetLoader, contractDefinitionStore)
