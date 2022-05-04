@@ -31,16 +31,12 @@ for pid in $(ps | grep /usr/bin/ssh | awk '{ print $1 }')
 do
   echo "Killing PID: $pid"
   kill "$pid"
-  sleep 5
 done
 
 echo "Open all three SSH tunnels from the Dataland-Tunnel-Server to your host system"
 ssh -R \*:"$dataland_edc_server_web_http_port":"$HOSTNAME":"$config_web_http_port" -N -f ubuntu@"$dataland_tunnel_public_ip"
-sleep 5
 ssh -R \*:"$dataland_edc_server_web_http_ids_port":"$HOSTNAME":"$config_web_http_ids_port" -N -f ubuntu@"$dataland_tunnel_public_ip"
-sleep 5
 ssh -R \*:"$dataland_edc_server_web_http_data_port":"$HOSTNAME":"$config_web_http_data_port" -N -f ubuntu@"$dataland_tunnel_public_ip"
-sleep 5
 
 echo "Starting Dataland EDC server"
 .././gradlew :dataland-edc-server:run >test.log 2>test.err &
