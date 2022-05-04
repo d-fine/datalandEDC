@@ -1,4 +1,4 @@
-package org.eclipse.dataspaceconnector.extensions.models
+package org.dataland.edc.server.models
 
 import okhttp3.OkHttpClient
 import java.security.SecureRandom

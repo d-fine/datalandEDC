@@ -1,8 +1,8 @@
-package org.eclipse.dataspaceconnector.extensions.controller
+package org.dataland.edc.server.controller
 
 import org.eclipse.dataspaceconnector.dataloading.AssetLoader
 import org.eclipse.dataspaceconnector.extensions.api.ConsumerApiController
-import org.eclipse.dataspaceconnector.extensions.service.DataManager
+import org.dataland.edc.server.service.DataManager
 import org.eclipse.dataspaceconnector.spi.contract.offer.store.ContractDefinitionStore
 
 class DatalandController() {

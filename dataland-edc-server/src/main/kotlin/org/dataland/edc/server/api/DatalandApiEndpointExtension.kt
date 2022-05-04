@@ -17,13 +17,14 @@
  *       Fraunhofer Institute for Software and Systems Engineering - initial API and implementation
  *
  */
-package org.eclipse.dataspaceconnector.extensions.api
+package org.dataland.edc.server.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.info.Info
+import org.dataland.edc.server.controller.DatalandController
 import org.eclipse.dataspaceconnector.dataloading.AssetLoader
-import org.eclipse.dataspaceconnector.extensions.controller.DatalandController
+import org.eclipse.dataspaceconnector.extensions.api.ConsumerApiController
 import org.eclipse.dataspaceconnector.spi.WebService
 import org.eclipse.dataspaceconnector.spi.contract.offer.store.ContractDefinitionStore
 import org.eclipse.dataspaceconnector.spi.system.Requires

@@ -1,10 +1,10 @@
-package org.eclipse.dataspaceconnector.extensions.service
+package org.dataland.edc.server.service
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.eclipse.dataspaceconnector.dataloading.AssetLoader
 import org.eclipse.dataspaceconnector.extensions.api.ConsumerApiController
-import org.eclipse.dataspaceconnector.extensions.models.DALADefaultOkHttpClientFactoryImpl
-import org.eclipse.dataspaceconnector.extensions.models.DALAHttpClient
+import org.dataland.edc.server.models.DALADefaultOkHttpClientFactoryImpl
+import org.dataland.edc.server.models.DALAHttpClient
 import org.eclipse.dataspaceconnector.policy.model.Action
 import org.eclipse.dataspaceconnector.policy.model.Permission
 import org.eclipse.dataspaceconnector.policy.model.Policy
@@ -17,6 +17,8 @@ import org.eclipse.dataspaceconnector.spi.types.domain.contract.offer.ContractOf
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataRequest
 import org.eurodat.broker.model.ProviderRequest
 import java.net.URI
+
+
 
 
 class DataManager {
@@ -46,10 +48,10 @@ class DataManager {
     private var counter = 0
 
     private fun generateProviderAssetId(): String {
-        // counter += 1
-        // return counter.toString()
+        counter += 1
+        return counter.toString()
         //return "test-asset"
-        return "another-asset"
+        //return "another-asset"
     }
 
     private fun getReceivedAsset(assetId: String): String {
@@ -70,14 +72,15 @@ class DataManager {
         assetLoader: AssetLoader,
         contractDefinitionStore: ContractDefinitionStore
     ): ProviderRequest {
-        println("Process $providerAssetId")
+        val dummyProviderAssetId = "test-asset"
+        println("Process $providerAssetId and $dummyProviderAssetId")
         val action = Action.Builder.newInstance().type(actionType).build()
 
 
-        val permission = Permission.Builder.newInstance().target(providerAssetId).action(action).build()
+        val permission = Permission.Builder.newInstance().target(dummyProviderAssetId).action(action).build()
         providedAssets[providerAssetId] = data
 
-        val asset = Asset.Builder.newInstance().id(providerAssetId)
+        val asset = Asset.Builder.newInstance().id(dummyProviderAssetId)
             .property("endpoint", "$datalandEdcServerUrl/api/dataland/provideAsset/$providerAssetId").build()
 
 
@@ -97,7 +100,7 @@ class DataManager {
             .accessPolicy(policy)
             .contractPolicy(policy)
             .selectorExpression(
-                AssetSelectorExpression.Builder.newInstance().whenEquals(Asset.PROPERTY_ID, providerAssetId).build()
+                AssetSelectorExpression.Builder.newInstance().whenEquals(Asset.PROPERTY_ID, dummyProviderAssetId).build()
             )
             .build()
         contractDefinitionStore.save(contractDefinition)

@@ -1,4 +1,4 @@
-package org.eclipse.dataspaceconnector.extensions.models
+package org.dataland.edc.server.models
 
 import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.JsonNode

@@ -11,7 +11,7 @@
  *       Fraunhofer Institute for Software and Systems Engineering - initial API and implementation
  *
  */
-package org.eclipse.dataspaceconnector.extensions.api
+package org.dataland.edc.server.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -24,9 +24,10 @@ import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import org.eclipse.dataspaceconnector.dataloading.AssetLoader
-import org.eclipse.dataspaceconnector.extensions.controller.DatalandController
+import org.eclipse.dataspaceconnector.extensions.api.ConsumerApiController
 import org.eclipse.dataspaceconnector.spi.contract.offer.store.ContractDefinitionStore
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor
+import org.dataland.edc.server.controller.DatalandController
 
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)

@@ -29,6 +29,8 @@ plugins {
     `java-library`
     id("application")
     id("io.swagger.core.v3.swagger-gradle-plugin")
+    kotlin("jvm")
+    kotlin("kapt")
 }
 
 val connectorVersion: String by project
@@ -39,6 +41,7 @@ repositories {
 }
 
 dependencies {
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.eclipse.dataspaceconnector:core")
     implementation("org.eclipse.dataspaceconnector:in-memory:assetindex-memory")
     implementation("org.eclipse.dataspaceconnector:in-memory:transfer-store-memory")
@@ -55,6 +58,10 @@ dependencies {
     implementation(libs.swagger.jaxrs2.jakarta)
     implementation(libs.rs.api)
     implementation(project(":api"))
+
+    implementation("org.eurodat.broker:broker-rest-model")
+    //implementation("org.eurodat.connector:api")
+    implementation("org.eclipse.dataspaceconnector:dataloading")
 }
 
 application {
