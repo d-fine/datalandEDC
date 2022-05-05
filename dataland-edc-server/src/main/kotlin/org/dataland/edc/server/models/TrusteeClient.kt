@@ -21,7 +21,7 @@ private const val HTTP_TIMEOUT: Long = 30
  */
 class TrusteeClient (
     private val baseURL: String,
-    credentials: String? = null
+    private val credentials: String
 ) {
     private val client: OkHttpClient =
         OkHttpClient.Builder()
@@ -38,8 +38,7 @@ class TrusteeClient (
             body?.toRequestBody("application/json".toMediaType()) ?: EMPTY_REQUEST
         )
             .url((baseURL + endpoint).toHttpUrl().newBuilder().build())
-        //TODO: Sollte statt password hier "credentials" benutzt werden?
-        request.addHeader("X-Api-Key", "password")
+        request.addHeader("X-Api-Key", credentials)
         client.newCall(request.build()).execute().use { response ->
                 if (!response.isSuccessful) throw IOException("Unexpected code $response")
                 val responseBody = response.body!!.string()
