@@ -32,7 +32,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./dataland-edc-dummyserver
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ghcr.io/d-fine/datalandedc/edcserver:${{ steps.meta.outputs.tags }}
           push: true
       - name: Build the edc real server image and push it to GitHub Container Registry
         uses: docker/build-push-action@v2
