@@ -19,9 +19,9 @@ private const val HTTP_TIMEOUT: Long = 30
 /**
  * An HTTP client to communicate with the EuroDaT Broker
  */
-class TrusteeClient (
+class TrusteeClient(
     private val baseURL: String,
-    credentials: String? = null
+    private val credentials: String
 ) {
     private val client: OkHttpClient =
         OkHttpClient.Builder()
@@ -38,28 +38,30 @@ class TrusteeClient (
             body?.toRequestBody("application/json".toMediaType()) ?: EMPTY_REQUEST
         )
             .url((baseURL + endpoint).toHttpUrl().newBuilder().build())
-        //TODO: Sollte statt password hier "credentials" benutzt werden?
-        request.addHeader("X-Api-Key", "password")
+        request.addHeader("X-Api-Key", credentials)
         client.newCall(request.build()).execute().use { response ->
-                if (!response.isSuccessful) throw IOException("Unexpected code $response")
-                val responseBody = response.body!!.string()
-                val jsonBody = try {
-                    toJsonMapper.readTree(responseBody)
-                } catch (e: JsonParseException) {
-                    toJsonMapper.readTree("""{"content": "$responseBody"}""")
-                }
-                println(
-                    """Sent '${response.request.method}' request to URL : ${response.request.url}
+            if (!response.isSuccessful) throw IOException("Unexpected code $response")
+            val responseBody = response.body!!.string()
+            val jsonBody = try {
+                toJsonMapper.readTree(responseBody)
+            } catch (e: JsonParseException) {
+                toJsonMapper.readTree("""{"content": "$responseBody"}""")
+            }
+            println(
+                """Sent '${response.request.method}' request to URL : ${response.request.url}
                            Response Code : ${response.code}
                            Response Body : $jsonBody"""
-                )
-                return jsonBody
-            }
+            )
+            return jsonBody
+        }
     }
 
+    /**
+     * registers an asset by sending an REST request to the EuroDaT broker
+     * returns the response of the Broker as JsonNode
+     */
     fun registerAsset(providerRequest: ProviderRequest): JsonNode {
         val providerRequestString = toJsonMapper.writeValueAsString(providerRequest)
         return post(REGISTER_ASSET_PAHT, providerRequestString)
     }
-
 }
