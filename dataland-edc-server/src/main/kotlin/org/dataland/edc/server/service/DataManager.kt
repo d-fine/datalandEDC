@@ -1,6 +1,7 @@
 package org.dataland.edc.server.service
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import org.awaitility.Awaitility.await
 import org.dataland.edc.server.models.DALADefaultOkHttpClientFactoryImpl
 import org.dataland.edc.server.models.DALAHttpClient
 import org.eclipse.dataspaceconnector.dataloading.AssetLoader
@@ -24,15 +25,18 @@ import org.eclipse.dataspaceconnector.spi.types.domain.contract.offer.ContractOf
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataRequest
 import org.eurodat.broker.model.ProviderRequest
 import java.net.URI
+import java.time.Duration
+import java.util.concurrent.TimeUnit
 
 class DataManager(
+    private val timeout: Duration = Duration.ofSeconds(60),
     private val assetLoader: AssetLoader,
     private val contractDefinitionStore: ContractDefinitionStore,
     private val transferProcessManager: TransferProcessManager,
     private val contractNegotiationStore: ContractNegotiationStore,
     private val consumerContractNegotiationManager: ConsumerContractNegotiationManager,
     private val context: ServiceExtensionContext
-    ) {
+) {
 
     private val trusteeURL = context.getSetting("trustee.uri", "default")
     private val trusteeIdsURL = context.getSetting("trustee.ids.uri", "default")
@@ -145,15 +149,14 @@ class DataManager(
     }
 
     private fun getAgreementId(negotiationId: String): String {
-        var agreementId: String? = null
         val negotiation: ContractNegotiation = contractNegotiationStore.find(negotiationId)!!
-        while (agreementId == null) {
-            if (ContractNegotiationStates.from(negotiation.state) == ContractNegotiationStates.CONFIRMED) {
-                agreementId = negotiation.contractAgreement.id
+        await()
+            .atMost(timeout)
+            .pollInterval(100, TimeUnit.MILLISECONDS)
+            .until {
+                ContractNegotiationStates.from(negotiation.state) == ContractNegotiationStates.CONFIRMED
             }
-            Thread.sleep(3000)
-        }
-        return agreementId
+        return negotiation.contractAgreement.id
     }
 
     private fun initiateNegotiations(assetId: String, contractDefinitionId: String): String {
@@ -180,12 +183,12 @@ class DataManager(
     }
 
     private fun getReceivedAsset(assetId: String): String {
-        var timeout = 60
-        while (!receivedAssets.containsKey(assetId)) {
-            println("Requested data for $assetId not found. Waiting.")
-            Thread.sleep(5000)
-            if (timeout > 0) timeout -= 5 else break
-        }
+        await()
+            .atMost(timeout)
+            .pollInterval(100, TimeUnit.MILLISECONDS)
+            .until {
+                receivedAssets.containsKey(assetId)
+            }
         return receivedAssets[assetId] ?: "Data not found"
     }
 
