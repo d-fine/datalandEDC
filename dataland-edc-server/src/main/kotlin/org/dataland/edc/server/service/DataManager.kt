@@ -35,7 +35,7 @@ class DataManager(
     ) {
 
     // TODO should be in config
-    private val trusteeURL = //"http://20.31.200.61:80/api"
+    private val trusteeURL = "http://20.31.200.61:80/api"
     private val trusteeIdsURL = "http://20.31.200.61:80/api"
 
     // Question: Do we want to route all traffic through the tunnel, even in preview?
