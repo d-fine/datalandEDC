@@ -60,6 +60,7 @@ start_time=$(date +%s)
 
 echo "Posting test data: $test_data."
 dataId=$(curl -X POST "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/data" -H "accept: application/json" -H "Content-Type: application/json" -d "$test_data")
+#We have to parse the dataId and save it under dataId to make the next curl run.
 echo "Received response from post request: $dataId"
 
 echo "Retrieving test data."
