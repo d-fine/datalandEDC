@@ -10,7 +10,7 @@ import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
 class DatalandController(
     private val dataManager: DataManager,
     private val context: ServiceExtensionContext
-    ): DatalandEDCApi {
+) : DatalandEDCApi {
 
     private val objectMapper = jacksonObjectMapper()
 
@@ -30,18 +30,14 @@ class DatalandController(
     }
 
     override fun selectDataById(dataId: String): String {
-        val splitDataId = dataId.split(":")
-        if (splitDataId.size != 2) throw IllegalArgumentException("The data ID $dataId has an invalid format.")
-        return dataManager.retrieveAssetFromTrustee(
-            assetId = splitDataId[0],
-            contractDefinitionId = splitDataId[1]
-        )
+        context.monitor.info("Asset with data ID $dataId is requested.")
+        return dataManager.getDataById(dataId)
     }
 
-    override fun storeReceivedData(id: String, data: ByteArray): Response {
-        context.monitor.info("Received asset POST request by Trustee with ID $id.")
+    override fun storeReceivedData(assetId: String, data: ByteArray): Response {
+        context.monitor.info("Received asset POST request by Trustee with ID $assetId.")
         val decodedData: Map<String, String> = objectMapper.readValue(data.decodeToString())
-        dataManager.storeReceivedAsset(id, decodedData["content"]!!)
-        return Response.ok("Dataland-connector received asset with asset ID $id").build()
+        dataManager.storeReceivedAsset(assetId, decodedData["content"]!!)
+        return Response.ok("Dataland-connector received asset with asset ID $assetId").build()
     }
 }

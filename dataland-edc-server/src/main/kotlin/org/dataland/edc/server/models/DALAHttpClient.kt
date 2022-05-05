@@ -15,7 +15,12 @@ import java.util.Base64
 import java.util.concurrent.TimeoutException
 import javax.net.ssl.SSLHandshakeException
 
-class DALAHttpClient(private val client: OkHttpClient, private val baseURL: String, private val auth: String = "Basic", credentials: String? = null) {
+class DALAHttpClient(
+    private val client: OkHttpClient,
+    private val baseURL: String,
+    private val auth: String = "Basic",
+    credentials: String? = null
+) {
     private val toJsonMapper = ObjectMapper()
     private val hasCredentials = !credentials.isNullOrEmpty()
     private val credentials = if (hasCredentials)
