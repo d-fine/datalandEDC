@@ -23,7 +23,7 @@ import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataRequest
 import org.eurodat.broker.model.ProviderRequest
 import java.net.URI
 import java.time.Duration
-import java.util.*
+import java.util.UUID
 
 private const val PROVIDER_URN_KEY = "urn:connector:provider"
 private const val CONSUMER_URN_KEY = "urn:connector:consumer"
