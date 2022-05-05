@@ -52,7 +52,7 @@ class DummyEdcControllerTest(
             object : TypeReference<Map<String, String>>() {}
         )
 
-        val dataId = result.get("dataId")!!
+        val dataId = result.get("data")!!
         assertTrue(dataId.contains(":"))
 
         performWithBasicResultsChecks(
