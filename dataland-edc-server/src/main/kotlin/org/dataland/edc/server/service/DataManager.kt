@@ -21,10 +21,9 @@ import org.eclipse.dataspaceconnector.spi.types.domain.contract.offer.ContractDe
 import org.eclipse.dataspaceconnector.spi.types.domain.contract.offer.ContractOffer
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataRequest
 import org.eurodat.broker.model.ProviderRequest
-import java.lang.Thread.sleep
 import java.net.URI
 import java.time.Duration
-import java.util.*
+import java.util.UUID
 
 private const val PROVIDER_URN_KEY = "urn:connector:provider"
 private const val CONSUMER_URN_KEY = "urn:connector:consumer"
@@ -135,7 +134,7 @@ class DataManager(
      * @param providerAssetId ID given to the asset on Dataland EDC side
      */
     fun getProvidedAsset(providerAssetId: String): String {
-       return providedAssets.remove(providerAssetId) ?: "No data with assetId $providerAssetId found."
+        return providedAssets.remove(providerAssetId) ?: "No data with assetId $providerAssetId found."
     }
 
     private fun retrieveAssetFromTrustee(assetId: String, contractDefinitionId: String): String {
