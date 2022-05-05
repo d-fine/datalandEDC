@@ -21,9 +21,10 @@ import org.eclipse.dataspaceconnector.spi.types.domain.contract.offer.ContractDe
 import org.eclipse.dataspaceconnector.spi.types.domain.contract.offer.ContractOffer
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataRequest
 import org.eurodat.broker.model.ProviderRequest
+import java.lang.Thread.sleep
 import java.net.URI
 import java.time.Duration
-import java.util.UUID
+import java.util.*
 
 private const val PROVIDER_URN_KEY = "urn:connector:provider"
 private const val CONSUMER_URN_KEY = "urn:connector:consumer"
@@ -43,11 +44,11 @@ class DataManager(
     private val transferProcessManager: TransferProcessManager,
     private val contractNegotiationStore: ContractNegotiationStore,
     private val consumerContractNegotiationManager: ConsumerContractNegotiationManager,
-    context: ServiceExtensionContext
+    private val context: ServiceExtensionContext
 ) {
     companion object {
         private val timeout = Duration.ofSeconds(60)
-        private val pollInterval = Duration.ofMillis(100)
+        private val pollInterval = Duration.ofMillis(2000)
     }
 
     private val trusteeURL = context.getSetting("trustee.uri", "default")
@@ -105,10 +106,10 @@ class DataManager(
         providedAssets[providerAssetId] = data
 
         val asset = Asset.Builder.newInstance().id(dummyProviderAssetId)
-            .property("endpoint", "$datalandEdcServerUrl/api/dataland/provideAsset/$providerAssetId").build()
+            .property("endpoint", "$datalandEdcServerUrl/api/dataland/eurodat/asset/$providerAssetId").build()
 
         val dataAddress = DataAddress.Builder.newInstance().type("Http")
-            .property("endpoint", "$datalandEdcServerUrl/api/dataland/provideAsset/$providerAssetId").build()
+            .property("endpoint", "$datalandEdcServerUrl/api/dataland/eurodat/asset/$providerAssetId").build()
 
         assetLoader.accept(asset, dataAddress)
         return asset
@@ -120,7 +121,10 @@ class DataManager(
      */
     fun provideAssetToTrustee(data: String): String {
         val asset = registerAsset(data)
+        context.monitor.info("Asset succesfully registered with Dataland EDC.")
+        context.monitor.debug("Provider request is: ${buildProviderRequest(asset)}")
         val trusteeResponse = trusteeClient.registerAsset(buildProviderRequest(asset))
+        context.monitor.info("Asset succesfully registered with Trustee.")
         val trusteeAssetId = trusteeResponse["asset"]["properties"]["asset:prop:id"].asText()
         val contractDefinitionId = trusteeResponse["contractDefinition"]["id"].asText()
         return "$trusteeAssetId:$contractDefinitionId"
@@ -131,7 +135,7 @@ class DataManager(
      * @param providerAssetId ID given to the asset on Dataland EDC side
      */
     fun getProvidedAsset(providerAssetId: String): String {
-        return providedAssets.remove(providerAssetId) ?: "No data with assetId $providerAssetId found."
+       return providedAssets.remove(providerAssetId) ?: "No data with assetId $providerAssetId found."
     }
 
     private fun retrieveAssetFromTrustee(assetId: String, contractDefinitionId: String): String {
@@ -144,7 +148,7 @@ class DataManager(
     private fun requestData(agreementId: String, assetId: String) {
         val dataDestination = DataAddress.Builder.newInstance()
             .property("type", "HttpFV")
-            .property("endpoint", "$datalandEdcServerUrl/api/dataland/receiveAsset")
+            .property("endpoint", "$datalandEdcServerUrl/api/dataland/eurodat/asset")
             .build()
         val dataRequest = DataRequest.Builder.newInstance()
             .id("process-id:$agreementId")
@@ -160,13 +164,13 @@ class DataManager(
     }
 
     private fun getAgreementId(negotiationId: String): String {
-        val negotiation: ContractNegotiation = contractNegotiationStore.find(negotiationId)!!
         await()
             .atMost(timeout)
             .pollInterval(pollInterval)
             .until {
-                ContractNegotiationStates.from(negotiation.state) == ContractNegotiationStates.CONFIRMED
+                ContractNegotiationStates.from(contractNegotiationStore.find(negotiationId)!!.state) == ContractNegotiationStates.CONFIRMED
             }
+        val negotiation: ContractNegotiation = contractNegotiationStore.find(negotiationId)!!
         return negotiation.contractAgreement.id
     }
 
