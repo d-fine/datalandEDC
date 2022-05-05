@@ -38,7 +38,7 @@ class TrusteeClient(
             body.toRequestBody("application/json".toMediaType())
         )
             .url((baseURL + endpoint).toHttpUrl().newBuilder().build())
-        val request=requestBuilder.addHeader("X-Api-Key", credentials).build()
+        val request = requestBuilder.addHeader("X-Api-Key", credentials).build()
         client.newCall(request).execute().use { return processRequestResponse(it) }
     }
 
