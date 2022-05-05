@@ -9,6 +9,11 @@ jobs:
   build-and-publish-edc-server-image:
     runs-on: ubuntu-latest
     steps:
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ghcr.io/d-fine/datalandedc/edcdummyserver
       - uses: actions/checkout@v2
         with:
           submodules: true
@@ -32,7 +37,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./dataland-edc-dummyserver
-          tags: ghcr.io/d-fine/datalandedc/edcdummyserver:latest
+          tags: ${{steps.meta.outputs.tags}}
           push: true
 
   publish-edc-clients:
