@@ -34,16 +34,13 @@ class DataManager(
     private val context: ServiceExtensionContext
     ) {
 
-    // TODO should be in config
-    private val trusteeURL = "http://20.31.200.61:80/api"
-    private val trusteeIdsURL = "http://20.31.200.61:80/api"
+    private val trusteeURL = context.getSetting("trustee.uri", "default")
+    private val trusteeIdsURL = context.getSetting("trustee.ids.uri", "default")
 
-    // Question: Do we want to route all traffic through the tunnel, even in preview?
     private val datalandEdcServerUrl = "http://" + context.getSetting("edc.server.uri", "default") + ":9191"
     private val datalandEdcServerIdsURL = "http://" + context.getSetting("edc.server.uri", "default") + ":9292"
 
-    // TODO should be in config
-    private val testCredentials = "password"
+    private val testCredentials = context.getSetting("trustee.credentials", "default")
 
     private val trusteeClient = DALAHttpClient(
         DALADefaultOkHttpClientFactoryImpl.create(false), trusteeURL, "APIKey", testCredentials
