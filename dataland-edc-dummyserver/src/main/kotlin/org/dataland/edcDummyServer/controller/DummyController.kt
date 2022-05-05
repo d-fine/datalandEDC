@@ -16,7 +16,7 @@ class DummyController : DefaultApi {
         return ResponseEntity.ok(dataStore.selectDataSet(dataId))
     }
 
-    override fun insertData(body: String?): ResponseEntity<String> {
-        return ResponseEntity.ok(dataStore.insertDataSet(body ?: ""))
+    override fun insertData(body: String?): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.ok(mapOf("dataId" to dataStore.insertDataSet(body ?: "")))
     }
 }

@@ -17,9 +17,9 @@ jobs:
           java-version: 17
           cache: gradle
       - name: Create the EDC spec
-        run: ./gradlew dataland-edc-server:resolve --no-daemon
+        run: ./gradlew dataland-edc-server:resolve --no-daemon --stacktrace
       - name: Build everything
-        run: ./gradlew assemble --no-daemon
+        run: ./gradlew assemble --no-daemon --stacktrace
       - name: Copy the gradle cache into the workspace
         run: cp -r /home/runner/.gradle ./gradlecache
       - name: Login to Github Packages

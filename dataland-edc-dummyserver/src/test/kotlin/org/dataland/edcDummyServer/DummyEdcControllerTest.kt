@@ -1,5 +1,7 @@
 package org.dataland.edcDummyServer
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,7 +17,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 @SpringBootTest
 @AutoConfigureMockMvc
 class DummyEdcControllerTest(
-    @Autowired var mockMvc: MockMvc
+    @Autowired val mockMvc: MockMvc,
+    @Autowired val objectMapper: ObjectMapper
 ) {
 
     private fun performWithBasicResultsChecks(requestBuilder: RequestBuilder): ResultActions {
@@ -44,7 +47,12 @@ class DummyEdcControllerTest(
                 .content(body)
         ).andReturn()
 
-        val dataId = request.response.contentAsString
+        val result: Map<String, String> = objectMapper.readValue(
+            request.response.contentAsString,
+            object: TypeReference<Map<String, String>>() {}
+        )
+
+        val dataId = result.get("dataId")!!
         assertTrue(dataId.contains(":"))
 
         performWithBasicResultsChecks(

@@ -22,9 +22,9 @@ class DatalandInternalEdcController(
         return objectMapper.writeValueAsString(mapOf("response" to "I am alive!"))
     }
 
-    override fun insertData(data: String): String {
+    override fun insertData(data: String): Map<String, String> {
         context.monitor.info("Received data to store in the trustee.")
-        return dataManager.provideAssetToTrustee(data)
+        return mapOf("dataId" to dataManager.provideAssetToTrustee(data))
     }
 
     override fun selectDataById(dataId: String): String {
