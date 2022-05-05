@@ -19,7 +19,6 @@
  */
 package org.dataland.edc.server.api
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.info.Info
 import org.dataland.edc.server.controller.DatalandController
 import org.dataland.edc.server.service.DataManager
