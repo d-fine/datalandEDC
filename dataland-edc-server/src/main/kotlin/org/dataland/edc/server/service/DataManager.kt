@@ -24,6 +24,9 @@ import org.eurodat.broker.model.ProviderRequest
 import java.net.URI
 import java.time.Duration
 
+private const val PROVIDER_URN_KEY = "urn:connector:provider"
+private const val CONSUMER_URN_KEY = "urn:connector:consumer"
+
 /**
  * Entity orchestrating the required steps for trustee data exchange
  * @param assetLoader holds all registered assets of the Dataland EDC
@@ -95,7 +98,7 @@ class DataManager(
             "$datalandEdcServerIdsURL/api/v1/ids/data",
             "owner-ID",
             "persistent",
-            asset, dummyPolicy, URI("urn:connector:provider"), URI("urn:connector:consumer")
+            asset, dummyPolicy, URI(PROVIDER_URN_KEY), URI(CONSUMER_URN_KEY)
         )
     }
 
@@ -176,8 +179,8 @@ class DataManager(
             .id("$contractDefinitionId:3a75736e-001d-4364-8bd4-9888490edb59")
             .policy(assetPolicy)
             .asset(dummyAsset)
-            .provider(URI("urn:connector:provider"))
-            .consumer(URI("urn:connector:provider"))
+            .provider(URI(PROVIDER_URN_KEY))
+            .consumer(URI(PROVIDER_URN_KEY))
             .build()
 
         val contractOfferRequest = ContractOfferRequest.Builder.newInstance()
