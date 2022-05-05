@@ -34,24 +34,44 @@ import jakarta.ws.rs.core.Response
 interface DatalandEDCApi {
     @GET
     @Path("health")
+    /**
+     * Endpoint to probe if the service is running.
+     */
     fun checkHealth(): String
 
     @POST
     @Path("dataland/data")
+    /**
+     * Endpoint to trigger the upload of the delivered data to the trustee
+     * @param data in a string format
+     */
     fun insertData(data: String): String
 
     @Produces(MediaType.APPLICATION_JSON)
     @GET
-    @Path("dataland/provideAsset/{assetId}")
-    fun provideAsset(@PathParam("assetId") providerAssetId: String): String
+    @Path("dataland/provideAsset/{providerAssetId}")
+    /**
+     * Endpoint returning the data associated to the provided ID, data are deleted on Dataland EDC after pick-up
+     * @param providerAssetId ID used on Dataland EDC side to identify the data
+     */
+    fun provideAsset(@PathParam("providerAssetId") providerAssetId: String): String
 
     @GET
     @Path("dataland/data/{dataId}")
+    /**
+     * Endpoint for the Dataland backend to retrieve data from the trustee
+     * @param dataId identifier containing the required information to retrieve data from the trustee
+     */
     fun selectDataById(@PathParam("dataId") dataId: String): String
 
     @Consumes(MediaType.APPLICATION_OCTET_STREAM)
     @Produces(MediaType.APPLICATION_JSON)
     @POST
-    @Path("dataland/receiveAsset/{id}")
-    fun storeReceivedData(@PathParam("id") assetId: String, data: ByteArray): Response
+    @Path("dataland/receiveAsset/{assetId}")
+    /**
+     * Endpoint to receive data delivered by the trustee
+     * @param assetId the identifier for the asset used on trustee side
+     * @param data the data coming from the trustee in a byte array format
+     */
+    fun storeReceivedData(@PathParam("assetId") assetId: String, data: ByteArray): Response
 }
