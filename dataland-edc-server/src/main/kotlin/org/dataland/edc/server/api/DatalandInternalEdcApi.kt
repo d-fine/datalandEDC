@@ -44,7 +44,7 @@ interface DatalandInternalEdcApi {
      * Endpoint to trigger the upload of the delivered data to the trustee
      * @param data in a string format
      */
-    fun insertData(data: String): String
+    fun insertData(data: String): Map <String, String>
 
     @GET
     @Path("/data/{dataId}")
