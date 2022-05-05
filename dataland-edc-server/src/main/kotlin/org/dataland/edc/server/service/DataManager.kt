@@ -50,7 +50,7 @@ class DataManager(
 
     private val testCredentials = context.getSetting("trustee.credentials", "default")
 
-    private val trusteeClient = TrusteeClient(trusteeURL,  testCredentials    )
+    private val trusteeClient = TrusteeClient(trusteeURL, testCredentials)
 
     private val receivedAssets: MutableMap<String, String> = mutableMapOf()
     private val providedAssets: MutableMap<String, String> = mutableMapOf()
