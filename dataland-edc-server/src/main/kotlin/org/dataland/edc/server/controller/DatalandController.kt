@@ -20,6 +20,7 @@ class DatalandController(
     }
 
     override fun insertData(data: String): String {
+        context.monitor.info("Received data to store in the trustee.")
         return dataManager.provideAssetToTrustee(data)
     }
 
