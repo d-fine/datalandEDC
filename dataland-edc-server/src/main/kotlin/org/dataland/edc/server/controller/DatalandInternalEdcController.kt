@@ -1,6 +1,5 @@
 package org.dataland.edc.server.controller
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.dataland.edc.server.api.DatalandInternalEdcApi
 import org.dataland.edc.server.service.DataManager
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
@@ -15,11 +14,9 @@ class DatalandInternalEdcController(
     private val context: ServiceExtensionContext
 ) : DatalandInternalEdcApi {
 
-    private val objectMapper = jacksonObjectMapper()
-
-    override fun checkHealth(): String {
+    override fun checkHealth(): Map<String, String> {
         context.monitor.info("Received a health request.")
-        return objectMapper.writeValueAsString(mapOf("response" to "I am alive!"))
+        return mapOf("response" to "I am alive!")
     }
 
     override fun insertData(data: String): Map<String, String> {
@@ -27,8 +24,8 @@ class DatalandInternalEdcController(
         return mapOf("dataId" to dataManager.provideAssetToTrustee(data))
     }
 
-    override fun selectDataById(dataId: String): String {
+    override fun selectDataById(dataId: String): Map<String, String> {
         context.monitor.info("Asset with data ID $dataId is requested.")
-        return dataManager.getDataById(dataId)
+        return mapOf("data" to dataManager.getDataById(dataId))
     }
 }
