@@ -30,6 +30,8 @@ val jacocoClasses by extra(
         }
     }
 )
+val jacocoVersion: String by project
+
 plugins {
     `java-library`
     id("application")
@@ -40,7 +42,7 @@ plugins {
 }
 
 jacoco {
-    toolVersion = "0.8.7"
+    toolVersion = jacocoVersion
 }
 
 tasks.test {

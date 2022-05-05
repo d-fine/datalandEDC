@@ -1,4 +1,5 @@
 // main
+val jacocoVersion: String by project
 
 allprojects {
     repositories {
@@ -60,7 +61,7 @@ subprojects {
 plugins {
     id("org.springframework.boot") version "2.6.7" apply false
     id("io.gitlab.arturbosch.detekt") version "1.20.0"
-    id("org.jlleitschuh.gradle.ktlint") version "10.2.1"
+    id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
     kotlin("jvm") version "1.6.21"
     kotlin("plugin.spring") version "1.6.21" apply false
     id("org.sonarqube") version "3.3"
@@ -68,6 +69,7 @@ plugins {
     id("org.springdoc.openapi-gradle-plugin") version "1.3.4" apply false
     id("io.swagger.core.v3.swagger-gradle-plugin") version "2.2.0" apply false
     jacoco
+    id("com.github.ben-manes.versions") version "0.42.0"
 }
 
 ktlint {
@@ -95,7 +97,7 @@ sonarqube {
 }
 
 jacoco {
-    toolVersion = "0.8.7"
+    toolVersion = jacocoVersion
 }
 
 tasks.jacocoTestReport {
