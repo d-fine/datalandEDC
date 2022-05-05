@@ -8,7 +8,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.internal.EMPTY_REQUEST
+import okhttp3.Response
 import org.eurodat.broker.model.ProviderRequest
 import java.io.IOException
 import java.util.concurrent.TimeUnit
@@ -33,27 +33,29 @@ class TrusteeClient(
 
     private val toJsonMapper = ObjectMapper()
 
-    private fun post(endpoint: String, body: String? = null): JsonNode {
-        val request = Request.Builder().post(
-            body?.toRequestBody("application/json".toMediaType()) ?: EMPTY_REQUEST
+    private fun post(endpoint: String, body: String): JsonNode {
+        val requestBuilder = Request.Builder().post(
+            body.toRequestBody("application/json".toMediaType())
         )
             .url((baseURL + endpoint).toHttpUrl().newBuilder().build())
-        request.addHeader("X-Api-Key", credentials)
-        client.newCall(request.build()).execute().use { response ->
-            if (!response.isSuccessful) throw IOException("Unexpected code $response")
-            val responseBody = response.body!!.string()
-            val jsonBody = try {
-                toJsonMapper.readTree(responseBody)
-            } catch (e: JsonParseException) {
-                toJsonMapper.readTree("""{"content": "$responseBody"}""")
-            }
-            println(
-                """Sent '${response.request.method}' request to URL : ${response.request.url}
-                           Response Code : ${response.code}
-                           Response Body : $jsonBody"""
-            )
-            return jsonBody
+        val request=requestBuilder.addHeader("X-Api-Key", credentials).build()
+        client.newCall(request).execute().use { return processRequestResponse(it) }
+    }
+
+    private fun processRequestResponse(response: Response): JsonNode {
+        if (!response.isSuccessful) throw IOException("Unexpected code $response")
+        val responseBody = response.body!!.string()
+        val jsonBody = try {
+            toJsonMapper.readTree(responseBody)
+        } catch (e: JsonParseException) {
+            toJsonMapper.readTree("""{"content": "$responseBody"}""")
         }
+        println(
+            """Sent '${response.request.method}' request to URL : ${response.request.url}
+                               Response Code : ${response.code}
+                               Response Body : $jsonBody"""
+        )
+        return jsonBody
     }
 
     /**
