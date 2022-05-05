@@ -8,10 +8,17 @@ import org.eclipse.dataspaceconnector.policy.model.Action
 import org.eclipse.dataspaceconnector.policy.model.Permission
 import org.eclipse.dataspaceconnector.policy.model.Policy
 import org.eclipse.dataspaceconnector.spi.asset.AssetSelectorExpression
+import org.eclipse.dataspaceconnector.spi.contract.negotiation.ConsumerContractNegotiationManager
+import org.eclipse.dataspaceconnector.spi.contract.negotiation.response.NegotiationResult
+import org.eclipse.dataspaceconnector.spi.contract.negotiation.store.ContractNegotiationStore
 import org.eclipse.dataspaceconnector.spi.contract.offer.store.ContractDefinitionStore
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
+import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessManager
 import org.eclipse.dataspaceconnector.spi.types.domain.DataAddress
 import org.eclipse.dataspaceconnector.spi.types.domain.asset.Asset
+import org.eclipse.dataspaceconnector.spi.types.domain.contract.negotiation.ContractNegotiation
+import org.eclipse.dataspaceconnector.spi.types.domain.contract.negotiation.ContractNegotiationStates
+import org.eclipse.dataspaceconnector.spi.types.domain.contract.negotiation.ContractOfferRequest
 import org.eclipse.dataspaceconnector.spi.types.domain.contract.offer.ContractDefinition
 import org.eclipse.dataspaceconnector.spi.types.domain.contract.offer.ContractOffer
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataRequest
@@ -21,8 +28,11 @@ import java.net.URI
 class DataManager(
     private val assetLoader: AssetLoader,
     private val contractDefinitionStore: ContractDefinitionStore,
+    private val transferProcessManager: TransferProcessManager,
+    private val contractNegotiationStore: ContractNegotiationStore,
+    private val consumerContractNegotiationManager: ConsumerContractNegotiationManager,
     private val context: ServiceExtensionContext
-) {
+    ) {
 
     // TODO should be in config
     private val trusteeURL = "http://20.31.200.61:80/api"
@@ -37,10 +47,6 @@ class DataManager(
 
     private val trusteeClient = DALAHttpClient(
         DALADefaultOkHttpClientFactoryImpl.create(false), trusteeURL, "APIKey", testCredentials
-    )
-    // TODO has to be removed (no http calls onto oneself)
-    private val datalandConnectorClient = DALAHttpClient(
-        DALADefaultOkHttpClientFactoryImpl.create(false), datalandEdcServerUrl, "APIKey", testCredentials
     )
 
     private val jsonMapper = jacksonObjectMapper()
@@ -138,16 +144,15 @@ class DataManager(
             .dataDestination(dataDestination)
             .managedResources(false)
             .build()
-        val dataRequestString = jsonMapper.writeValueAsString(dataRequest)
-        datalandConnectorClient.post("/api/control/transfer", dataRequestString)
+        transferProcessManager.initiateConsumerRequest(dataRequest)
     }
 
     private fun getAgreementId(negotiationId: String): String {
         var agreementId: String? = null
+        val negotiation: ContractNegotiation = contractNegotiationStore.find(negotiationId)!!
         while (agreementId == null) {
-            val checkNegotiationResult = datalandConnectorClient.get("/api/control/negotiation/$negotiationId/state")
-            if (checkNegotiationResult["status"].asText() == "CONFIRMED") {
-                agreementId = checkNegotiationResult["contractAgreementId"].asText()
+            if (ContractNegotiationStates.from(negotiation.state) == ContractNegotiationStates.CONFIRMED) {
+                agreementId = negotiation.contractAgreement.id
             }
             Thread.sleep(3000)
         }
@@ -165,10 +170,16 @@ class DataManager(
             .consumer(URI("urn:connector:provider"))
             .build()
 
-        val consumerRequestString = jsonMapper.writeValueAsString(assetContractOffer)
-        val params = mapOf("Content-Type" to "application/json", "connectorAddress" to "$trusteeIdsURL/v1/ids/data")
-        val negotiationResponse = datalandConnectorClient.post("/api/negotiation", consumerRequestString, params)
-        return negotiationResponse["id"].asText()
+        val contractOfferRequest = ContractOfferRequest.Builder.newInstance()
+            .contractOffer(assetContractOffer)
+            .protocol("ids-multipart")
+            .connectorId("consumer")
+            .connectorAddress("$trusteeIdsURL/v1/ids/data")
+            .type(ContractOfferRequest.Type.INITIAL)
+            .build()
+
+        val negotiationResult: NegotiationResult = consumerContractNegotiationManager.initiate(contractOfferRequest)
+        return negotiationResult.content.id
     }
 
     private fun getReceivedAsset(assetId: String): String {

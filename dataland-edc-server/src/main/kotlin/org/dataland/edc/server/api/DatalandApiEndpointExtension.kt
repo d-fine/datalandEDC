@@ -26,10 +26,14 @@ import org.dataland.edc.server.service.DataManager
 import org.eclipse.dataspaceconnector.dataloading.AssetLoader
 import org.eclipse.dataspaceconnector.extensions.api.ConsumerApiController
 import org.eclipse.dataspaceconnector.spi.WebService
+import org.eclipse.dataspaceconnector.spi.contract.negotiation.ConsumerContractNegotiationManager
+import org.eclipse.dataspaceconnector.spi.contract.negotiation.store.ContractNegotiationStore
 import org.eclipse.dataspaceconnector.spi.contract.offer.store.ContractDefinitionStore
+import org.eclipse.dataspaceconnector.spi.system.Inject
 import org.eclipse.dataspaceconnector.spi.system.Requires
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtension
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
+import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessManager
 
 @OpenAPIDefinition(info = Info(title = "Dataland EDC OpenAPI Spec", version = "1.0.0-SNAPSHOT"))
 /**
@@ -37,15 +41,40 @@ import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
  */
 @Requires(WebService::class, ConsumerApiController::class)
 class DatalandApiEndpointExtension : ServiceExtension {
+
+    @Inject
+    val assetLoader: AssetLoader? = null
+
+    @Inject
+    val contractDefinitionStore: ContractDefinitionStore? = null
+
+    @Inject
+    private val transferProcessManager: TransferProcessManager? = null
+
+    @Inject
+    private val contractNegotiationStore: ContractNegotiationStore? = null
+
+    @Inject
+    private val consumerContractNegotiationManager: ConsumerContractNegotiationManager? = null
+
+    @Inject
+    val webService: WebService? = null
+
     override fun name(): String {
         return "API Endpoint"
     }
 
+
+
     override fun initialize(context: ServiceExtensionContext) {
-        val webService: WebService = context.getService(WebService::class.java)
-        val assetLoader = context.getService(AssetLoader::class.java)
-        val contractDefinitionStore = context.getService(ContractDefinitionStore::class.java)
-        val dataManager = DataManager(assetLoader, contractDefinitionStore, context)
-        webService.registerResource(DatalandController(dataManager, context))
+        val dataManager = DataManager(
+            assetLoader!!,
+            contractDefinitionStore!!,
+            transferProcessManager!!,
+            contractNegotiationStore!!,
+            consumerContractNegotiationManager!!,
+            context
+        )
+        webService!!.registerResource(DatalandController(dataManager, context))
     }
 }
