@@ -10,7 +10,7 @@ import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
 class DatalandController(
     private val dataManager: DataManager,
     private val context: ServiceExtensionContext
-    ): DatalandEDCApi {
+) : DatalandEDCApi {
 
     private val objectMapper = jacksonObjectMapper()
 

@@ -18,23 +18,27 @@ import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataRequest
 import org.eurodat.broker.model.ProviderRequest
 import java.net.URI
 
-class DataManager(private val assetLoader: AssetLoader, private val contractDefinitionStore: ContractDefinitionStore, private val context: ServiceExtensionContext) {
+class DataManager(
+    private val assetLoader: AssetLoader,
+    private val contractDefinitionStore: ContractDefinitionStore,
+    private val context: ServiceExtensionContext
+) {
 
-    //TODO should be in config
+    // TODO should be in config
     private val trusteeURL = "http://20.31.200.61:80/api"
     private val trusteeIdsURL = "http://20.31.200.61:80/api"
 
-    //Question: Do we want to route all traffic through the tunnel, even in preview?
-    private val datalandEdcServerUrl = "http://"+context.getSetting("TUNNEL_URI", "default")+":9191"
-    private val datalandEdcServerIdsURL = "http://"+context.getSetting("TUNNEL_URI", "default")+":9292"
+    // Question: Do we want to route all traffic through the tunnel, even in preview?
+    private val datalandEdcServerUrl = "http://" + context.getSetting("TUNNEL_URI", "default") + ":9191"
+    private val datalandEdcServerIdsURL = "http://" + context.getSetting("TUNNEL_URI", "default") + ":9292"
 
-    //TODO should be in config
+    // TODO should be in config
     private val testCredentials = "password"
 
     private val trusteeClient = DALAHttpClient(
         DALADefaultOkHttpClientFactoryImpl.create(false), trusteeURL, "APIKey", testCredentials
     )
-    //TODO has to be removed (no http calls onto oneself)
+    // TODO has to be removed (no http calls onto oneself)
     private val datalandConnectorClient = DALAHttpClient(
         DALADefaultOkHttpClientFactoryImpl.create(false), datalandEdcServerUrl, "APIKey", testCredentials
     )
@@ -50,11 +54,12 @@ class DataManager(private val assetLoader: AssetLoader, private val contractDefi
     private val dummyPolicyUid = "956e172f-2de1-4501-8881-057a57fd0e60"
     private val dummyActionType = "USE"
     private val dummyAction = Action.Builder.newInstance().type(dummyActionType).build()
-    private val dummyPermission = Permission.Builder.newInstance().target(dummyProviderAssetId).action(dummyAction).build()
+    private val dummyPermission = Permission.Builder.newInstance().target(dummyProviderAssetId)
+        .action(dummyAction).build()
     private val dummyPolicy = Policy.Builder.newInstance().id(dummyPolicyUid).permission(dummyPermission).build()
     private val dummyAsset = Asset.Builder.newInstance().build()
 
-    //This is a workaround to enable multiple asset upload even-though EuroDaT supports only the ID 1 (see DALA-146)
+    // This is a workaround to enable multiple asset upload even-though EuroDaT supports only the ID 1 (see DALA-146)
     private val dummyContractDefinition = ContractDefinition.Builder.newInstance()
         .id("1")
         .accessPolicy(dummyPolicy)
@@ -85,7 +90,7 @@ class DataManager(private val assetLoader: AssetLoader, private val contractDefi
 
     private fun registerAsset(data: String): Asset {
         val providerAssetId = generateProviderAssetId()
-        //TODO check if we can use EDC internal components for storing data in memory
+        // TODO check if we can use EDC internal components for storing data in memory
         providedAssets[providerAssetId] = data
 
         val asset = Asset.Builder.newInstance().id(dummyProviderAssetId)
@@ -176,10 +181,19 @@ class DataManager(private val assetLoader: AssetLoader, private val contractDefi
         return receivedAssets[assetId] ?: "Data not found"
     }
 
-    fun storeReceivedAsset(id: String, decodedData: String) {
-        receivedAssets[id] = decodedData
+    /**
+     * Stores given data under a given asset ID in the in memory store
+     * @param assetId uuid as provided by the trustee
+     * @param data the data to be stored in string format
+     */
+    fun storeReceivedAsset(assetId: String, data: String) {
+        receivedAssets[assetId] = data
     }
 
+    /**
+     * Retrieve data for given data ID from in memory store or from the trustee if it is not yet in memory
+     * @param dataId The identifier to uniquely determine the data in question
+     */
     fun getDataById(dataId: String): String {
         val splitDataId = dataId.split(":")
         if (splitDataId.size != 2) throw IllegalArgumentException("The data ID $dataId has an invalid format.")
