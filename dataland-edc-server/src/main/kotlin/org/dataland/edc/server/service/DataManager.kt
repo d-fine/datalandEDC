@@ -167,7 +167,8 @@ class DataManager(
             .atMost(timeout)
             .pollInterval(pollInterval)
             .until {
-                ContractNegotiationStates.from(contractNegotiationStore.find(negotiationId)!!.state) == ContractNegotiationStates.CONFIRMED
+                ContractNegotiationStates.from(contractNegotiationStore.find(negotiationId)!!.state) ==
+                    ContractNegotiationStates.CONFIRMED
             }
         val negotiation: ContractNegotiation = contractNegotiationStore.find(negotiationId)!!
         return negotiation.contractAgreement.id
