@@ -111,7 +111,7 @@ class DataManager(private val assetLoader: AssetLoader, private val contractDefi
         return providedAssets[assetId] ?: "No data with assetId $assetId found"
     }
 
-    fun retrieveAssetFromTrustee(assetId: String, contractDefinitionId: String): String {
+    private fun retrieveAssetFromTrustee(assetId: String, contractDefinitionId: String): String {
         val negotiationId = initiateNegotiations(assetId, contractDefinitionId)
         val agreementId = getAgreementId(negotiationId)
         requestData(agreementId, assetId)
@@ -178,5 +178,20 @@ class DataManager(private val assetLoader: AssetLoader, private val contractDefi
 
     fun storeReceivedAsset(id: String, decodedData: String) {
         receivedAssets[id] = decodedData
+    }
+
+    fun getDataById(dataId: String): String {
+        val splitDataId = dataId.split(":")
+        if (splitDataId.size != 2) throw IllegalArgumentException("The data ID $dataId has an invalid format.")
+        val assetId = splitDataId[0]
+
+        return if (assetId in receivedAssets.keys) {
+            receivedAssets[assetId]!!
+        } else {
+            retrieveAssetFromTrustee(
+                assetId = assetId,
+                contractDefinitionId = splitDataId[1]
+            )
+        }
     }
 }
