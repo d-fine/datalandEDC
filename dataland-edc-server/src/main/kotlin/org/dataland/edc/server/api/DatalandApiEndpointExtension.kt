@@ -44,10 +44,6 @@ class DatalandApiEndpointExtension : ServiceExtension {
         val assetLoader = context.getService(AssetLoader::class.java)
         val contractDefinitionStore = context.getService(ContractDefinitionStore::class.java)
         val dataManager = DataManager(assetLoader, contractDefinitionStore, context)
-        val datalandController = DatalandController(dataManager, context)
-        webService.registerResource(DatalandApi(
-            context.monitor,
-            datalandController
-        ))
+        webService.registerResource(DatalandController(dataManager, context))
     }
 }
