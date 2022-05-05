@@ -53,5 +53,4 @@ interface DatalandInternalEdcApi {
      * @param dataId identifier containing the required information to retrieve data from the trustee
      */
     fun selectDataById(@PathParam("dataId") dataId: String): String
-
 }

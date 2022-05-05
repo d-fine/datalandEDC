@@ -23,6 +23,7 @@ import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataRequest
 import org.eurodat.broker.model.ProviderRequest
 import java.net.URI
 import java.time.Duration
+import java.util.UUID
 
 /**
  * Entity orchestrating the required steps for trustee data exchange
@@ -59,8 +60,6 @@ class DataManager(
     private val receivedAssets: MutableMap<String, String> = mutableMapOf()
     private val providedAssets: MutableMap<String, String> = mutableMapOf()
 
-    private var counter = 0
-
     private val dummyProviderAssetId = "test-asset"
     private val dummyPolicyUid = "956e172f-2de1-4501-8881-057a57fd0e60"
     private val dummyActionType = "USE"
@@ -85,8 +84,7 @@ class DataManager(
     }
 
     private fun generateProviderAssetId(): String {
-        counter += 1
-        return counter.toString()
+        return UUID.randomUUID().toString()
     }
 
     private fun buildProviderRequest(asset: Asset): ProviderRequest {
