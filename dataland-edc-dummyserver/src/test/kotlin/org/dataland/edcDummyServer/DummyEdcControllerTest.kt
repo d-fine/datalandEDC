@@ -7,6 +7,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.RequestBuilder
+import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
@@ -16,13 +18,18 @@ class DummyEdcControllerTest(
     @Autowired var mockMvc: MockMvc
 ) {
 
-    @Test
-    fun `check if an empty string is returned by get request when the data id does not exist`() {
-        mockMvc.perform(
-            MockMvcRequestBuilders.get("/dataland/data/0:0")
-        ).andExpectAll(
+    private fun performWithBasicResultsChecks(requestBuilder: RequestBuilder): ResultActions {
+        return mockMvc.perform(requestBuilder).andExpectAll(
             MockMvcResultMatchers.status().isOk,
             MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON),
+        )
+    }
+
+    @Test
+    fun `check if an empty string is returned by get request when the data id does not exist`() {
+        performWithBasicResultsChecks(
+            MockMvcRequestBuilders.get("/dataland/data/0:0")
+        ).andExpect(
             MockMvcResultMatchers.content().string("")
         )
     }
@@ -30,24 +37,19 @@ class DummyEdcControllerTest(
     @Test
     fun `check if the selected data is the same as the inserted data`() {
         val body = "{\"key\":\"value\"}"
-        val request = mockMvc.perform(
+        val request = performWithBasicResultsChecks(
             MockMvcRequestBuilders.post("/dataland/data")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body)
-        ).andExpectAll(
-            MockMvcResultMatchers.status().isOk,
-            MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)
         ).andReturn()
 
         val dataId = request.response.contentAsString
         assertTrue(dataId.contains(":"))
 
-        mockMvc.perform(
+        performWithBasicResultsChecks(
             MockMvcRequestBuilders.get("/dataland/data/$dataId")
-        ).andExpectAll(
-            MockMvcResultMatchers.status().isOk,
-            MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON),
+        ).andExpect(
             MockMvcResultMatchers.content().string(body)
         )
     }
