@@ -8,6 +8,8 @@ val jacocoClasses by extra(
         }
     }
 )
+val jacocoVersion: String by project
+
 repositories {
     mavenCentral()
 }
@@ -24,7 +26,7 @@ plugins {
 apply(plugin = "io.spring.dependency-management")
 
 jacoco {
-    toolVersion = "0.8.7"
+    toolVersion = jacocoVersion
 }
 
 tasks.test {
