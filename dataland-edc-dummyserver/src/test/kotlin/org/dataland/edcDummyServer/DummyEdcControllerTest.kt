@@ -33,7 +33,7 @@ class DummyEdcControllerTest(
         performWithBasicResultsChecks(
             MockMvcRequestBuilders.get("/dataland/data/0:0")
         ).andExpect(
-            MockMvcResultMatchers.content().string("")
+            MockMvcResultMatchers.content().string(objectMapper.writeValueAsString(mapOf("dataId" to "")))
         )
     }
 
@@ -58,7 +58,7 @@ class DummyEdcControllerTest(
         performWithBasicResultsChecks(
             MockMvcRequestBuilders.get("/dataland/data/$dataId")
         ).andExpect(
-            MockMvcResultMatchers.content().string(body)
+            MockMvcResultMatchers.content().string(objectMapper.writeValueAsString(mapOf("dataId" to body)))
         )
     }
 }

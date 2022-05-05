@@ -71,6 +71,6 @@ class DatalandApiEndpointExtension : ServiceExtension {
             context
         )
         webService!!.registerResource(DatalandInternalEdcController(dataManager, context))
-        webService!!.registerResource(DatalandEurodatController(dataManager, context))
+        webService.registerResource(DatalandEurodatController(dataManager, context))
     }
 }
