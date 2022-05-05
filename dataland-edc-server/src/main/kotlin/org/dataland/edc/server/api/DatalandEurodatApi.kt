@@ -28,7 +28,7 @@ import jakarta.ws.rs.core.Response
 /**
  * Provides the REST Endpoints of the Dataland EDC service towards EuroDaT
  */
-interface DatalandEuroDaTapi {
+interface DatalandEurodatApi {
     @Produces(MediaType.APPLICATION_JSON)
     @GET
     @Path("/asset/{datalandAssetId}")
@@ -41,11 +41,11 @@ interface DatalandEuroDaTapi {
     @Consumes(MediaType.APPLICATION_OCTET_STREAM)
     @Produces(MediaType.APPLICATION_JSON)
     @POST
-    @Path("/asset/{euroDaTassetId}")
+    @Path("/asset/{eurodatAssetId}")
     /**
      * Endpoint to receive data delivered by the trustee
-     * @param euroDaTassetId the identifier for the asset used on trustee side
+     * @param eurodatAssetId the identifier for the asset used on trustee side
      * @param data the data coming from the trustee in a byte array format
      */
-    fun storeReceivedData(@PathParam("euroDaTassetId") euroDaTassetId: String, data: ByteArray): Response
+    fun storeReceivedData(@PathParam("eurodatAssetId") eurodatAssetId: String, data: ByteArray): Response
 }
