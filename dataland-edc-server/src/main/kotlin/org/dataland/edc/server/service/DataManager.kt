@@ -1,6 +1,5 @@
 package org.dataland.edc.server.service
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.awaitility.Awaitility.await
 import org.dataland.edc.server.models.TrusteeClient
 import org.eclipse.dataspaceconnector.dataloading.AssetLoader
@@ -25,6 +24,13 @@ import org.eurodat.broker.model.ProviderRequest
 import java.net.URI
 import java.time.Duration
 
+private const val TIMEOUT_IN_SECONDS: Long = 60
+
+private const val POLL_INTERVAL_IN_MILIS: Long = 100
+
+/**
+ * A DataManager takes care of storing data at EuroDat and receiving it back
+ */
 class DataManager(
     private val assetLoader: AssetLoader,
     contractDefinitionStore: ContractDefinitionStore,
@@ -33,8 +39,8 @@ class DataManager(
     private val consumerContractNegotiationManager: ConsumerContractNegotiationManager,
     context: ServiceExtensionContext
 ) {
-    private val timeout = Duration.ofSeconds(60)
-    private val pollInterval = Duration.ofMillis(100)
+    private val timeout = Duration.ofSeconds(TIMEOUT_IN_SECONDS)
+    private val pollInterval = Duration.ofMillis(POLL_INTERVAL_IN_MILIS)
 
     private val trusteeURL = context.getSetting("trustee.uri", "default")
     private val trusteeIdsURL = context.getSetting("trustee.ids.uri", "default")

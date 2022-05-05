@@ -13,8 +13,8 @@ import org.eurodat.broker.model.ProviderRequest
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-private const val registerAssetPath = "/asset/register"
-private const val httpTimeOut: Long = 30
+private const val REGISTER_ASSET_PAHT = "/asset/register"
+private const val HTTP_TIMEOUT: Long = 30
 
 /**
  * An HTTP client to communicate with the EuroDaT Broker
@@ -25,10 +25,10 @@ class TrusteeClient (
 ) {
     private val client: OkHttpClient =
         OkHttpClient.Builder()
-            .writeTimeout(httpTimeOut, TimeUnit.SECONDS)
-            .readTimeout(httpTimeOut, TimeUnit.SECONDS)
-            .connectTimeout(httpTimeOut, TimeUnit.SECONDS)
-            .callTimeout(httpTimeOut, TimeUnit.SECONDS)
+            .writeTimeout(HTTP_TIMEOUT, TimeUnit.SECONDS)
+            .readTimeout(HTTP_TIMEOUT, TimeUnit.SECONDS)
+            .connectTimeout(HTTP_TIMEOUT, TimeUnit.SECONDS)
+            .callTimeout(HTTP_TIMEOUT, TimeUnit.SECONDS)
             .build()
 
     private val toJsonMapper = ObjectMapper()
@@ -59,7 +59,7 @@ class TrusteeClient (
 
     fun registerAsset(providerRequest: ProviderRequest): JsonNode {
         val providerRequestString = toJsonMapper.writeValueAsString(providerRequest)
-        return post(registerAssetPath, providerRequestString)
+        return post(REGISTER_ASSET_PAHT, providerRequestString)
     }
 
 }
