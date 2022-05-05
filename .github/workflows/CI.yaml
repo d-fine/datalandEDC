@@ -22,7 +22,7 @@ jobs:
           java-version: 11
           cache: gradle
       - name: Build, check and test project
-        run: ./gradlew assemble ktlintCheck detekt test --no-daemon
+        run: ./gradlew assemble ktlintCheck detekt test --no-daemon --stacktrace
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -60,7 +60,7 @@ jobs:
           java-version: 17
           cache: gradle
       - name: Build project
-        run: ./gradlew assemble --no-daemon
+        run: ./gradlew assemble --no-daemon --stacktrace
       - uses: actions/download-artifact@v2
         with:
           name: JaCoCoEDCDummyUnitTests
@@ -70,9 +70,9 @@ jobs:
       - name: Generate jacocoTestReport and run Sonar
         if: always()
         run: |
-          ./gradlew jacocoTestReport --no-daemon
+          ./gradlew jacocoTestReport --no-daemon --stacktrace
           find . -type f -iname "*.exec";
-          ./gradlew sonarqube --no-daemon
+          ./gradlew sonarqube --no-daemon --stacktrace
           find . -type f -name jacocoTestReport.xml;
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
