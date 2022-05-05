@@ -24,7 +24,7 @@ class DatalandEurodatController(
         return dataManager.getProvidedAsset(datalandAssetId)
     }
 
-    override fun storeReceivedData(eurodatAssetId: String, data: ByteArray): Response {
+    override fun storeReceivedAsset(eurodatAssetId: String, data: ByteArray): Response {
         context.monitor.info("Received asset POST request by EuroDaT with ID $eurodatAssetId.")
         val decodedData: Map<String, String> = objectMapper.readValue(data.decodeToString())
         dataManager.storeReceivedAsset(eurodatAssetId, decodedData["content"]!!)

@@ -45,8 +45,10 @@ edc_server_pid=$!
 sleep 20
 echo "Done waiting. Continue with test."
 
+echo "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/health"
+
 echo "Checking health endpoint"
-health_response=$(curl -X GET "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/health" -H "accept: application/json")
+health_response=$(curl -X GET "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/health" -H "accept: application/json")
 if [[ ! $health_response =~ "I am alive!" ]]; then
   echo "Response was unexpected: $health_response"
   exit 1
