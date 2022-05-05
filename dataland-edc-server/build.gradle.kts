@@ -72,15 +72,15 @@ dependencies {
     implementation("org.eclipse.dataspaceconnector:oauth2-core:$connectorVersion")
     implementation("org.eclipse.dataspaceconnector:control")
     implementation("org.eclipse.dataspaceconnector:ids")
+    implementation("org.eclipse.dataspaceconnector:dataloading")
+    implementation("org.eclipse.dataspaceconnector:spi")
     implementation("org.eurodat.connector:transfer-file")
+    implementation("org.eurodat.broker:broker-rest-model")
     implementation(libs.swagger.jaxrs2.jakarta)
     implementation(libs.rs.api)
     implementation(libs.awaitility)
     implementation(libs.awaitility.kotlin)
 
-    implementation("org.eurodat.broker:broker-rest-model")
-    implementation("org.eclipse.dataspaceconnector:dataloading")
-    implementation("org.eclipse.dataspaceconnector:spi")
     implementation(libs.swagger.annotations)
     implementation(libs.junit.jupiter)
     implementation(libs.okhttp)
@@ -109,7 +109,7 @@ pluginManager.withPlugin("io.swagger.core.v3.swagger-gradle-plugin") {
         prettyPrint = true
         classpath = java.sourceSets["main"].runtimeClasspath
         buildClasspath = classpath
-        resourcePackages = setOf("org.eclipse.dataspaceconnector")
+        resourcePackages = setOf("org.eclipse.dataspaceconnector", "org.dataland.edc.server")
         outputDir = file(jsonOutputDir)
     }
     configurations {
