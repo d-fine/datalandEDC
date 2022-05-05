@@ -109,7 +109,7 @@ pluginManager.withPlugin("io.swagger.core.v3.swagger-gradle-plugin") {
         prettyPrint = true
         classpath = java.sourceSets["main"].runtimeClasspath
         buildClasspath = classpath
-        resourcePackages = setOf("org.dataland.edc")
+        resourcePackages = setOf("org.dataland.edc.server.api.DatalandInternalEdcApi")
         outputDir = file(jsonOutputDir)
     }
     configurations {

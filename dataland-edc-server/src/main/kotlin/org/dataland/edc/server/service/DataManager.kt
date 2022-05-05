@@ -52,7 +52,7 @@ class DataManager(
     private val datalandEdcServerUrl = "http://" + context.getSetting("edc.server.uri", "default") + ":9191"
     private val datalandEdcServerIdsURL = "http://" + context.getSetting("edc.server.uri", "default") + ":9292"
 
-    private val testCredentials = context.getSetting("trustee.credentials", "default")
+    private val testCredentials = context.getSetting("trustee.credentials", "password")
 
     private val trusteeClient = TrusteeClient(trusteeURL, testCredentials)
 
