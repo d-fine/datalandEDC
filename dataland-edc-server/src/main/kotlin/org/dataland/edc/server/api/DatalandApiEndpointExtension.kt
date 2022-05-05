@@ -32,7 +32,9 @@ import org.eclipse.dataspaceconnector.spi.system.ServiceExtension
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
 
 @OpenAPIDefinition(info = Info(title = "Dataland EDC OpenAPI Spec", version = "1.0.0-SNAPSHOT"))
-
+/**
+ * Extends the EDC with the functionality required for Dataland
+ */
 @Requires(WebService::class, ConsumerApiController::class)
 class DatalandApiEndpointExtension : ServiceExtension {
     override fun name(): String {
