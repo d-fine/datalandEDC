@@ -20,17 +20,21 @@ import java.net.URI
 
 class DataManager(private val assetLoader: AssetLoader, private val contractDefinitionStore: ContractDefinitionStore, private val context: ServiceExtensionContext) {
 
+    //TODO should be in config
     private val trusteeURL = "http://20.31.200.61:80/api"
     private val trusteeIdsURL = "http://20.31.200.61:80/api"
 
+    //Question: Do we want to route all traffic through the tunnel, even in preview?
     private val datalandEdcServerUrl = "http://"+context.getSetting("TUNNEL_URI", "default")+":9191"
     private val datalandEdcServerIdsURL = "http://"+context.getSetting("TUNNEL_URI", "default")+":9292"
 
+    //TODO should be in config
     private val testCredentials = "password"
 
     private val trusteeClient = DALAHttpClient(
         DALADefaultOkHttpClientFactoryImpl.create(false), trusteeURL, "APIKey", testCredentials
     )
+    //TODO has to be removed (no http calls onto oneself)
     private val datalandConnectorClient = DALAHttpClient(
         DALADefaultOkHttpClientFactoryImpl.create(false), datalandEdcServerUrl, "APIKey", testCredentials
     )
@@ -50,6 +54,7 @@ class DataManager(private val assetLoader: AssetLoader, private val contractDefi
     private val dummyPolicy = Policy.Builder.newInstance().id(dummyPolicyUid).permission(dummyPermission).build()
     private val dummyAsset = Asset.Builder.newInstance().build()
 
+    //This is a workaround to enable multiple asset upload even-though EuroDaT supports only the ID 1 (see DALA-146)
     private val dummyContractDefinition = ContractDefinition.Builder.newInstance()
         .id("1")
         .accessPolicy(dummyPolicy)
@@ -78,37 +83,35 @@ class DataManager(private val assetLoader: AssetLoader, private val contractDefi
         )
     }
 
-    private fun registerAsset(
-        data: String
-    ): Asset {
+    private fun registerAsset(data: String): Asset {
         val providerAssetId = generateProviderAssetId()
+        //TODO check if we can use EDC internal components for storing data in memory
         providedAssets[providerAssetId] = data
 
         val asset = Asset.Builder.newInstance().id(dummyProviderAssetId)
             .property("endpoint", "$datalandEdcServerUrl/api/dataland/provideAsset/$providerAssetId").build()
 
-        val dataAddress = DataAddress.Builder.newInstance()
-            .type("Http")
+        val dataAddress = DataAddress.Builder.newInstance().type("Http")
             .property("endpoint", "$datalandEdcServerUrl/api/dataland/provideAsset/$providerAssetId").build()
 
         assetLoader.accept(asset, dataAddress)
         return asset
     }
 
-    fun uploadAssetToEuroDaT(data: String): String {
+    fun provideAssetToTrustee(data: String): String {
         val asset = registerAsset(data)
         val providerRequestString = jsonMapper.writeValueAsString(buildProviderRequest(asset))
-        val assetResponse = trusteeClient.post("/asset/register", providerRequestString)
-        val assetId = assetResponse["asset"]["properties"]["asset:prop:id"].asText()
-        val contractDefinitionId = assetResponse["contractDefinition"]["id"].asText()
-        return "$assetId:$contractDefinitionId"
+        val trusteeResponse = trusteeClient.post("/asset/register", providerRequestString)
+        val trusteeAssetId = trusteeResponse["asset"]["properties"]["asset:prop:id"].asText()
+        val contractDefinitionId = trusteeResponse["contractDefinition"]["id"].asText()
+        return "$trusteeAssetId:$contractDefinitionId"
     }
 
     fun getProvidedAsset(assetId: String): String {
         return providedAssets[assetId] ?: "No data with assetId $assetId found"
     }
 
-    fun getAssetFromEuroDaT(assetId: String, contractDefinitionId: String): String {
+    fun retrieveAssetFromTrustee(assetId: String, contractDefinitionId: String): String {
         val negotiationId = initiateNegotiations(assetId, contractDefinitionId)
         val agreementId = getAgreementId(negotiationId)
         requestData(agreementId, assetId)
