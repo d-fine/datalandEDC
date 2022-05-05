@@ -72,7 +72,6 @@ dependencies {
     implementation("org.eclipse.dataspaceconnector:oauth2-core:$connectorVersion")
     implementation("org.eclipse.dataspaceconnector:control")
     implementation("org.eclipse.dataspaceconnector:ids")
-    implementation("org.eurodat.connector:api")
     implementation("org.eurodat.connector:transfer-file")
     implementation(libs.swagger.jaxrs2.jakarta)
     implementation(libs.rs.api)
