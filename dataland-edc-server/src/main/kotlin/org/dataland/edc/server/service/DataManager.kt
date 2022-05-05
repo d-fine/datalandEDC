@@ -2,7 +2,6 @@ package org.dataland.edc.server.service
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.awaitility.Awaitility.await
-import org.dataland.edc.server.models.DALADefaultOkHttpClientFactoryImpl
 import org.dataland.edc.server.models.DALAHttpClient
 import org.eclipse.dataspaceconnector.dataloading.AssetLoader
 import org.eclipse.dataspaceconnector.policy.model.Action
@@ -45,9 +44,7 @@ class DataManager(
 
     private val testCredentials = context.getSetting("trustee.credentials", "default")
 
-    private val trusteeClient = DALAHttpClient(
-        DALADefaultOkHttpClientFactoryImpl.create(false), trusteeURL, "APIKey", testCredentials
-    )
+    private val trusteeClient = DALAHttpClient(trusteeURL,  testCredentials    )
 
     private val jsonMapper = jacksonObjectMapper()
 
