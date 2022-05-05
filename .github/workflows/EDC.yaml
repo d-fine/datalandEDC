@@ -13,7 +13,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: ghcr.io/d-fine/datalandedc/edcserver
+          images: ghcr.io/d-fine/datalandedc/edcdummyserver
       - uses: actions/checkout@v2
         with:
           submodules: recursive
