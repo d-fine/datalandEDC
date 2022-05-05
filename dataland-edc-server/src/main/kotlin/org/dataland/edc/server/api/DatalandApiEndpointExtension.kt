@@ -19,6 +19,7 @@
  */
 package org.dataland.edc.server.api
 
+import org.dataland.edc.server.controller.DatalandEurodatController
 import org.dataland.edc.server.controller.DatalandInternalEdcController
 import org.dataland.edc.server.service.DataManager
 import org.eclipse.dataspaceconnector.dataloading.AssetLoader
@@ -70,5 +71,6 @@ class DatalandApiEndpointExtension : ServiceExtension {
             context
         )
         webService!!.registerResource(DatalandInternalEdcController(dataManager, context))
+        webService!!.registerResource(DatalandEurodatController(dataManager, context))
     }
 }
