@@ -24,7 +24,6 @@ import io.swagger.v3.oas.annotations.info.Info
 import org.dataland.edc.server.controller.DatalandController
 import org.dataland.edc.server.service.DataManager
 import org.eclipse.dataspaceconnector.dataloading.AssetLoader
-import org.eclipse.dataspaceconnector.extensions.api.ConsumerApiController
 import org.eclipse.dataspaceconnector.spi.WebService
 import org.eclipse.dataspaceconnector.spi.contract.negotiation.ConsumerContractNegotiationManager
 import org.eclipse.dataspaceconnector.spi.contract.negotiation.store.ContractNegotiationStore
@@ -39,7 +38,7 @@ import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessManager
 /**
  * Extends the EDC with the functionality required for Dataland
  */
-@Requires(WebService::class, ConsumerApiController::class)
+@Requires(WebService::class)
 class DatalandApiEndpointExtension : ServiceExtension {
 
     @Inject
@@ -63,8 +62,6 @@ class DatalandApiEndpointExtension : ServiceExtension {
     override fun name(): String {
         return "API Endpoint"
     }
-
-
 
     override fun initialize(context: ServiceExtensionContext) {
         val dataManager = DataManager(

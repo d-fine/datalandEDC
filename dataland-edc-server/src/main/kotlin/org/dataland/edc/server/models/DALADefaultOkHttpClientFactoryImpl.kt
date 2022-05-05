@@ -9,6 +9,7 @@ import javax.net.ssl.SSLContext
 import javax.net.ssl.X509TrustManager
 
 object DALADefaultOkHttpClientFactoryImpl : DALAOkHttpClientFactory {
+    private const val timeOut: Long = 30
     override fun create(isSecure: Boolean): OkHttpClient = if (isSecure) {
         OkHttpClient.Builder()
     } else {
@@ -28,9 +29,9 @@ object DALADefaultOkHttpClientFactoryImpl : DALAOkHttpClientFactory {
             .sslSocketFactory(context.socketFactory, trustManager[0])
             .hostnameVerifier(allHostsValid)
     }
-        .writeTimeout(30, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
-        .connectTimeout(10, TimeUnit.SECONDS)
-        .callTimeout(120, TimeUnit.SECONDS)
+        .writeTimeout(timeOut, TimeUnit.SECONDS)
+        .readTimeout(timeOut, TimeUnit.SECONDS)
+        .connectTimeout(timeOut, TimeUnit.SECONDS)
+        .callTimeout(timeOut, TimeUnit.SECONDS)
         .build()
 }
