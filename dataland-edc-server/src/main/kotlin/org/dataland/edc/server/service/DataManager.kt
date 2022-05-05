@@ -1,8 +1,7 @@
 package org.dataland.edc.server.service
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import org.dataland.edc.server.models.DALADefaultOkHttpClientFactoryImpl
-import org.dataland.edc.server.models.DALAHttpClient
+import org.awaitility.Awaitility.await
+import org.dataland.edc.server.models.TrusteeClient
 import org.eclipse.dataspaceconnector.dataloading.AssetLoader
 import org.eclipse.dataspaceconnector.policy.model.Action
 import org.eclipse.dataspaceconnector.policy.model.Permission
@@ -23,7 +22,17 @@ import org.eclipse.dataspaceconnector.spi.types.domain.contract.offer.ContractOf
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataRequest
 import org.eurodat.broker.model.ProviderRequest
 import java.net.URI
+import java.time.Duration
 
+/**
+ * Entity orchestrating the required steps for trustee data exchange
+ * @param assetLoader holds all registered assets of the Dataland EDC
+ * @param contractDefinitionStore holds all available contracts of the Dataland EDC
+ * @param transferProcessManager manages the transfer process
+ * @param contractNegotiationStore holds the contract negotiations of the Dataland EDC
+ * @param consumerContractNegotiationManager manages contract negotiations
+ * @param context the context containing constants and the monitor for logging
+ */
 class DataManager(
     private val assetLoader: AssetLoader,
     contractDefinitionStore: ContractDefinitionStore,
@@ -32,6 +41,10 @@ class DataManager(
     private val consumerContractNegotiationManager: ConsumerContractNegotiationManager,
     context: ServiceExtensionContext
 ) {
+    companion object {
+        private val timeout = Duration.ofSeconds(60)
+        private val pollInterval = Duration.ofMillis(100)
+    }
 
     private val trusteeURL = context.getSetting("trustee.uri", "default")
     private val trusteeIdsURL = context.getSetting("trustee.ids.uri", "default")
@@ -41,11 +54,7 @@ class DataManager(
 
     private val testCredentials = context.getSetting("trustee.credentials", "default")
 
-    private val trusteeClient = DALAHttpClient(
-        DALADefaultOkHttpClientFactoryImpl.create(false), trusteeURL, "APIKey", testCredentials
-    )
-
-    private val jsonMapper = jacksonObjectMapper()
+    private val trusteeClient = TrusteeClient(trusteeURL, testCredentials)
 
     private val receivedAssets: MutableMap<String, String> = mutableMapOf()
     private val providedAssets: MutableMap<String, String> = mutableMapOf()
@@ -110,8 +119,7 @@ class DataManager(
      */
     fun provideAssetToTrustee(data: String): String {
         val asset = registerAsset(data)
-        val providerRequestString = jsonMapper.writeValueAsString(buildProviderRequest(asset))
-        val trusteeResponse = trusteeClient.post("/asset/register", providerRequestString)
+        val trusteeResponse = trusteeClient.registerAsset(buildProviderRequest(asset))
         val trusteeAssetId = trusteeResponse["asset"]["properties"]["asset:prop:id"].asText()
         val contractDefinitionId = trusteeResponse["contractDefinition"]["id"].asText()
         return "$trusteeAssetId:$contractDefinitionId"
@@ -151,15 +159,14 @@ class DataManager(
     }
 
     private fun getAgreementId(negotiationId: String): String {
-        var agreementId: String? = null
         val negotiation: ContractNegotiation = contractNegotiationStore.find(negotiationId)!!
-        while (agreementId == null) {
-            if (ContractNegotiationStates.from(negotiation.state) == ContractNegotiationStates.CONFIRMED) {
-                agreementId = negotiation.contractAgreement.id
+        await()
+            .atMost(timeout)
+            .pollInterval(pollInterval)
+            .until {
+                ContractNegotiationStates.from(negotiation.state) == ContractNegotiationStates.CONFIRMED
             }
-            Thread.sleep(3000)
-        }
-        return agreementId
+        return negotiation.contractAgreement.id
     }
 
     private fun initiateNegotiations(assetId: String, contractDefinitionId: String): String {
@@ -185,12 +192,12 @@ class DataManager(
     }
 
     private fun getReceivedAsset(assetId: String): String {
-        var timeout = 60
-        while (!receivedAssets.containsKey(assetId)) {
-            println("Requested data for $assetId not found. Waiting.")
-            Thread.sleep(5000)
-            if (timeout > 0) timeout -= 5 else break
-        }
+        await()
+            .atMost(timeout)
+            .pollInterval(pollInterval)
+            .until {
+                receivedAssets.containsKey(assetId)
+            }
         return receivedAssets[assetId] ?: "Data not found"
     }
 
@@ -212,13 +219,10 @@ class DataManager(
         if (splitDataId.size != 2) throw IllegalArgumentException("The data ID $dataId has an invalid format.")
         val assetId = splitDataId[0]
 
-        return if (assetId in receivedAssets.keys) {
+        return if (receivedAssets.containsKey(assetId)) {
             receivedAssets[assetId]!!
         } else {
-            retrieveAssetFromTrustee(
-                assetId = assetId,
-                contractDefinitionId = splitDataId[1]
-            )
+            retrieveAssetFromTrustee(assetId = assetId, contractDefinitionId = splitDataId[1])
         }
     }
 }

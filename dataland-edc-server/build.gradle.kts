@@ -75,6 +75,8 @@ dependencies {
     implementation("org.eurodat.connector:transfer-file")
     implementation(libs.swagger.jaxrs2.jakarta)
     implementation(libs.rs.api)
+    implementation(libs.awaitility)
+    implementation(libs.awaitility.kotlin)
 
     implementation("org.eurodat.broker:broker-rest-model")
     implementation("org.eclipse.dataspaceconnector:dataloading")

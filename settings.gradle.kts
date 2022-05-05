@@ -23,6 +23,9 @@ dependencyResolutionManagement {
 
             library("okhttp", "com.squareup.okhttp3:okhttp:4.9.3")
             library("rs-api", "jakarta.ws.rs:jakarta.ws.rs-api:3.1.0")
+
+            library("awaitility", "org.awaitility:awaitility:4.2.0")
+            library("awaitility-kotlin", "org.awaitility:awaitility-kotlin:4.2.0")
         }
     }
 }
