@@ -11,14 +11,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          submodules: true
+          submodules: recursive
       - uses: actions/setup-java@v2
         with:
           distribution: temurin
           java-version: 17
           cache: gradle
       - name: Build boot jars
-        run: ./gradlew :dataland-edc-dummyserver:bootJar :dataland-edc-server:run --no-daemon
+        run: ./gradlew :dataland-edc-dummyserver:bootJar :dataland-edc-server:jar --no-daemon
       - name: Login to Github Packages
         uses: docker/login-action@v1
         with:
@@ -46,7 +46,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          submodules: true
+          submodules: recursive
       - uses: actions/setup-java@v2
         with:
           distribution: temurin
