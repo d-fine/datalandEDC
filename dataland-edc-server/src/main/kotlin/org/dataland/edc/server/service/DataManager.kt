@@ -25,12 +25,12 @@ class DataManager(
 ) {
 
     // TODO should be in config
-    private val trusteeURL = "http://20.31.200.61:80/api"
+    private val trusteeURL = //"http://20.31.200.61:80/api"
     private val trusteeIdsURL = "http://20.31.200.61:80/api"
 
     // Question: Do we want to route all traffic through the tunnel, even in preview?
-    private val datalandEdcServerUrl = "http://" + context.getSetting("tunnel.uri", "default") + ":9191"
-    private val datalandEdcServerIdsURL = "http://" + context.getSetting("tunnel.uri", "default") + ":9292"
+    private val datalandEdcServerUrl = "http://" + context.getSetting("edc.server.uri", "default") + ":9191"
+    private val datalandEdcServerIdsURL = "http://" + context.getSetting("edc.server.uri", "default") + ":9292"
 
     // TODO should be in config
     private val testCredentials = "password"
