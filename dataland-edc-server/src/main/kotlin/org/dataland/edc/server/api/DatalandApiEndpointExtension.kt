@@ -19,8 +19,6 @@
  */
 package org.dataland.edc.server.api
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition
-import io.swagger.v3.oas.annotations.info.Info
 import org.dataland.edc.server.controller.DatalandController
 import org.dataland.edc.server.service.DataManager
 import org.eclipse.dataspaceconnector.dataloading.AssetLoader
@@ -34,7 +32,6 @@ import org.eclipse.dataspaceconnector.spi.system.ServiceExtension
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
 import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessManager
 
-@OpenAPIDefinition(info = Info(title = "Dataland EDC OpenAPI Spec", version = "1.0.0-SNAPSHOT"))
 /**
  * Extends the EDC with the functionality required for Dataland
  */
