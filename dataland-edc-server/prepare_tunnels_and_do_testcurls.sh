@@ -7,7 +7,7 @@ function stopEDCServer() {
   kill "$edc_server_pid"
 }
 
-dataland_tunnel_public_ip=$TUNNEL_PUBLIC_IP
+dataland_tunnel_uri=$TUNNEL_URI
 dataland_tunnel_startup_link=$TUNNEL_STARTUP_LINK
 
 config_web_http_port=9191
@@ -20,7 +20,7 @@ dataland_edc_server_web_http_ids_port=9292
 dataland_edc_server_web_http_data_port=9393
 
 echo "Check connection to tunnel server."
-if ! ssh ubuntu@"$dataland_tunnel_public_ip" "echo Successfully connected!"; then
+if ! ssh ubuntu@"$dataland_tunnel_uri" "echo Successfully connected!"; then
   echo "Unable to connect to tunnel server. Trying to start server."
   curl "$dataland_tunnel_startup_link"
   sleep 60
