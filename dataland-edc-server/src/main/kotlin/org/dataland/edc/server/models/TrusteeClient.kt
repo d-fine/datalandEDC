@@ -57,6 +57,10 @@ class TrusteeClient (
             }
     }
 
+    /**
+     * registers an asset by sending an REST request to the EuroDaT broker
+     * returns the response of the Broker as JsonNode
+     */
     fun registerAsset(providerRequest: ProviderRequest): JsonNode {
         val providerRequestString = toJsonMapper.writeValueAsString(providerRequest)
         return post(REGISTER_ASSET_PAHT, providerRequestString)
