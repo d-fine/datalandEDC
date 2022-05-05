@@ -9,7 +9,6 @@ import org.eclipse.dataspaceconnector.policy.model.Permission
 import org.eclipse.dataspaceconnector.policy.model.Policy
 import org.eclipse.dataspaceconnector.spi.asset.AssetSelectorExpression
 import org.eclipse.dataspaceconnector.spi.contract.negotiation.ConsumerContractNegotiationManager
-import org.eclipse.dataspaceconnector.spi.contract.negotiation.response.NegotiationResult
 import org.eclipse.dataspaceconnector.spi.contract.negotiation.store.ContractNegotiationStore
 import org.eclipse.dataspaceconnector.spi.contract.offer.store.ContractDefinitionStore
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
@@ -27,12 +26,12 @@ import java.net.URI
 
 class DataManager(
     private val assetLoader: AssetLoader,
-    private val contractDefinitionStore: ContractDefinitionStore,
+    contractDefinitionStore: ContractDefinitionStore,
     private val transferProcessManager: TransferProcessManager,
     private val contractNegotiationStore: ContractNegotiationStore,
     private val consumerContractNegotiationManager: ConsumerContractNegotiationManager,
-    private val context: ServiceExtensionContext
-    ) {
+    context: ServiceExtensionContext
+) {
 
     private val trusteeURL = context.getSetting("trustee.uri", "default")
     private val trusteeIdsURL = context.getSetting("trustee.ids.uri", "default")
@@ -93,7 +92,6 @@ class DataManager(
 
     private fun registerAsset(data: String): Asset {
         val providerAssetId = generateProviderAssetId()
-        // TODO check if we can use EDC internal components for storing data in memory
         providedAssets[providerAssetId] = data
 
         val asset = Asset.Builder.newInstance().id(dummyProviderAssetId)
@@ -106,6 +104,10 @@ class DataManager(
         return asset
     }
 
+    /**
+     * Methode to store data as an asset in the trustee
+     * @param data the data to be stored in the trustee
+     */
     fun provideAssetToTrustee(data: String): String {
         val asset = registerAsset(data)
         val providerRequestString = jsonMapper.writeValueAsString(buildProviderRequest(asset))
@@ -115,8 +117,12 @@ class DataManager(
         return "$trusteeAssetId:$contractDefinitionId"
     }
 
-    fun getProvidedAsset(assetId: String): String {
-        return providedAssets[assetId] ?: "No data with assetId $assetId found"
+    /**
+     * Methode to make data available for pickup from trustee
+     * @param providerAssetId ID given to the asset on Dataland EDC side
+     */
+    fun getProvidedAsset(providerAssetId: String): String {
+        return providedAssets.remove(providerAssetId) ?: "No data with assetId $providerAssetId found."
     }
 
     private fun retrieveAssetFromTrustee(assetId: String, contractDefinitionId: String): String {
@@ -175,8 +181,7 @@ class DataManager(
             .type(ContractOfferRequest.Type.INITIAL)
             .build()
 
-        val negotiationResult: NegotiationResult = consumerContractNegotiationManager.initiate(contractOfferRequest)
-        return negotiationResult.content.id
+        return consumerContractNegotiationManager.initiate(contractOfferRequest).content.id
     }
 
     private fun getReceivedAsset(assetId: String): String {
