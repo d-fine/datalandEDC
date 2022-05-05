@@ -24,12 +24,14 @@ import org.eurodat.broker.model.ProviderRequest
 import java.net.URI
 import java.time.Duration
 
-private const val TIMEOUT_IN_SECONDS: Long = 60
-
-private const val POLL_INTERVAL_IN_MILIS: Long = 100
-
 /**
- * A DataManager takes care of storing data at EuroDat and receiving it back
+ * Entity orchestrating the required steps for trustee data exchange
+ * @param assetLoader holds all registered assets of the Dataland EDC
+ * @param contractDefinitionStore holds all available contracts of the Dataland EDC
+ * @param transferProcessManager manages the transfer process
+ * @param contractNegotiationStore holds the contract negotiations of the Dataland EDC
+ * @param consumerContractNegotiationManager manages contract negotiations
+ * @param context the context containing constants and the monitor for logging
  */
 class DataManager(
     private val assetLoader: AssetLoader,
@@ -39,8 +41,10 @@ class DataManager(
     private val consumerContractNegotiationManager: ConsumerContractNegotiationManager,
     context: ServiceExtensionContext
 ) {
-    private val timeout = Duration.ofSeconds(TIMEOUT_IN_SECONDS)
-    private val pollInterval = Duration.ofMillis(POLL_INTERVAL_IN_MILIS)
+    companion object {
+        private val timeout = Duration.ofSeconds(60)
+        private val pollInterval = Duration.ofMillis(100)
+    }
 
     private val trusteeURL = context.getSetting("trustee.uri", "default")
     private val trusteeIdsURL = context.getSetting("trustee.ids.uri", "default")
@@ -215,13 +219,10 @@ class DataManager(
         if (splitDataId.size != 2) throw IllegalArgumentException("The data ID $dataId has an invalid format.")
         val assetId = splitDataId[0]
 
-        return if (assetId in receivedAssets.keys) {
+        return if (receivedAssets.containsKey(assetId)) {
             receivedAssets[assetId]!!
         } else {
-            retrieveAssetFromTrustee(
-                assetId = assetId,
-                contractDefinitionId = splitDataId[1]
-            )
+            retrieveAssetFromTrustee(assetId = assetId, contractDefinitionId = splitDataId[1])
         }
     }
 }
