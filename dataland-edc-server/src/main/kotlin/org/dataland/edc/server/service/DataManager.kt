@@ -27,8 +27,6 @@ import java.net.URI
 import java.time.Duration
 
 class DataManager(
-    private val timeout: Duration = Duration.ofSeconds(60),
-    private val pollInterval: Duration = Duration.ofMillis(100),
     private val assetLoader: AssetLoader,
     contractDefinitionStore: ContractDefinitionStore,
     private val transferProcessManager: TransferProcessManager,
@@ -36,6 +34,8 @@ class DataManager(
     private val consumerContractNegotiationManager: ConsumerContractNegotiationManager,
     context: ServiceExtensionContext
 ) {
+    private val timeout = Duration.ofSeconds(60)
+    private val pollInterval = Duration.ofMillis(100)
 
     private val trusteeURL = context.getSetting("trustee.uri", "default")
     private val trusteeIdsURL = context.getSetting("trustee.ids.uri", "default")
