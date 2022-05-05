@@ -25,10 +25,10 @@ import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataRequest
 import org.eurodat.broker.model.ProviderRequest
 import java.net.URI
 import java.time.Duration
-import java.util.concurrent.TimeUnit
 
 class DataManager(
     private val timeout: Duration = Duration.ofSeconds(60),
+    private val pollInterval: Duration = Duration.ofMillis(100),
     private val assetLoader: AssetLoader,
     contractDefinitionStore: ContractDefinitionStore,
     private val transferProcessManager: TransferProcessManager,
@@ -158,7 +158,7 @@ class DataManager(
         val negotiation: ContractNegotiation = contractNegotiationStore.find(negotiationId)!!
         await()
             .atMost(timeout)
-            .pollInterval(100, TimeUnit.MILLISECONDS)
+            .pollInterval(pollInterval)
             .until {
                 ContractNegotiationStates.from(negotiation.state) == ContractNegotiationStates.CONFIRMED
             }
@@ -190,7 +190,7 @@ class DataManager(
     private fun getReceivedAsset(assetId: String): String {
         await()
             .atMost(timeout)
-            .pollInterval(100, TimeUnit.MILLISECONDS)
+            .pollInterval(pollInterval)
             .until {
                 receivedAssets.containsKey(assetId)
             }
