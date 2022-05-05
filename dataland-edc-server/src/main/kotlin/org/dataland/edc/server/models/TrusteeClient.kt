@@ -9,14 +9,20 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.internal.EMPTY_REQUEST
+import org.eurodat.broker.model.ProviderRequest
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-class DALAHttpClient(
+private const val registerAssetPath = "/asset/register"
+private const val httpTimeOut: Long = 30
+
+/**
+ * An HTTP client to communicate with the EuroDaT Broker
+ */
+class TrusteeClient (
     private val baseURL: String,
     credentials: String? = null
 ) {
-    private val httpTimeOut: Long = 30
     private val client: OkHttpClient =
         OkHttpClient.Builder()
             .writeTimeout(httpTimeOut, TimeUnit.SECONDS)
@@ -27,7 +33,7 @@ class DALAHttpClient(
 
     private val toJsonMapper = ObjectMapper()
 
-    fun post(endpoint: String, body: String? = null): JsonNode {
+    private fun post(endpoint: String, body: String? = null): JsonNode {
         val request = Request.Builder().post(
             body?.toRequestBody("application/json".toMediaType()) ?: EMPTY_REQUEST
         )
@@ -49,6 +55,11 @@ class DALAHttpClient(
                 )
                 return jsonBody
             }
+    }
+
+    fun registerAsset(providerRequest: ProviderRequest): JsonNode {
+        val providerRequestString = toJsonMapper.writeValueAsString(providerRequest)
+        return post(registerAssetPath, providerRequestString)
     }
 
 }

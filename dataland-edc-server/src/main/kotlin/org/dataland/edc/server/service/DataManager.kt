@@ -2,7 +2,7 @@ package org.dataland.edc.server.service
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.awaitility.Awaitility.await
-import org.dataland.edc.server.models.DALAHttpClient
+import org.dataland.edc.server.models.TrusteeClient
 import org.eclipse.dataspaceconnector.dataloading.AssetLoader
 import org.eclipse.dataspaceconnector.policy.model.Action
 import org.eclipse.dataspaceconnector.policy.model.Permission
@@ -44,9 +44,7 @@ class DataManager(
 
     private val testCredentials = context.getSetting("trustee.credentials", "default")
 
-    private val trusteeClient = DALAHttpClient(trusteeURL,  testCredentials    )
-
-    private val jsonMapper = jacksonObjectMapper()
+    private val trusteeClient = TrusteeClient(trusteeURL,  testCredentials    )
 
     private val receivedAssets: MutableMap<String, String> = mutableMapOf()
     private val providedAssets: MutableMap<String, String> = mutableMapOf()
@@ -111,8 +109,7 @@ class DataManager(
      */
     fun provideAssetToTrustee(data: String): String {
         val asset = registerAsset(data)
-        val providerRequestString = jsonMapper.writeValueAsString(buildProviderRequest(asset))
-        val trusteeResponse = trusteeClient.post("/asset/register", providerRequestString)
+        val trusteeResponse = trusteeClient.registerAsset(buildProviderRequest(asset))
         val trusteeAssetId = trusteeResponse["asset"]["properties"]["asset:prop:id"].asText()
         val contractDefinitionId = trusteeResponse["contractDefinition"]["id"].asText()
         return "$trusteeAssetId:$contractDefinitionId"

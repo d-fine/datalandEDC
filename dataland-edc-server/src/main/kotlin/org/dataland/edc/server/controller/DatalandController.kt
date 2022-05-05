@@ -7,6 +7,9 @@ import org.dataland.edc.server.api.DatalandEDCApi
 import org.dataland.edc.server.service.DataManager
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
 
+/**
+ * The controller that implements the functionalities defined in the DatalandEDCApi
+ */
 class DatalandController(
     private val dataManager: DataManager,
     private val context: ServiceExtensionContext
