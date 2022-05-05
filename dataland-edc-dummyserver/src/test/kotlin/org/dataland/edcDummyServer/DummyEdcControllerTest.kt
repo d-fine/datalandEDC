@@ -49,7 +49,7 @@ class DummyEdcControllerTest(
 
         val result: Map<String, String> = objectMapper.readValue(
             request.response.contentAsString,
-            object: TypeReference<Map<String, String>>() {}
+            object : TypeReference<Map<String, String>>() {}
         )
 
         val dataId = result.get("dataId")!!
