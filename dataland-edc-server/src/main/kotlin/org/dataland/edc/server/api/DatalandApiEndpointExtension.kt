@@ -19,7 +19,7 @@
  */
 package org.dataland.edc.server.api
 
-import org.dataland.edc.server.controller.DatalandController
+import org.dataland.edc.server.controller.DatalandInternalEdcController
 import org.dataland.edc.server.service.DataManager
 import org.eclipse.dataspaceconnector.dataloading.AssetLoader
 import org.eclipse.dataspaceconnector.spi.WebService
@@ -69,6 +69,6 @@ class DatalandApiEndpointExtension : ServiceExtension {
             consumerContractNegotiationManager!!,
             context
         )
-        webService!!.registerResource(DatalandController(dataManager, context))
+        webService!!.registerResource(DatalandInternalEdcController(dataManager, context))
     }
 }

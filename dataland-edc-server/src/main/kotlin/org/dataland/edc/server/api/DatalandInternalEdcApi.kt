@@ -22,16 +22,15 @@ import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
-import jakarta.ws.rs.core.Response
 
 @OpenAPIDefinition(info = Info(title = "Dataland EDC OpenAPI Spec", version = "1.0.0-SNAPSHOT"))
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Path("/")
+@Path("/dataland")
 /**
- * Provides the REST Endpoints of the Dataland EDC service
+ * Provides the REST Endpoints of the Dataland EDC service towards the internal Dataland Backend
  */
-interface DatalandEDCApi {
+interface DatalandInternalEdcApi {
     @GET
     @Path("health")
     /**
@@ -40,38 +39,19 @@ interface DatalandEDCApi {
     fun checkHealth(): String
 
     @POST
-    @Path("dataland/data")
+    @Path("/data")
     /**
      * Endpoint to trigger the upload of the delivered data to the trustee
      * @param data in a string format
      */
     fun insertData(data: String): String
 
-    @Produces(MediaType.APPLICATION_JSON)
     @GET
-    @Path("dataland/provideAsset/{providerAssetId}")
-    /**
-     * Endpoint returning the data associated to the provided ID, data are deleted on Dataland EDC after pick-up
-     * @param providerAssetId ID used on Dataland EDC side to identify the data
-     */
-    fun provideAsset(@PathParam("providerAssetId") providerAssetId: String): String
-
-    @GET
-    @Path("dataland/data/{dataId}")
+    @Path("/data/{dataId}")
     /**
      * Endpoint for the Dataland backend to retrieve data from the trustee
      * @param dataId identifier containing the required information to retrieve data from the trustee
      */
     fun selectDataById(@PathParam("dataId") dataId: String): String
 
-    @Consumes(MediaType.APPLICATION_OCTET_STREAM)
-    @Produces(MediaType.APPLICATION_JSON)
-    @POST
-    @Path("dataland/receiveAsset/{assetId}")
-    /**
-     * Endpoint to receive data delivered by the trustee
-     * @param assetId the identifier for the asset used on trustee side
-     * @param data the data coming from the trustee in a byte array format
-     */
-    fun storeReceivedData(@PathParam("assetId") assetId: String, data: ByteArray): Response
 }

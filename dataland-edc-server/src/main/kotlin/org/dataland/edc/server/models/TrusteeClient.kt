@@ -19,7 +19,7 @@ private const val HTTP_TIMEOUT: Long = 30
 /**
  * An HTTP client to communicate with the EuroDaT Broker
  */
-class TrusteeClient (
+class TrusteeClient(
     private val baseURL: String,
     private val credentials: String
 ) {
@@ -40,20 +40,20 @@ class TrusteeClient (
             .url((baseURL + endpoint).toHttpUrl().newBuilder().build())
         request.addHeader("X-Api-Key", credentials)
         client.newCall(request.build()).execute().use { response ->
-                if (!response.isSuccessful) throw IOException("Unexpected code $response")
-                val responseBody = response.body!!.string()
-                val jsonBody = try {
-                    toJsonMapper.readTree(responseBody)
-                } catch (e: JsonParseException) {
-                    toJsonMapper.readTree("""{"content": "$responseBody"}""")
-                }
-                println(
-                    """Sent '${response.request.method}' request to URL : ${response.request.url}
+            if (!response.isSuccessful) throw IOException("Unexpected code $response")
+            val responseBody = response.body!!.string()
+            val jsonBody = try {
+                toJsonMapper.readTree(responseBody)
+            } catch (e: JsonParseException) {
+                toJsonMapper.readTree("""{"content": "$responseBody"}""")
+            }
+            println(
+                """Sent '${response.request.method}' request to URL : ${response.request.url}
                            Response Code : ${response.code}
                            Response Body : $jsonBody"""
-                )
-                return jsonBody
-            }
+            )
+            return jsonBody
+        }
     }
 
     /**
@@ -64,5 +64,4 @@ class TrusteeClient (
         val providerRequestString = toJsonMapper.writeValueAsString(providerRequest)
         return post(REGISTER_ASSET_PAHT, providerRequestString)
     }
-
 }
