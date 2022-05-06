@@ -39,6 +39,7 @@ curl "$dataland_tunnel_startup_link"
 
 echo "Starting Dataland EDC server"
 ./../gradlew :dataland-edc-server:run >test.log 2>test.err &
+edc_server_pid=$!
 
 is_infrastructure_up () {
   health_response=$(curl -s -f -X GET "http://localhost:${dataland_edc_server_web_http_port}/api/dataland/health" -H "accept: application/json")
@@ -92,3 +93,6 @@ echo "Retrieved data is: $get_response"
 runtime=$(($(date +%s) - start_time))
 
 echo "Test successfully run. Up- and download took $runtime seconds."
+
+echo "Stopping Dataland EDC Server."
+kill -15 "$edc_server_pid"

@@ -46,7 +46,7 @@ ssh -R \*:"$dataland_edc_server_web_http_ids_port":$HOSTNAME:"$config_web_http_i
 ssh -R \*:"$dataland_edc_server_web_http_data_port":$HOSTNAME:"$config_web_http_data_port" -N -f ubuntu@"$dataland_tunnel_uri"
 
 echo "Starting Dataland EDC server"
-./gradlew :dataland-edc-server:run >test.log 2>test.err &
+./../gradlew :dataland-edc-server:run >test.log 2>test.err &
 edc_server_pid=$!
 
 is_infrastructure_up () {
