@@ -15,7 +15,7 @@ config_web_http_ids_port=9292
 config_web_http_data_port=9393
 
 dataland_edc_server_uri=$EDC_SERVER_URI
-dataland_edc_server_web_http_port=9191
+export dataland_edc_server_web_http_port=9191
 dataland_edc_server_web_http_ids_port=9292
 dataland_edc_server_web_http_data_port=9393
 
@@ -42,12 +42,23 @@ echo "Starting Dataland EDC server"
 .././gradlew :dataland-edc-server:run >test.log 2>test.err &
 edc_server_pid=$!
 
-sleep 20
+sleep 10
 echo "Done waiting. Continue with test."
 
-echo "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/health"
+is_infrastructure_up () {
+  health_response=$(curl -X GET "http://localhost:${dataland_edc_server_web_http_port}/api/dataland/health" -H "accept: application/json")
+  if [[ ! $health_response =~ "I am alive!" ]]; then
+    echo "Response was unexpected: $health_response"
+    return 1
+  fi
+}
 
-echo "Checking health endpoint"
+echo "Checking health endpoint of dataland edc server locally"
+export -f is_infrastructure_up
+timeout 240 bash -c "while ! is_infrastructure_up; do echo 'dataland edc server not yet there - retrying in 5s'; sleep 5; done; echo 'dataland edc server up!'"
+
+
+echo "Checking health endpoint via internet"
 health_response=$(curl -X GET "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/health" -H "accept: application/json")
 if [[ ! $health_response =~ "I am alive!" ]]; then
   echo "Response was unexpected: $health_response"

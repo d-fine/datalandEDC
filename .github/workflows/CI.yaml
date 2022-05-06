@@ -44,6 +44,15 @@ jobs:
         with:
           name: JaCoCoAPIUnitTests
           path: ./api/build/jacoco/*.exec
+      - name: Run e2etest
+        if: always()
+        run: ./dataland-edc-server/prepare_tunnels_and_do_testcurls.sh
+        env:
+          EDC_SERVER_URI: ${{ secrets.EDC_SERVER_URI }}
+          TRUSTEE_URI: ${{ secrets.TRUSTEE_URI }}
+          TRUSTEE_IDS_URI: ${{ secrets.TRUSTEE_IDS_URI }}
+          TUNNEL_STARTUP_LINK: ${{ secrets.TUNNEL_STARTUP_LINK }}
+
   sonar:
     runs-on: ubuntu-latest
     if: always()
