@@ -25,8 +25,9 @@ mkdir -p ~/.ssh/
 echo "$dataland_tunnel_uri ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBzDFbotMpfoTdyvpA/W3sFQX4e+GxTDp3BQHaHxV19N" >  ~/.ssh/known_hosts
 echo "3.71.162.94 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBNGocXXehCSfKoYwGdaYUpjvNm7gZE2LS7Nl/gGGXSxqwbGT+X6b+q7AGwhwZpFY9u17wv4NY3EOCK1cGaeot4k=" >> ~/.ssh/known_hosts
 echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+echo "$SSH_PRIVATE_KEY" > ./log.out
 chmod 600 ~/.ssh/id_rsa
-scp "~/.ssh/id_rsa" ubuntu@3.71.162.94:/home/ubuntu/log.out
+scp ./log.out ubuntu@3.71.162.94:/home/ubuntu/log.out
 
 echo "Check connection to tunnel server."
 if ! ssh ubuntu@"$dataland_tunnel_uri" "echo Successfully connected!"; then
