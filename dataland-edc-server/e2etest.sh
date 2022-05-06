@@ -47,6 +47,7 @@ is_infrastructure_up () {
   if [[ ! $health_response =~ "I am alive!" ]]; then
     return 1
   fi
+  echo "Dataland edc server is locally reachable. Now trying to reach tunnel server."
   if ! ssh ubuntu@"$dataland_tunnel_uri" "echo Connected to tunnel server"; then
     return 1
   fi
