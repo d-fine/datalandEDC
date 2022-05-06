@@ -13,10 +13,10 @@ class DummyController : DefaultApi {
     val dataStore = InMemoryDataStore()
 
     override fun selectDataById(dataId: String): ResponseEntity<Map <String, String>> {
-        return ResponseEntity.ok(mapOf("dataId" to dataStore.selectDataSet(dataId)))
+        return ResponseEntity.ok(mapOf("data" to dataStore.selectDataSet(dataId)))
     }
 
     override fun insertData(body: String?): ResponseEntity<Map<String, String>> {
-        return ResponseEntity.ok(mapOf("data" to dataStore.insertDataSet(body ?: "")))
+        return ResponseEntity.ok(mapOf("dataId" to dataStore.insertDataSet(body ?: "")))
     }
 }
