@@ -14,7 +14,6 @@ import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
 import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessManager
 import org.eclipse.dataspaceconnector.spi.types.domain.DataAddress
 import org.eclipse.dataspaceconnector.spi.types.domain.asset.Asset
-import org.eclipse.dataspaceconnector.spi.types.domain.contract.negotiation.ContractNegotiation
 import org.eclipse.dataspaceconnector.spi.types.domain.contract.negotiation.ContractNegotiationStates
 import org.eclipse.dataspaceconnector.spi.types.domain.contract.negotiation.ContractOfferRequest
 import org.eclipse.dataspaceconnector.spi.types.domain.contract.offer.ContractDefinition
@@ -170,8 +169,7 @@ class DataManager(
                 ContractNegotiationStates.from(contractNegotiationStore.find(negotiationId)!!.state) ==
                     ContractNegotiationStates.CONFIRMED
             }
-        val negotiation: ContractNegotiation = contractNegotiationStore.find(negotiationId)!!
-        return negotiation.contractAgreement.id
+        return contractNegotiationStore.find(negotiationId)!!.contractAgreement.id
     }
 
     private fun initiateNegotiations(assetId: String, contractDefinitionId: String): String {

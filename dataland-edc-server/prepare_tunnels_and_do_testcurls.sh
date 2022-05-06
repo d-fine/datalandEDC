@@ -65,6 +65,7 @@ if [[ $response =~ $regex ]]; then
   dataId=${BASH_REMATCH[1]}
 else
   echo "Unable to extract data ID from response: $response"
+  exit 1
 fi
 echo "Received response from post request with data ID: $dataId"
 
