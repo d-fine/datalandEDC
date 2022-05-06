@@ -78,8 +78,6 @@ if [[ ! $health_response =~ "I am alive!" ]]; then
   exit 1
 fi
 
-exit 0
-
 test_data="Test Data from: "$(date "+%d.%m.%Y %H:%M:%S")
 
 start_time=$(date +%s)
