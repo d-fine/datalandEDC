@@ -41,9 +41,8 @@ echo "Starting Dataland EDC server"
 ./../gradlew :dataland-edc-server:run >test.log 2>test.err &
 
 is_infrastructure_up () {
-  health_response=$(curl -f -X GET "http://localhost:${dataland_edc_server_web_http_port}/api/dataland/health" -H "accept: application/json")
+  health_response=$(curl -s -f -X GET "http://localhost:${dataland_edc_server_web_http_port}/api/dataland/health" -H "accept: application/json")
   if [[ ! $health_response =~ "I am alive!" ]]; then
-    echo "Response was unexpected: $health_response"
     return 1
   fi
   if ! ssh ubuntu@"$dataland_tunnel_uri" "echo Connected to tunnel server"; then
