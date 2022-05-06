@@ -52,5 +52,5 @@ interface DatalandInternalEdcApi {
      * Endpoint for the Dataland backend to retrieve data from the trustee
      * @param dataId identifier containing the required information to retrieve data from the trustee
      */
-    fun selectDataById(@PathParam("dataId") dataId: String): Map <String, String>
+    fun selectDataById(@PathParam("dataId") dataId: String): String
 }

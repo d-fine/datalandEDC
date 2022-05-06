@@ -24,8 +24,8 @@ class DatalandInternalEdcController(
         return mapOf("dataId" to dataManager.provideAssetToTrustee(data))
     }
 
-    override fun selectDataById(dataId: String): Map<String, String> {
+    override fun selectDataById(dataId: String): String {
         context.monitor.info("Asset with data ID $dataId is requested.")
-        return mapOf("data" to dataManager.getDataById(dataId))
+        return dataManager.getDataById(dataId)
     }
 }
