@@ -19,12 +19,12 @@ export dataland_edc_server_web_http_port=9191
 dataland_edc_server_web_http_ids_port=9292
 dataland_edc_server_web_http_data_port=9393
 
-
-echo "Enable runner to connect to ssh tunnel server."
-mkdir -p ~/.ssh/
-echo "$dataland_tunnel_uri ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBzDFbotMpfoTdyvpA/W3sFQX4e+GxTDp3BQHaHxV19N" >  ~/.ssh/known_hosts
-echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-chmod 600 ~/.ssh/id_rsa
+echo "Checking if EuroDaT is available."
+if ! curl -f -X 'GET' "${TRUSTEE_URI}/ids/description" -H 'accept: application/json' >/dev/null 2>&1; then
+ echo "EuroDaT is not available."
+ exit 1
+fi
+echo "EuroDat is available."
 
 echo "Check connection to tunnel server."
 if ! ssh ubuntu@"$dataland_tunnel_uri" "echo Successfully connected!"; then
@@ -41,16 +41,13 @@ do
 done
 
 echo "Open all three SSH tunnels from the Dataland-Tunnel-Server to your host system"
-ssh -R \*:"$dataland_edc_server_web_http_port":"$HOSTNAME":"$config_web_http_port" -N -f ubuntu@"$dataland_tunnel_uri"
-ssh -R \*:"$dataland_edc_server_web_http_ids_port":"$HOSTNAME":"$config_web_http_ids_port" -N -f ubuntu@"$dataland_tunnel_uri"
-ssh -R \*:"$dataland_edc_server_web_http_data_port":"$HOSTNAME":"$config_web_http_data_port" -N -f ubuntu@"$dataland_tunnel_uri"
+ssh -R \*:"$dataland_edc_server_web_http_port":$HOSTNAME:"$config_web_http_port" -N -f ubuntu@"$dataland_tunnel_uri"
+ssh -R \*:"$dataland_edc_server_web_http_ids_port":$HOSTNAME:"$config_web_http_ids_port" -N -f ubuntu@"$dataland_tunnel_uri"
+ssh -R \*:"$dataland_edc_server_web_http_data_port":$HOSTNAME:"$config_web_http_data_port" -N -f ubuntu@"$dataland_tunnel_uri"
 
 echo "Starting Dataland EDC server"
-.././gradlew :dataland-edc-server:run >test.log 2>test.err &
+./../gradlew :dataland-edc-server:run >test.log 2>test.err &
 edc_server_pid=$!
-
-sleep 10
-echo "Done waiting. Continue with test."
 
 is_infrastructure_up () {
   health_response=$(curl -X GET "http://localhost:${dataland_edc_server_web_http_port}/api/dataland/health" -H "accept: application/json")
@@ -64,7 +61,6 @@ echo "Checking health endpoint of dataland edc server locally"
 export -f is_infrastructure_up
 timeout 240 bash -c "while ! is_infrastructure_up; do echo 'dataland edc server not yet there - retrying in 5s'; sleep 5; done; echo 'dataland edc server up!'"
 
-
 echo "Checking health endpoint via internet"
 health_response=$(curl -X GET "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/health" -H "accept: application/json")
 if [[ ! $health_response =~ "I am alive!" ]]; then
@@ -73,7 +69,6 @@ if [[ ! $health_response =~ "I am alive!" ]]; then
 fi
 
 test_data="Test Data from: "$(date "+%d.%m.%Y %H:%M:%S")
-
 start_time=$(date +%s)
 
 echo "Posting test data: $test_data."
