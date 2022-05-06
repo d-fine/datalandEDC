@@ -52,6 +52,7 @@ jobs:
           TRUSTEE_URI: ${{ secrets.TRUSTEE_URI }}
           TRUSTEE_IDS_URI: ${{ secrets.TRUSTEE_IDS_URI }}
           TUNNEL_STARTUP_LINK: ${{ secrets.TUNNEL_STARTUP_LINK }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
   sonar:
     runs-on: ubuntu-latest

@@ -15,7 +15,7 @@ set -eu
 #config_web_http_data_port=9393
 
 #dataland_edc_server_uri=$EDC_SERVER_URI
-#dataland_edc_server_web_http_port=9191
+export dataland_edc_server_web_http_port=9191
 #dataland_edc_server_web_http_ids_port=9292
 #dataland_edc_server_web_http_data_port=9393
 
@@ -48,16 +48,24 @@ set -eu
 #echo "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/health"
 
 echo "Checking if EuroDaT is available."
-TODO test if EuroDaT is there
-
-
-
-echo "Checking health endpoint"
-health_response=$(curl -X GET "http://localhost:${dataland_edc_server_web_http_port}/api/dataland/health" -H "accept: application/json")
-if [[ ! $health_response =~ "I am alive!" ]]; then
-  echo "Response was unexpected: $health_response"
-  exit 1
+if ! curl -f -X 'GET' "${TRUSTEE_URI}/ids/description" -H 'accept: application/json' >/dev/null 2>&1; then
+ echo "EuroDaT is not available."
+ exit 1
 fi
+echo "EuroDat is available."
+
+
+is_infrastructure_up () {
+  health_response=$(curl -X GET "http://localhost:${dataland_edc_server_web_http_port}/api/dataland/health" -H "accept: application/json")
+  if [[ ! $health_response =~ "I am alive!" ]]; then
+    echo "Response was unexpected: $health_response"
+    return 1
+  fi
+}
+
+echo "Checking health endpoint of dataland edc server"
+export -f is_infrastructure_up
+timeout 240 bash -c "while ! is_infrastructure_up; do echo 'dataland edc server not yet there - retrying in 5s'; sleep 5; done; echo 'dataland edc server up!'"
 
 test_data="Test Data from: "$(date "+%d.%m.%Y %H:%M:%S")
 
@@ -70,6 +78,7 @@ if [[ $response =~ $regex ]]; then
   dataId=${BASH_REMATCH[1]}
 else
   echo "Unable to extract data ID from response: $response"
+  exit 1
 fi
 echo "Received response from post request with data ID: $dataId"
 
