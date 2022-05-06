@@ -33,7 +33,7 @@ class DummyEdcControllerTest(
         performWithBasicResultsChecks(
             MockMvcRequestBuilders.get("/dataland/data/0:0")
         ).andExpect(
-            MockMvcResultMatchers.content().string(objectMapper.writeValueAsString(mapOf("dataId" to "")))
+            MockMvcResultMatchers.content().string("")
         )
     }
 
@@ -52,13 +52,13 @@ class DummyEdcControllerTest(
             object : TypeReference<Map<String, String>>() {}
         )
 
-        val dataId = result.get("data")!!
+        val dataId = result.get("dataId")!!
         assertTrue(dataId.contains(":"))
 
         performWithBasicResultsChecks(
             MockMvcRequestBuilders.get("/dataland/data/$dataId")
         ).andExpect(
-            MockMvcResultMatchers.content().string(objectMapper.writeValueAsString(mapOf("dataId" to body)))
+            MockMvcResultMatchers.content().string(body)
         )
     }
 }
