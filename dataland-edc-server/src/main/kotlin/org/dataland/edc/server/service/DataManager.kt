@@ -120,10 +120,10 @@ class DataManager(
      */
     fun provideAssetToTrustee(data: String): String {
         val asset = registerAsset(data)
-        context.monitor.info("Asset succesfully registered with Dataland EDC.")
+        context.monitor.info("Asset successfully registered with Dataland EDC.")
         context.monitor.debug("Provider request is: ${buildProviderRequest(asset)}")
         val trusteeResponse = trusteeClient.registerAsset(buildProviderRequest(asset))
-        context.monitor.info("Asset succesfully registered with Trustee.")
+        context.monitor.info("Asset successfully registered with Trustee.")
         val trusteeAssetId = trusteeResponse["asset"]["properties"]["asset:prop:id"].asText()
         val contractDefinitionId = trusteeResponse["contractDefinition"]["id"].asText()
         return "$trusteeAssetId:$contractDefinitionId"
