@@ -19,6 +19,13 @@ export dataland_edc_server_web_http_port=9191
 dataland_edc_server_web_http_ids_port=9292
 dataland_edc_server_web_http_data_port=9393
 
+
+echo "Enable runner to connect to ssh tunnel server."
+mkdir -p ~/.ssh/
+echo "$dataland_tunnel_uri ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBzDFbotMpfoTdyvpA/W3sFQX4e+GxTDp3BQHaHxV19N" >  ~/.ssh/known_hosts
+echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+chmod 600 ~/.ssh/id_rsa
+
 echo "Check connection to tunnel server."
 if ! ssh ubuntu@"$dataland_tunnel_uri" "echo Successfully connected!"; then
   echo "Unable to connect to tunnel server. Trying to start server."
