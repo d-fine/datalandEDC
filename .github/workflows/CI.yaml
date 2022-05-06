@@ -46,7 +46,7 @@ jobs:
           path: ./api/build/jacoco/*.exec
       - name: Run e2etest
         if: always()
-        run: ./dataland-edc-server/prepare_tunnels_and_do_testcurls.sh
+        run: ./dataland-edc-server/e2etest.sh
         env:
           EDC_SERVER_URI: ${{ secrets.EDC_SERVER_URI }}
           TRUSTEE_URI: ${{ secrets.TRUSTEE_URI }}
