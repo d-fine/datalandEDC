@@ -43,6 +43,7 @@ plugins {
 
 jacoco {
     toolVersion = jacocoVersion
+    applyTo(tasks.run.get())
 }
 
 tasks.test {

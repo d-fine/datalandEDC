@@ -46,7 +46,7 @@ is_infrastructure_up () {
     echo "Response was unexpected: $health_response"
     return 1
   fi
-  if ! ssh ubuntu@"$dataland_tunnel_uri"; then
+  if ! ssh ubuntu@"$dataland_tunnel_uri" "echo Connected to tunnel server"; then
     return 1
   fi
 }
