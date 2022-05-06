@@ -33,20 +33,20 @@ if ! ssh ubuntu@"$dataland_tunnel_uri" "echo Successfully connected!"; then
   sleep 60
 fi
 
-echo "Kill all locally running SSH tunnels"
-for pid in $(ps | grep /usr/bin/ssh | awk '{ print $1 }')
-do
-  echo "Killing PID: $pid"
-  kill "$pid"
-done
+#echo "Kill all locally running SSH tunnels"
+#for pid in $(ps | grep /usr/bin/ssh | awk '{ print $1 }')
+#do
+#  echo "Killing PID: $pid"
+#  kill "$pid"
+#done
 
 echo "Open all three SSH tunnels from the Dataland-Tunnel-Server to your host system"
-ssh -R \*:"$dataland_edc_server_web_http_port":"$HOSTNAME":"$config_web_http_port" -N -f ubuntu@"$dataland_tunnel_uri"
-ssh -R \*:"$dataland_edc_server_web_http_ids_port":"$HOSTNAME":"$config_web_http_ids_port" -N -f ubuntu@"$dataland_tunnel_uri"
-ssh -R \*:"$dataland_edc_server_web_http_data_port":"$HOSTNAME":"$config_web_http_data_port" -N -f ubuntu@"$dataland_tunnel_uri"
+ssh -R \*:"$dataland_edc_server_web_http_port":localhost:"$config_web_http_port" -N -f ubuntu@"$dataland_tunnel_uri"
+ssh -R \*:"$dataland_edc_server_web_http_ids_port":localhost:"$config_web_http_ids_port" -N -f ubuntu@"$dataland_tunnel_uri"
+ssh -R \*:"$dataland_edc_server_web_http_data_port":localhost:"$config_web_http_data_port" -N -f ubuntu@"$dataland_tunnel_uri"
 
 echo "Starting Dataland EDC server"
-.././gradlew :dataland-edc-server:run >test.log 2>test.err &
+./gradlew :dataland-edc-server:run >test.log 2>test.err &
 edc_server_pid=$!
 
 sleep 10
@@ -71,6 +71,8 @@ if [[ ! $health_response =~ "I am alive!" ]]; then
   echo "Response was unexpected: $health_response"
   exit 1
 fi
+
+exit 0
 
 test_data="Test Data from: "$(date "+%d.%m.%Y %H:%M:%S")
 
