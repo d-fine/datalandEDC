@@ -59,9 +59,14 @@ test_data="Test Data from: "$(date "+%d.%m.%Y %H:%M:%S")
 start_time=$(date +%s)
 
 echo "Posting test data: $test_data."
-dataId=$(curl -X POST "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/data" -H "accept: application/json" -H "Content-Type: application/json" -d "$test_data")
-#We have to parse the dataId and save it under dataId to make the next curl run.
-echo "Received response from post request: $dataId"
+response=$(curl -X POST "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/data" -H "accept: application/json" -H "Content-Type: application/json" -d "$test_data")
+regex="\"([a-f0-9\-]+:[a-f0-9\-]+)\""
+if [[ $response =~ $regex ]]; then
+  dataId=${BASH_REMATCH[1]}
+else
+  echo "Unable to extract data ID from response: $response"
+fi
+echo "Received response from post request with data ID: $dataId"
 
 echo "Retrieving test data."
 get_response=$(curl -X GET "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/data/$dataId" -H "accept: application/json")
