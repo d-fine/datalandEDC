@@ -33,6 +33,7 @@ chmod 600 ~/.ssh/id_rsa
 echo "Check connection to tunnel server."
 if ssh ubuntu@"$dataland_tunnel_uri" "sudo shutdown now"; then
    echo "Tunnel server was running and has been stopped."
+   sleep 10
 fi
 echo "Starting tunnel server."
 curl "$dataland_tunnel_startup_link"
