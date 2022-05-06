@@ -53,7 +53,7 @@ TODO test if EuroDaT is there
 
 
 echo "Checking health endpoint"
-health_response=$(curl -X GET "http://localhost/api/dataland/health" -H "accept: application/json")
+health_response=$(curl -X GET "http://localhost:${dataland_edc_server_web_http_port}/api/dataland/health" -H "accept: application/json")
 if [[ ! $health_response =~ "I am alive!" ]]; then
   echo "Response was unexpected: $health_response"
   exit 1
@@ -64,7 +64,7 @@ test_data="Test Data from: "$(date "+%d.%m.%Y %H:%M:%S")
 start_time=$(date +%s)
 
 echo "Posting test data: $test_data."
-response=$(curl -X POST "http://localhost/api/dataland/data" -H "accept: application/json" -H "Content-Type: application/json" -d "$test_data")
+response=$(curl -X POST "http://localhost:${dataland_edc_server_web_http_port}/api/dataland/data" -H "accept: application/json" -H "Content-Type: application/json" -d "$test_data")
 regex="\"([a-f0-9\-]+:[a-f0-9\-]+)\""
 if [[ $response =~ $regex ]]; then
   dataId=${BASH_REMATCH[1]}
@@ -74,7 +74,7 @@ fi
 echo "Received response from post request with data ID: $dataId"
 
 echo "Retrieving test data."
-get_response=$(curl -X GET "http://localhost/api/dataland/data/$dataId" -H "accept: application/json")
+get_response=$(curl -X GET "http://localhost:${dataland_edc_server_web_http_port}/api/dataland/data/$dataId" -H "accept: application/json")
 if [[ ! $get_response =~ $test_data ]]; then
   echo "Response was unexpected: $get_response"
   echo "Expected was substring: $test_data"
