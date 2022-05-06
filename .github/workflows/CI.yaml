@@ -23,27 +23,18 @@ jobs:
           cache: gradle
       - name: Build, check and test project
         run: ./gradlew assemble ktlintCheck detekt test --no-daemon --stacktrace
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Upload Test Reports
         if: always()
         uses: actions/upload-artifact@v2
         with:
           name: TestReport
           path: ./**/build/reports
-      - name: Upload JaCoCo EDC Dummy Server Results
+      - name: Upload JaCoCo Unit Tests Results
         if: always()
         uses: actions/upload-artifact@v2
         with:
-          name: JaCoCoEDCDummyUnitTests
+          name: JaCoCoEDCUnitTests
           path: ./*/build/jacoco/*.exec
-      - name: Upload JaCoCo API Results
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: JaCoCoAPIUnitTests
-          path: ./api/build/jacoco/*.exec
       - name: Run e2etest
         if: always()
         run: ./dataland-edc-server/e2etest.sh
@@ -53,6 +44,12 @@ jobs:
           TRUSTEE_IDS_URI: ${{ secrets.TRUSTEE_IDS_URI }}
           TUNNEL_STARTUP_LINK: ${{ secrets.TUNNEL_STARTUP_LINK }}
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Upload JaCoCo E2E Tests Results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: JaCoCoEDCE2ETests
+          path: ./dataland-edc-server/build/jacoco/*.exec
 
   sonar:
     runs-on: ubuntu-latest
@@ -73,17 +70,15 @@ jobs:
         run: ./gradlew assemble --no-daemon --stacktrace
       - uses: actions/download-artifact@v2
         with:
-          name: JaCoCoEDCDummyUnitTests
+          name: JaCoCoEDCUnitTests
       - uses: actions/download-artifact@v2
         with:
-          name: JaCoCoAPIUnitTests
+          name: JaCoCoEDCE2ETests
       - name: Generate jacocoTestReport and run Sonar
         if: always()
         run: |
           ./gradlew jacocoTestReport --no-daemon --stacktrace
-          find . -type f -iname "*.exec";
           ./gradlew sonarqube --no-daemon --stacktrace
-          find . -type f -name jacocoTestReport.xml;
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
