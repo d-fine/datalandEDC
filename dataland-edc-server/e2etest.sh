@@ -47,6 +47,7 @@ export dataland_edc_server_web_http_port=9191
 
 #echo "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/health"
 
+
 echo "Checking if EuroDaT is available."
 if ! curl -f -X 'GET' "${TRUSTEE_URI}/ids/description" -H 'accept: application/json' >/dev/null 2>&1; then
  echo "EuroDaT is not available."
