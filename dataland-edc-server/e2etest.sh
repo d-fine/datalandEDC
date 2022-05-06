@@ -2,16 +2,16 @@
 set -eu
 
 export dataland_tunnel_uri=$EDC_SERVER_URI
-dataland_tunnel_startup_link=$TUNNEL_STARTUP_LINK
 dataland_edc_server_uri=$EDC_SERVER_URI
-
-config_web_http_port=9191
-config_web_http_ids_port=9292
-config_web_http_data_port=9393
+dataland_tunnel_startup_link=$TUNNEL_STARTUP_LINK
 
 export dataland_edc_server_web_http_port=9191
 dataland_edc_server_web_http_ids_port=9292
 dataland_edc_server_web_http_data_port=9393
+
+config_web_http_port=9191
+config_web_http_ids_port=9292
+config_web_http_data_port=9393
 
 workdir=$(dirname "$0")
 echo "Changing to working directory $workdir"
