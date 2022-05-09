@@ -22,6 +22,7 @@ import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataRequest
 import org.eurodat.broker.model.ProviderRequest
 import java.net.URI
 import java.time.Duration
+import java.util.Collections
 import java.util.UUID
 
 private const val PROVIDER_URN_KEY = "urn:connector:provider"
@@ -55,12 +56,10 @@ class DataManager(
     private val datalandEdcServerUrl = "http://" + context.getSetting("edc.server.uri", "default") + ":9191"
     private val datalandEdcServerIdsURL = "http://" + context.getSetting("edc.server.uri", "default") + ":9292"
 
-    private val testCredentials = context.getSetting("trustee.credentials", "password")
+    private val trusteeClient = TrusteeClient(trusteeURL, context.getSetting("trustee.credentials", "password"))
 
-    private val trusteeClient = TrusteeClient(trusteeURL, testCredentials)
-
-    private val receivedAssets: MutableMap<String, String> = mutableMapOf()
-    private val providedAssets: MutableMap<String, String> = mutableMapOf()
+    private val receivedAssets: MutableMap<String, String> = Collections.synchronizedMap(mutableMapOf())
+    private val providedAssets: MutableMap<String, String> = Collections.synchronizedMap(mutableMapOf())
 
     private val dummyProviderAssetId = "test-asset"
     private val dummyPolicyUid = "956e172f-2de1-4501-8881-057a57fd0e60"
@@ -85,10 +84,6 @@ class DataManager(
         contractDefinitionStore.save(dummyContractDefinition)
     }
 
-    private fun generateProviderAssetId(): String {
-        return UUID.randomUUID().toString()
-    }
-
     private fun buildProviderRequest(asset: Asset): ProviderRequest {
         return ProviderRequest(
             "eurodat-connector-test",
@@ -100,7 +95,7 @@ class DataManager(
     }
 
     private fun registerAsset(data: String): Asset {
-        val providerAssetId = generateProviderAssetId()
+        val providerAssetId = UUID.randomUUID().toString()
         providedAssets[providerAssetId] = data
 
         val asset = Asset.Builder.newInstance().id(dummyProviderAssetId)
