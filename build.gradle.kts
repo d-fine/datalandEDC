@@ -85,7 +85,7 @@ sonarqube {
         property("sonar.qualitygate.wait", true)
         property(
             "sonar.coverage.exclusions",
-            "**/test/**, **/trustee-platform/**, **/extensions/**, **/DummyEdc.kt"
+            "**/test/**, **/trustee-platform/**, **/DummyEdc.kt"
         )
         property(
             "sonar.sources",
