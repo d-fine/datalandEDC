@@ -1,5 +1,6 @@
 // main
 val jacocoVersion: String by project
+val connectorVersion: String by project
 
 allprojects {
     repositories {
@@ -21,8 +22,6 @@ allprojects {
         devVersion
     }
 }
-
-val connectorVersion = project.properties["connectorVersion"]
 
 extra["OpenApiSpec"] = "OpenApiSpec.json"
 
