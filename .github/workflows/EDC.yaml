@@ -9,12 +9,6 @@ jobs:
   build-and-publish-edc-server-image:
     runs-on: ubuntu-latest
     steps:
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v3
-        with:
-          images: ghcr.io/d-fine/datalandedc/edcdummyserver
-          tags: type=match,pattern=RELEASE-(.*),group=1
       - uses: actions/checkout@v2
         with:
           submodules: recursive
@@ -34,17 +28,29 @@ jobs:
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v1
+      - name: Get edcdummyserver version for the RELEASE tags without prefix
+        id: metaEdcdummyserver
+        uses: docker/metadata-action@v3
+        with:
+          images: ghcr.io/d-fine/datalandedc/edcdummyserver
+          tags: type=match,pattern=RELEASE-(.*),group=1
       - name: Build the edc dummy server image and push it to GitHub Container Registry
         uses: docker/build-push-action@v2
         with:
           context: ./dataland-edc-dummyserver
-          tags: ${{steps.meta.outputs.tags}}
+          tags: ${{steps.metaEdcdummyserver.outputs.tags}}
           push: true
+      - name: Get edcserver version for the RELEASE tags without prefix
+        id: metaEdcserver
+        uses: docker/metadata-action@v3
+        with:
+          images: ghcr.io/d-fine/datalandedc/edcserver
+          tags: type=match,pattern=RELEASE-(.*),group=1
       - name: Build the edc real server image and push it to GitHub Container Registry
         uses: docker/build-push-action@v2
         with:
           context: ./dataland-edc-server
-          tags: ghcr.io/d-fine/datalandedc/edcserver:latest
+          tags: ${{steps.metaEdcserver.outputs.tags}}
           push: true
 
   publish-edc-clients:
