@@ -1,7 +1,6 @@
 package org.dataland.edcDummyServer
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import org.dataland.edcDummyServer.openApiServer.model.InsertDataResponse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -55,6 +54,7 @@ class DummyEdcControllerTest(
         performWithBasicResultsChecks(
             MockMvcRequestBuilders.get("/dataland/data/$dataId")
         ).andExpect(
-            MockMvcResultMatchers.content().string(body))
+            MockMvcResultMatchers.content().string(body)
+        )
     }
 }
