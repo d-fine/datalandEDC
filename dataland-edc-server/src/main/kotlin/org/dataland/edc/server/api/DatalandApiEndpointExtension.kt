@@ -1,22 +1,3 @@
-/*
- * This content is based on copyrighted work as referenced below.
- *
- * Changes made:
- * - removed unneeded parts
- */
-/*
- *  Copyright (c) 2021 Fraunhofer Institute for Software and Systems Engineering
- *
- *  This program and the accompanying materials are made available under the
- *  terms of the Apache License, Version 2.0 which is available at
- *  https://www.apache.org/licenses/LICENSE-2.0
- *
- *  SPDX-License-Identifier: Apache-2.0
- *
- *  Contributors:
- *       Fraunhofer Institute for Software and Systems Engineering - initial API and implementation
- *
- */
 package org.dataland.edc.server.api
 
 import org.dataland.edc.server.controller.DatalandEurodatController

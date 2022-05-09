@@ -1,9 +1,9 @@
 package org.dataland.edcDummyServer.service
 
-import java.util.Collections
-import java.util.UUID
 import org.dataland.edcDummyServer.interfaces.DataStoreInterface
 import org.springframework.stereotype.Component
+import java.util.Collections
+import java.util.UUID
 
 /**
  * Simple implementation of a data store using in memory storage
