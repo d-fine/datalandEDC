@@ -16,16 +16,16 @@ is_tunnel_server_up () {
 export -f is_tunnel_server_up
 
 export dataland_tunnel_uri=$EDC_SERVER_URI
-export dataland_edc_server_uri=$EDC_SERVER_URI
-export dataland_tunnel_startup_link=$TUNNEL_STARTUP_LINK
+dataland_edc_server_uri=$EDC_SERVER_URI
+dataland_tunnel_startup_link=$TUNNEL_STARTUP_LINK
 
 export dataland_edc_server_web_http_port=9191
-export dataland_edc_server_web_http_ids_port=9292
-export dataland_edc_server_web_http_data_port=9393
+dataland_edc_server_web_http_ids_port=9292
+dataland_edc_server_web_http_data_port=9393
 
-export config_web_http_port=9191
-export config_web_http_ids_port=9292
-export config_web_http_data_port=9393
+config_web_http_port=9191
+config_web_http_ids_port=9292
+config_web_http_data_port=9393
 
 is_eurodat_up () {
   echo "Checking if EuroDaT is available."
@@ -38,8 +38,11 @@ is_eurodat_up () {
 
 start_edc_server () {
   echo "Starting Dataland EDC server."
-  ./../../gradlew :dataland-edc-server:run --stacktrace >edc_server.log 2>&1 &
-  export edc_server_pid=$!
+  current_dir=$(pwd)
+  cd ../../ || exit
+  ./gradlew :dataland-edc-server:run --stacktrace >edc_server.log 2>&1 &
+  edc_server_pid=$!
+  cd "$current_dir" || exit
 }
 
 execute_eurodat_test () {
