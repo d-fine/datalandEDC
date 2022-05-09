@@ -73,7 +73,7 @@ plugins {
 
 ktlint {
     filter {
-        exclude("**/trustee-platform/**, **/dataland-eurodat-dummyserver/**, **/dataland-eurodat-client/**")
+        exclude("**/trustee-platform/**")
     }
 }
 
