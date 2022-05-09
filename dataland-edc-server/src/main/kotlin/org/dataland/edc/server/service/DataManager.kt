@@ -118,7 +118,7 @@ class DataManager(
     }
 
     /**
-     * Methode to store data as an asset in the trustee
+     * Method to store data as an asset in the trustee
      * @param data the data to be stored in the trustee
      */
     fun provideAssetToTrustee(data: String): String {
@@ -134,7 +134,7 @@ class DataManager(
     }
 
     /**
-     * Methode to make data available for pickup from trustee
+     * Method to make data available for pickup from trustee
      * @param providerAssetId ID given to the asset on Dataland EDC side
      */
     fun getProvidedAsset(providerAssetId: String): String {
