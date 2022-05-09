@@ -86,8 +86,7 @@ sonarqube {
         property("sonar.qualitygate.wait", true)
         property(
             "sonar.coverage.exclusions",
-            "**/test/**, **/trustee-platform/**, **/dataland-eurodat-dummyserver/**, " +
-                "**/dataland-eurodat-client/**, **/extensions/**, **/DummyEdc.kt"
+            "**/test/**, **/trustee-platform/**, **/extensions/**, **/DummyEdc.kt"
         )
         property(
             "sonar.sources",
@@ -128,8 +127,6 @@ detekt {
     detektFileTree
         .exclude("**/build/**")
         .exclude("**/trustee-platform/**")
-        .exclude("**/dataland-eurodat-dummyserver/**")
-        .exclude("**/dataland-eurodat-client/**")
         .exclude("**/node_modules/**")
         .exclude(".gradle")
     source = files(detektFileTree)
