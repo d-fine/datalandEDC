@@ -22,7 +22,7 @@ allprojects {
     }
 }
 
-val connectorVersion = "0.0.1"
+val connectorVersion = project.properties["connectorVersion"]
 
 extra["OpenApiSpec"] = "OpenApiSpec.json"
 
