@@ -40,4 +40,4 @@ ssh -R \*:"$dataland_edc_server_web_http_data_port":localhost:"$config_web_http_
 execute_eurodat_test
 
 echo "Stopping Dataland EDC Server."
-kill -15 "$edc_server_pid"
+kill "$edc_server_pid"
