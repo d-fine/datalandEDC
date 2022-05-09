@@ -124,7 +124,6 @@ class DataManager(
     fun provideAssetToTrustee(data: String): String {
         val (asset, providerAssetId) = registerAsset(data)
         context.monitor.info("Asset successfully registered with Dataland EDC.")
-        context.monitor.debug("Provider request is: ${buildProviderRequest(asset)}")
         val trusteeResponse = trusteeClient.registerAsset(buildProviderRequest(asset))
         providedAssets.remove(providerAssetId)
         context.monitor.info("Asset successfully registered with Trustee.")
