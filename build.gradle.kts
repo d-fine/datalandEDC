@@ -73,7 +73,7 @@ plugins {
 
 ktlint {
     filter {
-        exclude("**/trustee-platform/**, **/dataland-eurodat-dummyserver/**, **/dataland-eurodat-client/**")
+        exclude("**/trustee-platform/**")
     }
 }
 
@@ -85,7 +85,7 @@ sonarqube {
         property("sonar.qualitygate.wait", true)
         property(
             "sonar.coverage.exclusions",
-            "**/test/**, **/trustee-platform/**, **/extensions/**, **/DummyEdc.kt"
+            "**/test/**, **/trustee-platform/**, **/DummyEdc.kt"
         )
         property(
             "sonar.sources",

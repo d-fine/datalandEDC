@@ -103,7 +103,7 @@ class DataManager(
         )
     }
 
-    private fun registerAsset(data: String): Asset {
+    private fun registerAssetLocally(data: String): Pair<Asset, String> {
         val providerAssetId = UUID.randomUUID().toString()
         providedAssets[providerAssetId] = data
 
@@ -114,18 +114,18 @@ class DataManager(
             .property("endpoint", "$endpointForAssetPickup/$providerAssetId").build()
 
         assetLoader.accept(asset, dataAddress)
-        return asset
+        return Pair(asset, providerAssetId)
     }
 
     /**
-     * Methode to store data as an asset in the trustee
+     * Method to store data as an asset in the trustee
      * @param data the data to be stored in the trustee
      */
     fun provideAssetToTrustee(data: String): String {
-        val asset = registerAsset(data)
+        val (asset, providerAssetId) = registerAssetLocally(data)
         context.monitor.info("Asset successfully registered with Dataland EDC.")
-        context.monitor.debug("Provider request is: ${buildProviderRequest(asset)}")
         val trusteeResponse = trusteeClient.registerAsset(buildProviderRequest(asset))
+        providedAssets.remove(providerAssetId)
         context.monitor.info("Asset successfully registered with Trustee.")
         val trusteeAssetId = trusteeResponse["asset"]["properties"]["asset:prop:id"].asText()
         val contractDefinitionId = trusteeResponse["contractDefinition"]["id"].asText()
@@ -133,11 +133,11 @@ class DataManager(
     }
 
     /**
-     * Methode to make data available for pickup from trustee
+     * Method to make data available for pickup from trustee
      * @param providerAssetId ID given to the asset on Dataland EDC side
      */
     fun getProvidedAsset(providerAssetId: String): String {
-        return providedAssets.remove(providerAssetId) ?: "No data with assetId $providerAssetId found."
+        return providedAssets[providerAssetId] ?: "No data with assetId $providerAssetId found."
     }
 
     private fun retrieveAssetFromTrustee(assetId: String, contractDefinitionId: String): String {
