@@ -39,7 +39,7 @@ tasks.test {
     dependsOn("generateEdcServer")
 }
 
-java.sourceCompatibility = JavaVersion.VERSION_17
+java.sourceCompatibility = JavaVersion.VERSION_11
 
 val openApiSpecConfig by configurations.creating {
     isCanBeConsumed = false

@@ -16,7 +16,7 @@ val openApiSpecConfig by configurations.creating {
     isCanBeResolved = true
 }
 
-java.sourceCompatibility = JavaVersion.VERSION_17
+java.sourceCompatibility = JavaVersion.VERSION_11
 
 dependencies {
     implementation(libs.springdoc.openapi.ui)
