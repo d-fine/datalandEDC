@@ -1,7 +1,8 @@
 package org.dataland.edcDummyServer
 
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
+import org.dataland.edcDummyServer.openApiServer.model.InsertDataResponse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -39,26 +40,21 @@ class DummyEdcControllerTest(
 
     @Test
     fun `check if the selected data is the same as the inserted data`() {
-        val body = "{\"key\":\"value\"}"
+        val body = objectMapper.writeValueAsString(mapOf("key" to "value"))
+        println(body)
         val request = performWithBasicResultsChecks(
             MockMvcRequestBuilders.post("/dataland/data")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body)
         ).andReturn()
-
-        val result: Map<String, String> = objectMapper.readValue(
-            request.response.contentAsString,
-            object : TypeReference<Map<String, String>>() {}
-        )
-
-        val dataId = result.get("dataId")!!
+        val dataId = objectMapper.readValue(
+            request.response.contentAsString, InsertDataResponse::class.java
+        ).dataId
         assertTrue(dataId.contains(":"))
-
         performWithBasicResultsChecks(
             MockMvcRequestBuilders.get("/dataland/data/$dataId")
         ).andExpect(
-            MockMvcResultMatchers.content().string(body)
-        )
+            MockMvcResultMatchers.content().string(body))
     }
 }

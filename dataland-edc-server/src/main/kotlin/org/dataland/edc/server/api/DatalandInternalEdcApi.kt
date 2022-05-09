@@ -10,7 +10,6 @@ import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
 import org.dataland.edc.server.models.InsertDataResponse
-import org.dataland.edc.server.models.SelectDataByIdResponse
 
 @OpenAPIDefinition(info = Info(title = "Dataland EDC OpenAPI Spec", version = "1.0.0-SNAPSHOT"))
 @Consumes(MediaType.APPLICATION_JSON)
@@ -41,5 +40,5 @@ interface DatalandInternalEdcApi {
      * Endpoint for the Dataland backend to retrieve data from the trustee
      * @param dataId identifier containing the required information to retrieve data from the trustee
      */
-    fun selectDataById(@PathParam("dataId") dataId: String): SelectDataByIdResponse
+    fun selectDataById(@PathParam("dataId") dataId: String): String
 }

@@ -2,7 +2,6 @@ package org.dataland.edc.server.controller
 
 import org.dataland.edc.server.api.DatalandInternalEdcApi
 import org.dataland.edc.server.models.InsertDataResponse
-import org.dataland.edc.server.models.SelectDataByIdResponse
 import org.dataland.edc.server.service.DataManager
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
 
@@ -26,8 +25,8 @@ class DatalandInternalEdcController(
         return InsertDataResponse(dataManager.provideAssetToTrustee(data))
     }
 
-    override fun selectDataById(dataId: String): SelectDataByIdResponse {
+    override fun selectDataById(dataId: String): String {
         context.monitor.info("Asset with data ID $dataId is requested.")
-        return SelectDataByIdResponse(dataManager.getDataById(dataId))
+        return dataManager.getDataById(dataId)
     }
 }
