@@ -1,5 +1,5 @@
 rootProject.name = "connector"
-includeBuild("trustee-platform/services/edc") // TODO
+includeBuild("trustee-platform/services/edc")
 includeBuild("trustee-platform/services/broker")
 include("dataland-edc-client")
 include("dataland-edc-dummyserver")

@@ -127,7 +127,6 @@ detekt {
     detektFileTree
         .exclude("**/build/**")
         .exclude("**/trustee-platform/**")
-        .exclude("**/node_modules/**")
         .exclude(".gradle")
     source = files(detektFileTree)
 }
