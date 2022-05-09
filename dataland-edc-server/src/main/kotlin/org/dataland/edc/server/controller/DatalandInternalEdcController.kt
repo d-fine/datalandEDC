@@ -1,6 +1,8 @@
 package org.dataland.edc.server.controller
 
 import org.dataland.edc.server.api.DatalandInternalEdcApi
+import org.dataland.edc.server.models.InsertDataResponse
+import org.dataland.edc.server.models.SelectDataByIdResponse
 import org.dataland.edc.server.service.DataManager
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
 
@@ -19,13 +21,13 @@ class DatalandInternalEdcController(
         return mapOf("response" to "I am alive!")
     }
 
-    override fun insertData(data: String): Map<String, String> {
+    override fun insertData(data: String): InsertDataResponse {
         context.monitor.info("Received data to store in the trustee.")
-        return mapOf("dataId" to dataManager.provideAssetToTrustee(data))
+        return InsertDataResponse(dataManager.provideAssetToTrustee(data))
     }
 
-    override fun selectDataById(dataId: String): String {
+    override fun selectDataById(dataId: String): SelectDataByIdResponse {
         context.monitor.info("Asset with data ID $dataId is requested.")
-        return dataManager.getDataById(dataId)
+        return SelectDataByIdResponse(dataManager.getDataById(dataId))
     }
 }
