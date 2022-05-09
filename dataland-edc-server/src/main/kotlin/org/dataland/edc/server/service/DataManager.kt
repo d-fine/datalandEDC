@@ -103,7 +103,7 @@ class DataManager(
         )
     }
 
-    private fun registerAsset(data: String): Pair<Asset, String> {
+    private fun registerAssetLocally(data: String): Pair<Asset, String> {
         val providerAssetId = UUID.randomUUID().toString()
         providedAssets[providerAssetId] = data
 
@@ -122,7 +122,7 @@ class DataManager(
      * @param data the data to be stored in the trustee
      */
     fun provideAssetToTrustee(data: String): String {
-        val (asset, providerAssetId) = registerAsset(data)
+        val (asset, providerAssetId) = registerAssetLocally(data)
         context.monitor.info("Asset successfully registered with Dataland EDC.")
         val trusteeResponse = trusteeClient.registerAsset(buildProviderRequest(asset))
         providedAssets.remove(providerAssetId)
