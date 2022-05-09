@@ -1,6 +1,21 @@
 #!/bin/bash
 set -eu
 
+is_edc_server_up () {
+  health_response=$(curl -s -f -X GET "http://localhost:${dataland_edc_server_web_http_port}/api/dataland/health" -H "accept: application/json")
+  if [[ ! $health_response =~ "I am alive!" ]]; then
+    return 1
+  fi
+}
+export -f is_edc_server_up
+
+is_tunnel_server_up () {
+  if ! ssh ubuntu@"$dataland_tunnel_uri" "echo Connected to tunnel server"; then
+    return 1
+  fi
+}
+export -f is_tunnel_server_up
+
 export dataland_tunnel_uri=$EDC_SERVER_URI
 dataland_edc_server_uri=$EDC_SERVER_URI
 dataland_tunnel_startup_link=$TUNNEL_STARTUP_LINK
@@ -14,7 +29,7 @@ config_web_http_ids_port=9292
 config_web_http_data_port=9393
 
 workdir=$(dirname "$0")
-echo "Changing to working directory $workdir"
+echo "Changing to working directory $workdir."
 cd "$workdir"
 
 echo "Checking if EuroDaT is available."
@@ -33,36 +48,28 @@ chmod 600 ~/.ssh/id_rsa
 echo "Check connection to tunnel server."
 if ssh ubuntu@"$dataland_tunnel_uri" "sudo shutdown now"; then
    echo "Tunnel server was running and has been stopped."
-   sleep 10
 fi
-echo "Starting tunnel server."
-curl "$dataland_tunnel_startup_link"
 
-echo "Starting Dataland EDC server"
+echo "Starting Dataland EDC server."
 ./../gradlew :dataland-edc-server:run >test.log 2>test.err &
 edc_server_pid=$!
 
-is_infrastructure_up () {
-  health_response=$(curl -s -f -X GET "http://localhost:${dataland_edc_server_web_http_port}/api/dataland/health" -H "accept: application/json")
-  if [[ ! $health_response =~ "I am alive!" ]]; then
-    return 1
-  fi
-  echo "Dataland edc server is locally reachable. Now trying to reach tunnel server."
-  if ! ssh ubuntu@"$dataland_tunnel_uri" "echo Connected to tunnel server"; then
-    return 1
-  fi
-}
+echo "Checking health endpoint of dataland edc server locally."
+timeout 240 bash -c "while ! is_edc_server_up; do echo 'Dataland EDC server not yet there - retrying in 5s'; sleep 5; done; echo 'Dataland EDC server up!'"
 
-echo "Checking health endpoint of dataland edc server locally and tunnel server status"
-export -f is_infrastructure_up
-timeout 240 bash -c "while ! is_infrastructure_up; do echo 'dataland edc server or tunnel server not yet there - retrying in 5s'; sleep 5; done; echo 'dataland edc and tunnel server up!'"
+echo "Starting tunnel server."
+curl "$dataland_tunnel_startup_link"
+sleep 10
 
-echo "Open all three SSH tunnels from the Dataland-Tunnel-Server to your host system"
+echo "Checking availability of tunnel server."
+timeout 240 bash -c "while ! is_tunnel_server_up; do echo 'Tunnel server not yet there - retrying in 5s'; sleep 5; done; echo 'Tunnel server up!'"
+
+echo "Open all three SSH tunnels between tunnel server and the host system."
 ssh -R \*:"$dataland_edc_server_web_http_port":localhost:"$config_web_http_port" -N -f ubuntu@"$dataland_tunnel_uri"
 ssh -R \*:"$dataland_edc_server_web_http_ids_port":localhost:"$config_web_http_ids_port" -N -f ubuntu@"$dataland_tunnel_uri"
 ssh -R \*:"$dataland_edc_server_web_http_data_port":localhost:"$config_web_http_data_port" -N -f ubuntu@"$dataland_tunnel_uri"
 
-echo "Checking health endpoint via internet"
+echo "Checking health endpoint via tunnel server."
 health_response=$(curl -X GET "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/health" -H "accept: application/json")
 if [[ ! $health_response =~ "I am alive!" ]]; then
   echo "Response was unexpected: $health_response"
