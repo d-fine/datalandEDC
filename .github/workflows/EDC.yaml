@@ -20,7 +20,7 @@ jobs:
       - uses: actions/setup-java@v2
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 11
           cache: gradle
       - name: Build boot jars
         run: ./gradlew :dataland-edc-dummyserver:bootJar :dataland-edc-server:jar --no-daemon --stacktrace
@@ -55,7 +55,7 @@ jobs:
       - uses: actions/setup-java@v2
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 11
           cache: gradle
       - name: Publish packages
         run: ./gradlew dataland-edc-client:publish --no-daemon --stacktrace

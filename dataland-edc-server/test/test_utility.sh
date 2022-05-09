@@ -10,7 +10,7 @@ is_edc_server_up () {
 export -f is_edc_server_up
 
 is_tunnel_server_up () {
-  if ! ssh ubuntu@"$dataland_tunnel_uri" "echo Connected to tunnel server"; then
+  if ! ssh -o ConnectTimeout=5 ubuntu@"$dataland_tunnel_uri" "echo Connected to tunnel server"; then
     return 1
   fi
 }

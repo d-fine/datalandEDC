@@ -79,7 +79,7 @@ jobs:
       - uses: actions/setup-java@v2
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 11
           cache: gradle
       - name: Build project
         run: ./gradlew assemble --no-daemon --stacktrace
