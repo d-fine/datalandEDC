@@ -1,7 +1,8 @@
 #!/bin/bash
 
 is_edc_server_up () {
-  health_response=$(curl -s -f -X GET "http://localhost:${dataland_edc_server_web_http_port}/api/dataland/health" -H "accept: application/json")
+  server_uri="${1:-localhost}"
+  health_response=$(curl -s -f -X GET "http://${server_uri}:${dataland_edc_server_web_http_port}/api/dataland/health" -H "accept: application/json")
   if [[ ! $health_response =~ "I am alive!" ]]; then
     return 1
   fi
@@ -47,9 +48,8 @@ start_edc_server () {
 
 execute_eurodat_test () {
   echo "Checking health endpoint via tunnel server."
-  health_response=$(curl -X GET "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/health" -H "accept: application/json")
-  if [[ ! $health_response =~ "I am alive!" ]]; then
-    echo "Response was unexpected: $health_response"
+  if ! is_edc_server_up "$dataland_edc_server_uri"; then
+    echo "Unable to reach EDC server via tunnel."
     exit 1
   fi
 
