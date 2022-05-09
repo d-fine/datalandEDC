@@ -14,6 +14,7 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: ghcr.io/d-fine/datalandedc/edcdummyserver
+          tags: type=match,pattern=RELEASE-(.*),group=1
       - uses: actions/checkout@v2
         with:
           submodules: recursive
