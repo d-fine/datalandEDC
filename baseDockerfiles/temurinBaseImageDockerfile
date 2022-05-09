@@ -1,2 +1,0 @@
-FROM eclipse-temurin:17.0.3_7-jdk-focal
-COPY ./gradlecache /root/.gradle
