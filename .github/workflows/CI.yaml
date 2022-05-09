@@ -44,6 +44,12 @@ jobs:
           TRUSTEE_IDS_URI: ${{ secrets.TRUSTEE_IDS_URI }}
           TUNNEL_STARTUP_LINK: ${{ secrets.TUNNEL_STARTUP_LINK }}
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Upload EDC Server log file
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: EdcServerLog
+          path: ./dataland-edc-server/edc_server.log
       - name: Upload JaCoCo E2E Tests Results
         if: always()
         uses: actions/upload-artifact@v2

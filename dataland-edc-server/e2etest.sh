@@ -51,7 +51,7 @@ if ssh ubuntu@"$dataland_tunnel_uri" "sudo shutdown now"; then
 fi
 
 echo "Starting Dataland EDC server."
-./../gradlew :dataland-edc-server:run >test.log 2>test.err &
+./../gradlew :dataland-edc-server:run --stacktrace >edc_server.log 2>&1 &
 edc_server_pid=$!
 
 echo "Checking health endpoint of dataland edc server locally."
