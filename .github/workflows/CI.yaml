@@ -58,7 +58,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: EdcServerLog
-          path: ./dataland-edc-server/test/edc_server.log
+          path: ./edc_server.log
       - name: Upload JaCoCo E2E Tests Results
         if: always()
         uses: actions/upload-artifact@v2
