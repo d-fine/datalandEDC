@@ -47,7 +47,7 @@ class DataManager(
 ) {
     companion object {
         private val timeout = Duration.ofSeconds(60)
-        private val pollInterval = Duration.ofMillis(2000)
+        private val pollInterval = Duration.ofMillis(100)
     }
 
     private val trusteeURL = context.getSetting("trustee.uri", "default")
