@@ -1,6 +1,7 @@
 package org.dataland.edc.server.controller
 
 import org.dataland.edc.server.api.DatalandInternalEdcApi
+import org.dataland.edc.server.models.CheckHealthResponse
 import org.dataland.edc.server.models.InsertDataResponse
 import org.dataland.edc.server.service.DataManager
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
@@ -15,9 +16,9 @@ class DatalandInternalEdcController(
     private val context: ServiceExtensionContext
 ) : DatalandInternalEdcApi {
 
-    override fun checkHealth(): Map<String, String> {
+    override fun checkHealth(): CheckHealthResponse {
         context.monitor.info("Received a health request.")
-        return mapOf("response" to "I am alive!")
+        return CheckHealthResponse("I am alive!")
     }
 
     override fun insertData(data: String): InsertDataResponse {

@@ -9,6 +9,7 @@ import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
+import org.dataland.edc.server.models.CheckHealthResponse
 import org.dataland.edc.server.models.InsertDataResponse
 
 @OpenAPIDefinition(info = Info(title = "Dataland EDC OpenAPI Spec", version = "un-versioned"))
@@ -24,7 +25,7 @@ interface DatalandInternalEdcApi {
     /**
      * Endpoint to probe if the service is running.
      */
-    fun checkHealth(): Map <String, String>
+    fun checkHealth(): CheckHealthResponse
 
     @POST
     @Path("/data")
