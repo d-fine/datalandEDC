@@ -77,6 +77,9 @@ tasks.register<Jar>("fatJar") {
         attributes["Main-Class"] = "org.eclipse.dataspaceconnector.boot.system.runtime.BaseRuntime"
     }
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+    from("$projectDir") {
+        include("vault.properties", "config.properties", "keystore.jks")
+    }
     with(tasks.jar.get() as CopySpec)
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
