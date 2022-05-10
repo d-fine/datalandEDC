@@ -72,10 +72,20 @@ application {
     )
 }
 
-tasks.withType<Jar> {
+/*tasks.withType<Jar> {
     manifest {
         attributes["Main-Class"] = "org.eclipse.dataspaceconnector.boot.system.runtime.BaseRuntime"
     }
+
+}*/
+
+tasks.register<Jar>("fatJar"){
+    manifest {
+        attributes["Main-Class"] = "org.eclipse.dataspaceconnector.boot.system.runtime.BaseRuntime"
+    }
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+    with(tasks.jar.get() as CopySpec)
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 val jsonOutputDir = buildDir

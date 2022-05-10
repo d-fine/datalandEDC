@@ -18,7 +18,7 @@ jobs:
           java-version: 11
           cache: gradle
       - name: Build jars and publish EDC client
-        run: ./gradlew :dataland-edc-dummyserver:bootJar :dataland-edc-server:jar :dataland-edc-client:publish --no-daemon --stacktrace
+        run: ./gradlew :dataland-edc-dummyserver:bootJar :dataland-edc-server:fatJar :dataland-edc-client:publish --no-daemon --stacktrace
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: $GITHUB_ACTOR
