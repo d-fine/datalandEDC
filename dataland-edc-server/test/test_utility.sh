@@ -20,6 +20,8 @@ export dataland_tunnel_uri=$EDC_SERVER_URI
 dataland_edc_server_uri=$EDC_SERVER_URI
 dataland_tunnel_startup_link=$TUNNEL_STARTUP_LINK
 
+eurodat_health_endpoint="${TRUSTEE_URI}/ids/description"
+
 export dataland_edc_server_web_http_port=9191
 dataland_edc_server_web_http_ids_port=9292
 dataland_edc_server_web_http_data_port=9393
@@ -30,7 +32,7 @@ config_web_http_data_port=9393
 
 is_eurodat_up () {
   echo "Checking if EuroDaT is available."
-  if ! curl -f -X 'GET' "${TRUSTEE_URI}/ids/description" -H 'accept: application/json' >/dev/null 2>&1; then
+  if ! curl -f -X 'GET' "$eurodat_health_endpoint" -H 'accept: application/json' >/dev/null 2>&1; then
     echo "EuroDaT is not available."
     exit 1
   fi
