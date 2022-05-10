@@ -72,6 +72,12 @@ application {
     )
 }
 
+tasks.withType<Jar> {
+    manifest {
+        attributes["Main-Class"] = "org.eclipse.dataspaceconnector.boot.system.runtime.BaseRuntime"
+    }
+}
+
 val jsonOutputDir = buildDir
 val jsonFile = rootProject.extra["OpenApiSpec"]
 
