@@ -22,8 +22,8 @@ import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataRequest
 import org.eurodat.broker.model.ProviderRequest
 import java.net.URI
 import java.time.Duration
-import java.util.Collections
 import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
 
 private const val PROVIDER_URN_KEY = "urn:connector:provider"
 private const val CONSUMER_URN_KEY = "urn:connector:consumer"
@@ -58,8 +58,8 @@ class DataManager(
 
     private val trusteeClient = TrusteeClient(trusteeURL, context.getSetting("trustee.credentials", "password"))
 
-    private val receivedAssets: MutableMap<String, String> = Collections.synchronizedMap(mutableMapOf())
-    private val providedAssets: MutableMap<String, String> = Collections.synchronizedMap(mutableMapOf())
+    private val receivedAssets: ConcurrentHashMap<String, String> = ConcurrentHashMap()
+    private val providedAssets: ConcurrentHashMap<String, String> = ConcurrentHashMap()
 
     private val endpointForAssetPickup = "$datalandEdcServerUrl/api/dataland/eurodat/asset"
     private val participantId = "dataland"
