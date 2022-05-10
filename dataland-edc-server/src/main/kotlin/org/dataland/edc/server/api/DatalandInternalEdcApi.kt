@@ -11,7 +11,7 @@ import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
 import org.dataland.edc.server.models.InsertDataResponse
 
-@OpenAPIDefinition(info = Info(title = "Dataland EDC OpenAPI Spec", version = "1.0.0-SNAPSHOT"))
+@OpenAPIDefinition(info = Info(title = "Dataland EDC OpenAPI Spec", version = "un-versioned"))
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Path("/dataland")

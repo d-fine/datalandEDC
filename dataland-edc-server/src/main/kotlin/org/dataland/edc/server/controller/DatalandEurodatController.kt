@@ -24,10 +24,10 @@ class DatalandEurodatController(
         return dataManager.getProvidedAsset(datalandAssetId)
     }
 
-    override fun storeReceivedAsset(eurodatAssetId: String, data: ByteArray): Response {
-        context.monitor.info("Received asset POST request by EuroDaT with ID $eurodatAssetId.")
+    override fun storeReceivedAsset(trusteeAssetId: String, data: ByteArray): Response {
+        context.monitor.info("Received asset POST request by EuroDaT with ID $trusteeAssetId.")
         val decodedData: Map<String, String> = objectMapper.readValue(data.decodeToString())
-        dataManager.storeReceivedAsset(eurodatAssetId, decodedData["content"]!!)
-        return Response.ok("Dataland-connector received asset with asset ID $eurodatAssetId").build()
+        dataManager.storeReceivedAsset(trusteeAssetId, decodedData["content"]!!)
+        return Response.ok("Dataland-connector received asset with asset ID $trusteeAssetId").build()
     }
 }

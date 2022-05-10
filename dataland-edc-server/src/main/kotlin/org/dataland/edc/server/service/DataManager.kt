@@ -137,17 +137,18 @@ class DataManager(
      * @param datalandAssetId ID given to the asset on Dataland EDC side
      */
     fun getProvidedAsset(datalandAssetId: String): String {
-        return providedAssets[datalandAssetId] ?: "No data with assetId $datalandAssetId found."
+        context.monitor.info("Received request for data with ID: $datalandAssetId")
+        return providedAssets[datalandAssetId] ?: "No data with ID $datalandAssetId found."
     }
 
-    private fun retrieveAssetFromTrustee(assetId: String, contractDefinitionId: String): String {
-        val negotiationId = initiateNegotiations(assetId, contractDefinitionId)
+    private fun retrieveAssetFromTrustee(trusteeAssetId: String, contractDefinitionId: String): String {
+        val negotiationId = initiateNegotiations(trusteeAssetId, contractDefinitionId)
         val agreementId = getAgreementId(negotiationId)
-        requestData(agreementId, assetId)
-        return getReceivedAsset(assetId)
+        requestData(agreementId, trusteeAssetId)
+        return getReceivedAsset(trusteeAssetId)
     }
 
-    private fun requestData(agreementId: String, assetId: String) {
+    private fun requestData(agreementId: String, trusteeAssetId: String) {
         val dataDestination = DataAddress.Builder.newInstance()
             .property("type", "HttpFV")
             .property("endpoint", "$datalandEdcServerUrl/api/dataland/eurodat/asset")
@@ -157,7 +158,7 @@ class DataManager(
             .connectorAddress("$trusteeIdsURL/v1/ids/data")
             .protocol("ids-multipart")
             .connectorId("consumer")
-            .assetId(assetId)
+            .assetId(trusteeAssetId)
             .contractId(agreementId)
             .dataDestination(dataDestination)
             .managedResources(false)
@@ -176,8 +177,8 @@ class DataManager(
         return contractNegotiationStore.find(negotiationId)!!.contractAgreement.id
     }
 
-    private fun initiateNegotiations(assetId: String, contractDefinitionId: String): String {
-        val assetPermission = Permission.Builder.newInstance().target(assetId).action(dummyAction).build()
+    private fun initiateNegotiations(trusteeAssetId: String, contractDefinitionId: String): String {
+        val assetPermission = Permission.Builder.newInstance().target(trusteeAssetId).action(dummyAction).build()
         val assetPolicy = Policy.Builder.newInstance().id(dummyPolicyUid).permission(assetPermission).build()
         val assetContractOffer = ContractOffer.Builder.newInstance()
             .id("$contractDefinitionId:3a75736e-001d-4364-8bd4-9888490edb59")
@@ -198,24 +199,24 @@ class DataManager(
         return consumerContractNegotiationManager.initiate(contractOfferRequest).content.id
     }
 
-    private fun getReceivedAsset(assetId: String): String {
+    private fun getReceivedAsset(trusteeAssetId: String): String {
         await()
             .atMost(timeout)
             .pollInterval(pollInterval)
             .until {
-                receivedAssets.containsKey(assetId)
+                receivedAssets.containsKey(trusteeAssetId)
             }
-        return receivedAssets[assetId] ?: "No data under ID $assetId found."
+        return receivedAssets[trusteeAssetId] ?: "No data under ID $trusteeAssetId found."
     }
 
     /**
      * Stores given data under a given asset ID in the in memory store
-     * @param assetId uuid as provided by the trustee
+     * @param trusteeAssetId uuid as provided by the trustee
      * @param data the data to be stored in string format
      */
-    fun storeReceivedAsset(assetId: String, data: String) {
-        context.monitor.info("Received and stored data with ID: $assetId")
-        receivedAssets[assetId] = data
+    fun storeReceivedAsset(trusteeAssetId: String, data: String) {
+        context.monitor.info("Received and stored data with ID: $trusteeAssetId")
+        receivedAssets[trusteeAssetId] = data
     }
 
     /**
@@ -225,12 +226,12 @@ class DataManager(
     fun getDataById(dataId: String): String {
         val splitDataId = dataId.split(":")
         if (splitDataId.size != 2) throw IllegalArgumentException("The data ID $dataId has an invalid format.")
-        val assetId = splitDataId[0]
+        val trusteeAssetId = splitDataId[0]
 
-        return if (receivedAssets.containsKey(assetId)) {
-            receivedAssets[assetId]!!
+        return if (receivedAssets.containsKey(trusteeAssetId)) {
+            receivedAssets[trusteeAssetId]!!
         } else {
-            retrieveAssetFromTrustee(assetId = assetId, contractDefinitionId = splitDataId[1])
+            retrieveAssetFromTrustee(trusteeAssetId = trusteeAssetId, contractDefinitionId = splitDataId[1])
         }
     }
 }
