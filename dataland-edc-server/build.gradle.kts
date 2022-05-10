@@ -8,6 +8,7 @@ val jacocoClasses by extra(
     }
 )
 val jacocoVersion: String by project
+val connectorVersion: String by project
 
 plugins {
     `java-library`
@@ -30,7 +31,6 @@ tasks.test {
         setDestinationFile(file("$buildDir/jacoco/jacoco.exec"))
     }
 }
-val connectorVersion: String by project
 
 repositories {
     mavenCentral()
