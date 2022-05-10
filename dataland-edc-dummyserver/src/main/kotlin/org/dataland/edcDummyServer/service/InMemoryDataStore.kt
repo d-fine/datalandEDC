@@ -10,17 +10,17 @@ import java.util.concurrent.ConcurrentHashMap
  */
 @Component
 class InMemoryDataStore : DataStoreInterface {
-    var data: ConcurrentHashMap<String, String> = ConcurrentHashMap()
+    var storedData: ConcurrentHashMap<String, String> = ConcurrentHashMap()
 
     override fun insertDataSet(data: String): String {
         val assetId = UUID.randomUUID().toString()
         val contractDefinitionId = UUID.randomUUID().toString()
         val dataID = "$assetId:$contractDefinitionId"
-        this.data[dataID] = data
+        storedData[dataID] = data
         return dataID
     }
 
     override fun selectDataSet(dataId: String): String {
-        return data[dataId] ?: ""
+        return storedData[dataId] ?: ""
     }
 }
