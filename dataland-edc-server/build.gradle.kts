@@ -72,14 +72,7 @@ application {
     )
 }
 
-/*tasks.withType<Jar> {
-    manifest {
-        attributes["Main-Class"] = "org.eclipse.dataspaceconnector.boot.system.runtime.BaseRuntime"
-    }
-
-}*/
-
-tasks.register<Jar>("fatJar"){
+tasks.register<Jar>("fatJar") {
     manifest {
         attributes["Main-Class"] = "org.eclipse.dataspaceconnector.boot.system.runtime.BaseRuntime"
     }
