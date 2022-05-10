@@ -13,9 +13,9 @@ class InMemoryDataStore : DataStoreInterface {
     var storedData: ConcurrentHashMap<String, String> = ConcurrentHashMap()
 
     override fun insertDataSet(data: String): String {
-        val assetId = UUID.randomUUID().toString()
+        val trusteeAssetId = UUID.randomUUID().toString()
         val contractDefinitionId = UUID.randomUUID().toString()
-        val dataID = "$assetId:$contractDefinitionId"
+        val dataID = "$trusteeAssetId:$contractDefinitionId"
         storedData[dataID] = data
         return dataID
     }
