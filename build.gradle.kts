@@ -69,6 +69,7 @@ plugins {
     id("io.swagger.core.v3.swagger-gradle-plugin") version "2.2.0" apply false
     jacoco
     id("com.github.ben-manes.versions") version "0.42.0"
+    id("com.github.johnrengelman.shadow") version "7.1.2" apply false
 }
 
 ktlint {

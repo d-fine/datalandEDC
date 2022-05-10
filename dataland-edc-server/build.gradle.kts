@@ -17,6 +17,7 @@ plugins {
     kotlin("jvm")
     kotlin("kapt")
     jacoco
+    id("com.github.johnrengelman.shadow")
 }
 
 jacoco {
@@ -72,16 +73,8 @@ application {
     )
 }
 
-tasks.register<Jar>("fatJar") {
-    manifest {
-        attributes["Main-Class"] = "org.eclipse.dataspaceconnector.boot.system.runtime.BaseRuntime"
-    }
-    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
-    from("$projectDir") {
-        include("vault.properties", "config.properties", "keystore.jks")
-    }
-    with(tasks.jar.get() as CopySpec)
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+    mergeServiceFiles()
 }
 
 val jsonOutputDir = buildDir
