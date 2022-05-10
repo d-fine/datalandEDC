@@ -205,7 +205,7 @@ class DataManager(
             .until {
                 receivedAssets.containsKey(assetId)
             }
-        return receivedAssets[assetId] ?: "Data not found"
+        return receivedAssets[assetId] ?: "No data under ID $assetId found."
     }
 
     /**
@@ -214,6 +214,7 @@ class DataManager(
      * @param data the data to be stored in string format
      */
     fun storeReceivedAsset(assetId: String, data: String) {
+        context.monitor.info("Received and stored data with ID: $assetId")
         receivedAssets[assetId] = data
     }
 
