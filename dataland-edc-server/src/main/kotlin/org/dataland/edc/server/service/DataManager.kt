@@ -67,11 +67,11 @@ class DataManager(
     private val dataOwnerId = "dataland"
     private val storageType = "persistent"
 
-    private val dummyProviderAssetId = "test-asset"
+    private val dummyDatalandAssetId = "test-asset"
     private val dummyPolicyUid = "956e172f-2de1-4501-8881-057a57fd0e60"
     private val dummyActionType = "USE"
     private val dummyAction = Action.Builder.newInstance().type(dummyActionType).build()
-    private val dummyPermission = Permission.Builder.newInstance().target(dummyProviderAssetId)
+    private val dummyPermission = Permission.Builder.newInstance().target(dummyDatalandAssetId)
         .action(dummyAction).build()
     private val dummyPolicy = Policy.Builder.newInstance().id(dummyPolicyUid).permission(dummyPermission).build()
     private val dummyAsset = Asset.Builder.newInstance().build()
@@ -82,7 +82,7 @@ class DataManager(
         .accessPolicy(dummyPolicy)
         .contractPolicy(dummyPolicy)
         .selectorExpression(
-            AssetSelectorExpression.Builder.newInstance().whenEquals(Asset.PROPERTY_ID, dummyProviderAssetId).build()
+            AssetSelectorExpression.Builder.newInstance().whenEquals(Asset.PROPERTY_ID, dummyDatalandAssetId).build()
         )
         .build()
 
@@ -104,17 +104,17 @@ class DataManager(
     }
 
     private fun registerAssetLocally(data: String): Pair<Asset, String> {
-        val providerAssetId = UUID.randomUUID().toString()
-        providedAssets[providerAssetId] = data
+        val datalandAssetId = UUID.randomUUID().toString()
+        providedAssets[datalandAssetId] = data
 
-        val asset = Asset.Builder.newInstance().id(dummyProviderAssetId)
-            .property("endpoint", "$endpointForAssetPickup/$providerAssetId").build()
+        val asset = Asset.Builder.newInstance().id(dummyDatalandAssetId)
+            .property("endpoint", "$endpointForAssetPickup/$datalandAssetId").build()
 
         val dataAddress = DataAddress.Builder.newInstance().type("Http")
-            .property("endpoint", "$endpointForAssetPickup/$providerAssetId").build()
+            .property("endpoint", "$endpointForAssetPickup/$datalandAssetId").build()
 
         assetLoader.accept(asset, dataAddress)
-        return Pair(asset, providerAssetId)
+        return Pair(asset, datalandAssetId)
     }
 
     /**
@@ -122,10 +122,10 @@ class DataManager(
      * @param data the data to be stored in the trustee
      */
     fun provideAssetToTrustee(data: String): String {
-        val (asset, providerAssetId) = registerAssetLocally(data)
+        val (asset, datalandAssetId) = registerAssetLocally(data)
         context.monitor.info("Asset successfully registered with Dataland EDC.")
         val trusteeResponse = trusteeClient.registerAsset(buildProviderRequest(asset))
-        providedAssets.remove(providerAssetId)
+        providedAssets.remove(datalandAssetId)
         context.monitor.info("Asset successfully registered with Trustee.")
         val trusteeAssetId = trusteeResponse["asset"]["properties"]["asset:prop:id"].asText()
         val contractDefinitionId = trusteeResponse["contractDefinition"]["id"].asText()
@@ -134,10 +134,10 @@ class DataManager(
 
     /**
      * Method to make data available for pickup from trustee
-     * @param providerAssetId ID given to the asset on Dataland EDC side
+     * @param datalandAssetId ID given to the asset on Dataland EDC side
      */
-    fun getProvidedAsset(providerAssetId: String): String {
-        return providedAssets[providerAssetId] ?: "No data with assetId $providerAssetId found."
+    fun getProvidedAsset(datalandAssetId: String): String {
+        return providedAssets[datalandAssetId] ?: "No data with assetId $datalandAssetId found."
     }
 
     private fun retrieveAssetFromTrustee(assetId: String, contractDefinitionId: String): String {
