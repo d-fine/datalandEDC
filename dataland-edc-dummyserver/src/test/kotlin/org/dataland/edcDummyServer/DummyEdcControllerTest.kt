@@ -40,7 +40,6 @@ class DummyEdcControllerTest(
     @Test
     fun `check if the selected data is the same as the inserted data`() {
         val body = objectMapper.writeValueAsString(mapOf("key" to "value"))
-        println(body)
         val request = performWithBasicResultsChecks(
             MockMvcRequestBuilders.post("/dataland/data")
                 .accept(MediaType.APPLICATION_JSON)
