@@ -19,7 +19,7 @@ export -f is_tunnel_server_up
 
 export dataland_tunnel_uri=dataland-tunnel.duckdns.org
 dataland_edc_server_uri=dataland-tunnel.duckdns.org
-dataland_tunnel_startup_link=$TUNNEL_STARTUP_LINK
+export dataland_tunnel_startup_link=$TUNNEL_STARTUP_LINK
 
 eurodat_health_endpoint=${TRUSTEE_DESCRIPTION_URI}
 
