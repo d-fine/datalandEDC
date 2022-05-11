@@ -54,6 +54,7 @@ tasks.register(taskName, org.openapitools.generator.gradle.plugin.tasks.Generate
         )
     )
     dependsOn("getOpenApiSpec")
+    templateDir.set("$projectDir/openApiTemplate/")
 }
 
 sourceSets {
