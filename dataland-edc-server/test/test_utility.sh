@@ -21,7 +21,7 @@ export dataland_tunnel_uri=dataland-tunnel.duckdns.org
 dataland_edc_server_uri=dataland-tunnel.duckdns.org
 export dataland_tunnel_startup_link=$TUNNEL_STARTUP_LINK
 
-eurodat_health_endpoint=${TRUSTEE_DESCRIPTION_URI}
+eurodat_health_endpoint="${TRUSTEE_WEB_URI}/ids/description"
 
 export dataland_edc_server_web_http_port=9191
 dataland_edc_server_web_http_ids_port=9292
@@ -44,10 +44,7 @@ start_edc_server () {
   echo "Starting Dataland EDC server."
   current_dir=$(pwd)
   cd ../../ || exit
-  # TODO: Remove again
-  echo "env: " > edc_server.log
-  env >> edc_server.log
-  ./gradlew :dataland-edc-server:run --stacktrace >> edc_server.log 2>&1 &
+  ./gradlew :dataland-edc-server:run --stacktrace >edc_server.log 2>&1 &
   edc_server_pid=$!
   cd "$current_dir" || exit
 }
