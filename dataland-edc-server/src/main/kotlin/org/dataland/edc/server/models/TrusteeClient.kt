@@ -14,7 +14,7 @@ import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 private const val REGISTER_ASSET_PATH = "/asset/register"
-private const val HTTP_TIMEOUT: Long = 30
+private const val HTTP_TIMEOUT: Long = 300
 
 /**
  * An HTTP client to communicate with the EuroDaT Broker. This file is a simplified version of
