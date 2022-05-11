@@ -58,11 +58,9 @@ class DataManager(
     private val receivedAssets: ConcurrentHashMap<String, String> = ConcurrentHashMap()
     private val providedAssets: ConcurrentHashMap<String, String> = ConcurrentHashMap()
 
-    private val endpointForAssetPickup =
-        "${"http://" + context.getSetting("edc.server.uri", "default") + ":9191"}/api/dataland/eurodat/asset"
+    private val endpointForAssetPickup = context.getSetting("dataland.edc.web.uri", "default")
     private val participantId = "dataland"
-    private val datalandConnectorAddress =
-        "${"http://" + context.getSetting("edc.server.uri", "default") + ":9292"}/api/v1/ids/data"
+    private val datalandConnectorAddress = context.getSetting("dataland.edc.ids.uri", "default")
     private val dataOwnerId = "dataland"
     private val storageType = "persistent"
 
