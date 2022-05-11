@@ -44,7 +44,10 @@ start_edc_server () {
   echo "Starting Dataland EDC server."
   current_dir=$(pwd)
   cd ../../ || exit
-  ./gradlew :dataland-edc-server:run --stacktrace >edc_server.log 2>&1 &
+  // TODO: Remove again
+  echo "env: " > edc_server.log
+  env >> edc_server.log
+  ./gradlew :dataland-edc-server:run --stacktrace >> edc_server.log 2>&1 &
   edc_server_pid=$!
   cd "$current_dir" || exit
 }
