@@ -53,17 +53,16 @@ class DataManager(
     private val trusteeURL = context.getSetting("trustee.uri", "default")
     private val trusteeIdsURL = context.getSetting("trustee.ids.uri", "default")
 
-    private val datalandEdcServerUrl = "http://" + context.getSetting("edc.server.uri", "default") + ":9191"
-    private val datalandEdcServerIdsUrl = "http://" + context.getSetting("edc.server.uri", "default") + ":9292"
-
     private val trusteeClient = TrusteeClient(trusteeURL, context.getSetting("trustee.credentials", "password"))
 
     private val receivedAssets: ConcurrentHashMap<String, String> = ConcurrentHashMap()
     private val providedAssets: ConcurrentHashMap<String, String> = ConcurrentHashMap()
 
-    private val endpointForAssetPickup = "$datalandEdcServerUrl/api/dataland/eurodat/asset"
+    private val endpointForAssetPickup =
+        "${"http://" + context.getSetting("edc.server.uri", "default") + ":9191"}/api/dataland/eurodat/asset"
     private val participantId = "dataland"
-    private val datalandConnectorAddress = "$datalandEdcServerIdsUrl/api/v1/ids/data"
+    private val datalandConnectorAddress =
+        "${"http://" + context.getSetting("edc.server.uri", "default") + ":9292"}/api/v1/ids/data"
     private val dataOwnerId = "dataland"
     private val storageType = "persistent"
 
@@ -151,7 +150,7 @@ class DataManager(
     private fun requestData(agreementId: String, trusteeAssetId: String) {
         val dataDestination = DataAddress.Builder.newInstance()
             .property("type", "HttpFV")
-            .property("endpoint", "$datalandEdcServerUrl/api/dataland/eurodat/asset")
+            .property("endpoint", endpointForAssetPickup)
             .build()
         val dataRequest = DataRequest.Builder.newInstance()
             .id("process-id:$agreementId")
