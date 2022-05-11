@@ -37,8 +37,9 @@ jobs:
         run: ./dataland-edc-server/test/e2etest.sh
         env:
           EDC_SERVER_URI: ${{ secrets.EDC_SERVER_URI }}
-          TRUSTEE_URI: ${{ secrets.TRUSTEE_URI }}
-          TRUSTEE_IDS_URI: ${{ secrets.TRUSTEE_IDS_URI }}
+          TRUSTEE_DESCRIPTION_URI: ${{ secrets.TRUSTEE_URI }}/ids/description
+          TRUSTEE_WEB_URI: ${{ secrets.TRUSTEE_URI }}
+          TRUSTEE_IDS_URI: ${{ secrets.TRUSTEE_URI }}/v1/ids/data
           TUNNEL_STARTUP_LINK: ${{ secrets.TUNNEL_STARTUP_LINK }}
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           EDC_API_AUTH_KEY: ${{ secrets.EDC_API_AUTH_KEY }}

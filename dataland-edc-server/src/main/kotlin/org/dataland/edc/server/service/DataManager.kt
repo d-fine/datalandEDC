@@ -50,17 +50,19 @@ class DataManager(
         private val pollInterval = Duration.ofMillis(100)
     }
 
-    private val trusteeURL = context.getSetting("trustee.uri", "default")
-    private val trusteeIdsURL = context.getSetting("trustee.ids.uri", "default")
+    private val trusteeWebUrl = context.getSetting("trustee.web.uri", "default")
+    private val trusteeIdsUrl = context.getSetting("trustee.ids.uri", "default")
 
-    private val trusteeClient = TrusteeClient(trusteeURL, context.getSetting("trustee.credentials", "password"))
+    private val trusteeClient = TrusteeClient(trusteeWebUrl, context.getSetting("trustee.credentials", "password"))
 
     private val receivedAssets: ConcurrentHashMap<String, String> = ConcurrentHashMap()
     private val providedAssets: ConcurrentHashMap<String, String> = ConcurrentHashMap()
 
+    //private val endpointForAssetPickup = context.getSetting("dataland.edc.web.uri", "default")
     private val endpointForAssetPickup =
         "${"http://" + context.getSetting("edc.server.uri", "default") + ":9191"}/api/dataland/eurodat/asset"
     private val participantId = "dataland"
+    //    private val datalandConnectorAddress = context.getSetting("dataland.edc.ids.uri", "default")
     private val datalandConnectorAddress =
         "${"http://" + context.getSetting("edc.server.uri", "default") + ":9292"}/api/v1/ids/data"
     private val dataOwnerId = "dataland"
@@ -154,7 +156,7 @@ class DataManager(
             .build()
         val dataRequest = DataRequest.Builder.newInstance()
             .id("process-id:$agreementId")
-            .connectorAddress("$trusteeIdsURL/v1/ids/data")
+            .connectorAddress(trusteeIdsUrl)
             .protocol("ids-multipart")
             .connectorId("consumer")
             .assetId(trusteeAssetId)
@@ -191,7 +193,7 @@ class DataManager(
             .contractOffer(assetContractOffer)
             .protocol("ids-multipart")
             .connectorId("consumer")
-            .connectorAddress("$trusteeIdsURL/v1/ids/data")
+            .connectorAddress(trusteeIdsUrl)
             .type(ContractOfferRequest.Type.INITIAL)
             .build()
 

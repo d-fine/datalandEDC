@@ -21,7 +21,7 @@ export dataland_tunnel_uri=$EDC_SERVER_URI
 dataland_edc_server_uri=$EDC_SERVER_URI
 dataland_tunnel_startup_link=$TUNNEL_STARTUP_LINK
 
-eurodat_health_endpoint="${TRUSTEE_URI}/ids/description"
+eurodat_health_endpoint=${TRUSTEE_DESCRIPTION_URI}
 
 export dataland_edc_server_web_http_port=9191
 dataland_edc_server_web_http_ids_port=9292
