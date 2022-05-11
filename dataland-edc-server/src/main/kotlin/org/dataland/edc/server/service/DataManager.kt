@@ -54,7 +54,7 @@ class DataManager(
     private val trusteeIdsURL = context.getSetting("trustee.ids.uri", "default")
 
     private val datalandEdcServerUrl = "http://" + context.getSetting("edc.server.uri", "default") + ":9191"
-    private val datalandEdcServerIdsURL = "http://" + context.getSetting("edc.server.uri", "default") + ":9292"
+    private val datalandEdcServerIdsUrl = "http://" + context.getSetting("edc.server.uri", "default") + ":9292"
 
     private val trusteeClient = TrusteeClient(trusteeURL, context.getSetting("trustee.credentials", "password"))
 
@@ -63,7 +63,7 @@ class DataManager(
 
     private val endpointForAssetPickup = "$datalandEdcServerUrl/api/dataland/eurodat/asset"
     private val participantId = "dataland"
-    private val datalandConnectorAddress = "$datalandEdcServerIdsURL/api/v1/ids/data"
+    private val datalandConnectorAddress = "$datalandEdcServerIdsUrl/api/v1/ids/data"
     private val dataOwnerId = "dataland"
     private val storageType = "persistent"
 
