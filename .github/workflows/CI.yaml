@@ -38,7 +38,6 @@ jobs:
         env:
           DATALAND_EDC_WEB_URI: http://dataland-tunnel.duckdns.org:9191/api/dataland/eurodat/asset
           DATALAND_EDC_IDS_URI: http://dataland-tunnel.duckdns.org:9292/api/v1/ids/data
-          TRUSTEE_DESCRIPTION_URI: ${{ secrets.TRUSTEE_URI }}/ids/description
           TRUSTEE_WEB_URI: ${{ secrets.TRUSTEE_URI }}
           TRUSTEE_IDS_URI: ${{ secrets.TRUSTEE_URI }}/v1/ids/data
           TUNNEL_STARTUP_LINK: ${{ secrets.TUNNEL_STARTUP_LINK }}
