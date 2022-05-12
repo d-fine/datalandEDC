@@ -17,3 +17,13 @@ To publish a (non-SNAPSHOT)-Release:
 * checkout & update the current main branch (`git checkout main && git pull`)
 * tag the current commit using the tag name `RELEASE-<version>` (`git tag RELEASE-<version>`)
 * push the tag (`git push origin RELEASE-<version>`)
+
+# Dependency on OpenApi Generator
+We need to modify the OpenApi generated Code to increase HTTP Timeouts. To achieve this, we adapted a moustache Template. 
+In case the OpenApi Generator version is updated, most likely this template needs an update as well. To 
+extract the Template corresponding to the current OpenApiversion, run:
+`docker run --rm -v <yourTargetDirectoryHere>:/local openapitools/openapi-generator-cli:<openApiGeneratorPluginVersion> author template -g kotlin -o /local/out/`
+where e.G. `yourTargetDirectoryHere`=`C:\datalandEDC`, and `openApiGeneratorPluginVersion`=`v5.4.0`.
+Find the relevant template in: `/out/libraries/jvm-okhttp/infrastructure/ApiClient.kt.mustache`.
+Copy it to `openApiTemplate/libraries/jvm-okhttp/infrastructure/ApiClient.kt.mustache`. 
+Make sure the applied changes (import of `TimeUnit` as well as setting the timeouts during the `OkHttpClient.Builder` phase) get re-applied.
