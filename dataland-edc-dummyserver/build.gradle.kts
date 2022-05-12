@@ -8,6 +8,8 @@ val jacocoClasses by extra(
         }
     }
 )
+val jacocoVersion: String by project
+
 repositories {
     mavenCentral()
 }
@@ -17,15 +19,14 @@ plugins {
     kotlin("jvm")
     jacoco
     kotlin("plugin.spring")
-    id("com.github.johnrengelman.processes") version "0.5.0"
-    id("org.springdoc.openapi-gradle-plugin") version "1.3.4"
-    id("org.openapi.generator") version "5.4.0"
+    id("org.springdoc.openapi-gradle-plugin")
+    id("org.openapi.generator")
 }
 
 apply(plugin = "io.spring.dependency-management")
 
 jacoco {
-    toolVersion = "0.8.7"
+    toolVersion = jacocoVersion
 }
 
 tasks.test {
@@ -34,9 +35,11 @@ tasks.test {
     extensions.configure(JacocoTaskExtension::class) {
         setDestinationFile(file("$buildDir/jacoco/jacoco.exec"))
     }
+
+    dependsOn("generateEdcServer")
 }
 
-java.sourceCompatibility = JavaVersion.VERSION_17
+java.sourceCompatibility = JavaVersion.VERSION_11
 
 val openApiSpecConfig by configurations.creating {
     isCanBeConsumed = false
@@ -44,12 +47,13 @@ val openApiSpecConfig by configurations.creating {
 }
 
 dependencies {
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("org.springdoc:springdoc-openapi-ui:1.6.6")
-    implementation("org.junit.jupiter:junit-jupiter:5.8.2")
+    implementation(libs.springdoc.openapi.ui)
+    implementation(libs.junit.jupiter)
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    openApiSpecConfig(project(mapOf("path" to ":dataland-connector", "configuration" to "openApiSpec")))
+    openApiSpecConfig(project(mapOf("path" to ":dataland-edc-server", "configuration" to "openApiSpec")))
 }
 
 tasks.register<Copy>("getOpenApiSpec") {

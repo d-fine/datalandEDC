@@ -1,6 +1,7 @@
 package org.dataland.edcDummyServer.controller
 
 import org.dataland.edcDummyServer.openApiServer.api.DefaultApi
+import org.dataland.edcDummyServer.openApiServer.model.InsertDataResponse
 import org.dataland.edcDummyServer.service.InMemoryDataStore
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
@@ -16,7 +17,7 @@ class DummyController : DefaultApi {
         return ResponseEntity.ok(dataStore.selectDataSet(dataId))
     }
 
-    override fun insertData(body: String?): ResponseEntity<String> {
-        return ResponseEntity.ok(dataStore.insertDataSet(body ?: ""))
+    override fun insertData(body: String?): ResponseEntity<InsertDataResponse> {
+        return ResponseEntity.ok(InsertDataResponse(dataStore.insertDataSet(body ?: "")))
     }
 }

@@ -1,8 +1,11 @@
 // main
+val jacocoVersion: String by project
+val connectorVersion: String by project
 
 allprojects {
     repositories {
         mavenCentral()
+        maven("https://maven.iais.fraunhofer.de/artifactory/eis-ids-public")
     }
     group = "org.dataland"
     val releaseTagPrefix = "RELEASE-"
@@ -32,7 +35,7 @@ subprojects {
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions {
             freeCompilerArgs = listOf("-Xjsr305=strict", "-opt-in=kotlin.RequiresOptIn")
-            jvmTarget = "17"
+            jvmTarget = "11"
         }
     }
     configure<PublishingExtension> {
@@ -55,13 +58,24 @@ subprojects {
 }
 
 plugins {
-    id("org.springframework.boot") version "2.6.6" apply false
-    id("io.gitlab.arturbosch.detekt") version "1.19.0"
-    id("org.jlleitschuh.gradle.ktlint") version "10.2.1"
-    kotlin("jvm") version "1.6.10"
-    kotlin("plugin.spring") version "1.6.20" apply false
+    id("org.springframework.boot") version "2.6.7" apply false
+    id("io.gitlab.arturbosch.detekt") version "1.20.0"
+    id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
+    kotlin("jvm") version "1.6.21"
+    kotlin("plugin.spring") version "1.6.21" apply false
     id("org.sonarqube") version "3.3"
+    id("org.openapi.generator") version "5.4.0" apply false
+    id("org.springdoc.openapi-gradle-plugin") version "1.3.4" apply false
+    id("io.swagger.core.v3.swagger-gradle-plugin") version "2.2.0" apply false
     jacoco
+    id("com.github.ben-manes.versions") version "0.42.0"
+    id("com.github.johnrengelman.shadow") version "7.1.2" apply false
+}
+
+ktlint {
+    filter {
+        exclude("**/trustee-platform/**")
+    }
 }
 
 sonarqube {
@@ -70,7 +84,10 @@ sonarqube {
         property("sonar.organization", "d-fine")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.qualitygate.wait", true)
-        property("sonar.coverage.exclusions", "**/test/**, **/DataSpaceConnector/**, **/extensions/**, **/DummyEdc.kt")
+        property(
+            "sonar.coverage.exclusions",
+            "**/test/**, **/trustee-platform/**, **/DummyEdc.kt"
+        )
         property(
             "sonar.sources",
             subprojects.flatMap { project -> project.properties["sonarSources"] as Iterable<*> }
@@ -79,7 +96,7 @@ sonarqube {
 }
 
 jacoco {
-    toolVersion = "0.8.7"
+    toolVersion = jacocoVersion
 }
 
 tasks.jacocoTestReport {
@@ -98,8 +115,8 @@ tasks.jacocoTestReport {
 }
 
 dependencies {
-    detekt("io.gitlab.arturbosch.detekt:detekt-cli:1.19.0")
-    detekt("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.6.10")
+    detekt("io.gitlab.arturbosch.detekt:detekt-cli:1.20.0")
+    detekt("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.6.21")
 }
 
 detekt {
@@ -107,8 +124,10 @@ detekt {
     allRules = false
     config = files("$projectDir/config/detekt.yml")
     val detektFileTree = fileTree("$projectDir")
-    detektFileTree.exclude("**/build/**").exclude("**/node_modules/**")
-        .exclude(".gradle").exclude("**/DataSpaceConnector/**").exclude("api")
+    detektFileTree
+        .exclude("**/build/**")
+        .exclude("**/trustee-platform/**")
+        .exclude(".gradle")
     source = files(detektFileTree)
 }
 
