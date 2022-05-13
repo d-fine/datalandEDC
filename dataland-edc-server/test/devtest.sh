@@ -12,7 +12,7 @@ echo "Changing to working directory $workdir."
 cd "$workdir"
 
 envsubst < "./.env.devtest" > .env
-source "./.env"
+source ./.env
 
 source ./test_utility.sh
 

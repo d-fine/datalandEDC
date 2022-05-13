@@ -8,7 +8,8 @@ cd "$workdir"
 echo "A"
 envsubst < "./.env.e2etest" > .env
 echo "B"
-source "./.env"
+sleep 30
+source ./.env
 echo "C"
 
 source ./test_utility.sh
