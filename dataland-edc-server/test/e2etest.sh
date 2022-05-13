@@ -11,9 +11,9 @@ echo "Showing all contents in this folder"
 ls
 
 echo "A"
-envsubst < "./.env.e2etest" > .env
+envsubst < "./.env.e2etest" > env
 echo "B"
-##source ./.env
+source ./env
 echo "C"
 
 source ./test_utility.sh
