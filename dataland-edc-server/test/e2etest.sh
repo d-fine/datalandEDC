@@ -13,8 +13,7 @@ ls
 echo "A"
 envsubst < "./.env.e2etest" > .env
 echo "B"
-sleep 30
-source ./.env
+##source ./.env
 echo "C"
 
 source ./test_utility.sh
