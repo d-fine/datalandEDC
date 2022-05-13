@@ -5,6 +5,11 @@ workdir=$(dirname "$0")
 echo "Changing to working directory $workdir."
 cd "$workdir"
 
+echo "Present working directory:"
+pwd
+echo "Showing all contents in this folder"
+ls
+
 echo "A"
 envsubst < "./.env.e2etest" > .env
 echo "B"
