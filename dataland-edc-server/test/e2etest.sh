@@ -5,11 +5,15 @@ workdir=$(dirname "$0")
 echo "Changing to working directory $workdir."
 cd "$workdir"
 
+echo "A"
 envsubst < "./.env.e2etest" > .env
+echo "B"
 source "./.env"
+echo "C"
 
 source ./test_utility.sh
 
+echo "D"
 is_eurodat_up
 
 echo "Enable runner to connect to ssh tunnel server."
