@@ -36,19 +36,13 @@ jobs:
         if: always()
         run: ./dataland-edc-server/test/e2etest.sh
         env:
-          DATALAND_EDC_WEB_URI: http://dataland-tunnel.duckdns.org:9191/api/dataland/eurodat/asset
-          DATALAND_EDC_IDS_URI: http://dataland-tunnel.duckdns.org:9292/api/v1/ids/data
-          TRUSTEE_WEB_URI: ${{ secrets.TRUSTEE_URI }}
-          TRUSTEE_IDS_URI: ${{ secrets.TRUSTEE_URI }}/v1/ids/data
+          TRUSTEE_IP: ${{ secrets.TRUSTEE_IP }}
+          TRUSTEE_CREDENTIALS: ${{ secrets.TRUSTEE_CREDENTIALS }}
           TUNNEL_STARTUP_LINK: ${{ secrets.TUNNEL_STARTUP_LINK }}
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           EDC_API_AUTH_KEY: ${{ secrets.EDC_API_AUTH_KEY }}
           EDC_API_CONTROL_AUTH_APIKEY_VALUE: ${{ secrets.EDC_API_CONTROL_AUTH_APIKEY_VALUE }}
           EDC_KEYSTORE_PASSWORD: ${{ secrets.EDC_KEYSTORE_PASSWORD }}
-          EDC_OAUTH_PROVIDER_AUDIENCE: ${{ secrets.EDC_OAUTH_PROVIDER_AUDIENCE }}
-          EDC_OAUTH_PROVIDER_JWKS_URL: ${{ secrets.EDC_OAUTH_PROVIDER_JWKS_URL }}
-          EDC_OAUTH_TOKEN_URL: ${{ secrets.EDC_OAUTH_TOKEN_URL }}
-          IDS_WEBHOOK_ADDRESS: ${{ secrets.IDS_WEBHOOK_ADDRESS }}
       - name: Upload EDC Server log file
         if: always()
         uses: actions/upload-artifact@v2
