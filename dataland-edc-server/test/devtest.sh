@@ -11,7 +11,7 @@ workdir=$(dirname "$0")
 echo "Changing to working directory $workdir."
 cd "$workdir"
 
-envsubst < "./.env.devtest" > .env
+envsubst < ./.env.template > .env
 source ./.env
 
 source ./test_utility.sh
