@@ -46,7 +46,7 @@ class DataManager(
     private val context: ServiceExtensionContext
 ) {
     companion object {
-        private val timeout = Duration.ofSeconds(60)
+        private val timeout = Duration.ofSeconds(120)
         private val pollInterval = Duration.ofMillis(100)
     }
 
