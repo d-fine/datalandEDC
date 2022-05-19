@@ -14,3 +14,4 @@ Please check all boxes before the Pull Request is merged. In case you skip a box
   - [ ] It's verified that this version actually is the one deployed (check actuator/info for branch name and commit id!)
   - [ ] The new feature is manually used/tested/observed on preview
 - [ ] There is at least one picture for each story, which was created before coding has started
+- [ ] The test-script (dataland-edc-server/devtest.sh) still works. Run it locally!
