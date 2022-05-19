@@ -42,11 +42,9 @@ repositories {
 dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-    implementation("org.eclipse.dataspaceconnector:http:$connectorVersion")
     implementation("org.eclipse.dataspaceconnector:filesystem-configuration:$connectorVersion")
     implementation("org.eclipse.dataspaceconnector:filesystem-vault:$connectorVersion")
     implementation("org.eclipse.dataspaceconnector:oauth2-core:$connectorVersion")
-    implementation("org.eclipse.dataspaceconnector:control-api:$connectorVersion")
     implementation("org.eclipse.dataspaceconnector:ids:$connectorVersion")
 
     api("org.slf4j:slf4j-api:2.0.0-alpha1")
