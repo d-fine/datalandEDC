@@ -76,8 +76,8 @@ class DataManager(
     // This is a workaround to enable multiple asset upload even-though EuroDaT supports only the ID 1 (see DALA-146)
     private val dummyContractDefinition = ContractDefinition.Builder.newInstance()
         .id("1")
-        .accessPolicy(dummyPolicy)
-        .contractPolicy(dummyPolicy)
+        .accessPolicyId(dummyPolicyUid)
+        .contractPolicyId(dummyPolicyUid)
         .selectorExpression(
             AssetSelectorExpression.Builder.newInstance().whenEquals(Asset.PROPERTY_ID, dummyDatalandAssetId).build()
         )
@@ -96,7 +96,8 @@ class DataManager(
             asset = asset,
             policy = dummyPolicy,
             provider = URI(PROVIDER_URN_KEY),
-            consumer = URI(CONSUMER_URN_KEY)
+            consumer = URI(CONSUMER_URN_KEY),
+            contractDefinitionId = "1"
         )
     }
 
