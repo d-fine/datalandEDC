@@ -25,32 +25,6 @@ dependencyResolutionManagement {
 
             library("awaitility", "org.awaitility:awaitility:4.2.0")
             library("awaitility-kotlin", "org.awaitility:awaitility-kotlin:4.2.0")
-
-            library("edc-core", "org.eclipse.dataspaceconnector:core:0.0.1-SNAPSHOT")
-            library("edc-assetindex-memory", "org.eclipse.dataspaceconnector:assetindex-memory:0.0.1-SNAPSHOT")
-            library(
-                "edc-transfer-process-store-memory",
-                "org.eclipse.dataspaceconnector:transfer-process-store-memory:0.0.1-SNAPSHOT"
-            )
-            library(
-                "edc-contractnegotiation-store-memory",
-                "org.eclipse.dataspaceconnector:contractnegotiation-store-memory:0.0.1-SNAPSHOT"
-            )
-            library(
-                "edc-contractdefinition-store-memory",
-                "org.eclipse.dataspaceconnector:contractdefinition-store-memory:0.0.1-SNAPSHOT"
-            )
-            library("edc-http", "org.eclipse.dataspaceconnector:http:0.0.1-SNAPSHOT")
-            library(
-                "edc-filesystem-configuration",
-                "org.eclipse.dataspaceconnector:filesystem-configuration:0.0.1-SNAPSHOT"
-            )
-            library("edc-filesystem-vault", "org.eclipse.dataspaceconnector:filesystem-vault:0.0.1-SNAPSHOT")
-            library("edc-oauth2-core", "org.eclipse.dataspaceconnector:oauth2-core:0.0.1-SNAPSHOT")
-            library("edc-control-api", "org.eclipse.dataspaceconnector:control-api:0.0.1-SNAPSHOT")
-            library("edc-ids", "org.eclipse.dataspaceconnector:ids:0.0.1-SNAPSHOT")
-            library("edc-dataloading", "org.eclipse.dataspaceconnector:dataloading:0.0.1-SNAPSHOT")
-            library("edc-spi", "org.eclipse.dataspaceconnector:spi:0.0.1-SNAPSHOT")
         }
     }
 }
