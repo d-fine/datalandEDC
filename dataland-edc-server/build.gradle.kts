@@ -44,8 +44,8 @@ dependencies {
 
     implementation("org.eclipse.dataspaceconnector:oauth2-core:$connectorVersion")
     implementation("org.eclipse.dataspaceconnector:transfer-spi:$connectorVersion")
-    //implementation("org.eclipse.dataspaceconnector:contract-spi:$connectorVersion")
-    implementation("org.eclipse.dataspaceconnector:core:$connectorVersion")
+    implementation("org.eclipse.dataspaceconnector:contract-spi:$connectorVersion")
+    //implementation("org.eclipse.dataspaceconnector:core:$connectorVersion")
     implementation("org.eclipse.dataspaceconnector:spi:$connectorVersion")
     implementation("org.eclipse.dataspaceconnector:http:$connectorVersion")
     implementation("org.eclipse.dataspaceconnector:ids:$connectorVersion")
