@@ -42,9 +42,6 @@ repositories {
 dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-    implementation("org.eclipse.dataspaceconnector:common-util:$connectorVersion")
-    implementation("org.eclipse.dataspaceconnector:spi:$connectorVersion")
-    implementation("org.eclipse.dataspaceconnector:dataloading:$connectorVersion")
     implementation("org.eclipse.dataspaceconnector:core:$connectorVersion")
     implementation("org.eclipse.dataspaceconnector:transfer-spi:$connectorVersion")
     implementation("org.eclipse.dataspaceconnector:contract-spi:$connectorVersion")
