@@ -39,6 +39,7 @@ jobs:
         run: ./dataland-edc-server/test/e2etest.sh
         env:
           TRUSTEE_IP: ${{ secrets.TRUSTEE_IP }}
+          KEYCLOAK_IP: ${{ secrets.TRUSTEE_IP }}
           TRUSTEE_CREDENTIALS: ${{ secrets.TRUSTEE_CREDENTIALS }}
           TUNNEL_STARTUP_LINK: ${{ secrets.TUNNEL_STARTUP_LINK }}
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
