@@ -50,7 +50,7 @@ dependencies {
     implementation(libs.edc.filesystem.configuration)
     implementation(libs.edc.filesystem.vault)
     implementation(libs.edc.oauth2.core)
-    implementation(libs.edc.control)
+    implementation(libs.edc.control.api)
     implementation(libs.edc.ids)
     implementation(libs.edc.dataloading)
     implementation(libs.edc.spi)
