@@ -42,13 +42,10 @@ repositories {
 dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-    implementation("org.eclipse.dataspaceconnector:filesystem-configuration:$connectorVersion")
-    implementation("org.eclipse.dataspaceconnector:filesystem-vault:$connectorVersion")
-    implementation("org.eclipse.dataspaceconnector:oauth2-core:$connectorVersion")
-    implementation("org.eclipse.dataspaceconnector:ids:$connectorVersion")
-
-    api("org.slf4j:slf4j-api:2.0.0-alpha1")
-    api("de.fraunhofer.iais.eis.ids.infomodel:java:4.2.7")
+    implementation(libs.edc.filesystem.configuration)
+    implementation(libs.edc.filesystem.vault)
+    implementation(libs.edc.oauth2.core)
+    implementation(libs.edc.ids)
 
     implementation("org.eurodat.connector:transfer-file")
     implementation("org.eurodat.broker:broker-rest-model")
