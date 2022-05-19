@@ -42,9 +42,6 @@ jobs:
           TRUSTEE_CREDENTIALS: ${{ secrets.TRUSTEE_CREDENTIALS }}
           TUNNEL_STARTUP_LINK: ${{ secrets.TUNNEL_STARTUP_LINK }}
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          EDC_API_AUTH_KEY: ${{ secrets.EDC_API_AUTH_KEY }}
-          EDC_API_CONTROL_AUTH_APIKEY_VALUE: ${{ secrets.EDC_API_CONTROL_AUTH_APIKEY_VALUE }}
-          EDC_KEYSTORE_PASSWORD: ${{ secrets.EDC_KEYSTORE_PASSWORD }}
       - name: Upload EDC Server log file
         if: always()
         uses: actions/upload-artifact@v2
