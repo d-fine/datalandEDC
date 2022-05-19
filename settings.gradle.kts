@@ -28,11 +28,23 @@ dependencyResolutionManagement {
 
             library("edc-core", "org.eclipse.dataspaceconnector:core:0.0.1-SNAPSHOT")
             library("edc-assetindex-memory", "org.eclipse.dataspaceconnector:assetindex-memory:0.0.1-SNAPSHOT")
-            library("edc-transfer-process-store-memory", "org.eclipse.dataspaceconnector:transfer-process-store-memory:0.0.1-SNAPSHOT")
-            library("edc-contractnegotiation-store-memory", "org.eclipse.dataspaceconnector:contractnegotiation-store-memory:0.0.1-SNAPSHOT")
-            library("edc-contractdefinition-store-memory", "org.eclipse.dataspaceconnector:contractdefinition-store-memory:0.0.1-SNAPSHOT")
+            library(
+                "edc-transfer-process-store-memory",
+                "org.eclipse.dataspaceconnector:transfer-process-store-memory:0.0.1-SNAPSHOT"
+            )
+            library(
+                "edc-contractnegotiation-store-memory",
+                "org.eclipse.dataspaceconnector:contractnegotiation-store-memory:0.0.1-SNAPSHOT"
+            )
+            library(
+                "edc-contractdefinition-store-memory",
+                "org.eclipse.dataspaceconnector:contractdefinition-store-memory:0.0.1-SNAPSHOT"
+            )
             library("edc-http", "org.eclipse.dataspaceconnector:http:0.0.1-SNAPSHOT")
-            library("edc-filesystem-configuration", "org.eclipse.dataspaceconnector:filesystem-configuration:0.0.1-SNAPSHOT")
+            library(
+                "edc-filesystem-configuration",
+                "org.eclipse.dataspaceconnector:filesystem-configuration:0.0.1-SNAPSHOT"
+            )
             library("edc-filesystem-vault", "org.eclipse.dataspaceconnector:filesystem-vault:0.0.1-SNAPSHOT")
             library("edc-oauth2-core", "org.eclipse.dataspaceconnector:oauth2-core:0.0.1-SNAPSHOT")
             library("edc-control-api", "org.eclipse.dataspaceconnector:control-api:0.0.1-SNAPSHOT")
