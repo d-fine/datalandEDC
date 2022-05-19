@@ -4,6 +4,7 @@ val connectorVersion: String by project
 
 allprojects {
     repositories {
+        mavenLocal()
         mavenCentral()
         maven("https://maven.iais.fraunhofer.de/artifactory/eis-ids-public")
     }

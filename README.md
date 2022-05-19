@@ -27,3 +27,10 @@ where e.G. `yourTargetDirectoryHere`=`C:\datalandEDC`, and `openApiGeneratorPlug
 Find the relevant template in: `/out/libraries/jvm-okhttp/infrastructure/ApiClient.kt.mustache`.
 Copy it to `openApiTemplate/libraries/jvm-okhttp/infrastructure/ApiClient.kt.mustache`. 
 Make sure the applied changes (import of `TimeUnit` as well as setting the timeouts during the `OkHttpClient.Builder` phase) get re-applied.
+
+# Building the DataSpaceConnector
+To build this project, you need the compiled DataSpaceConnector libraries. As they didn't yet publish a version to maven central, deploy them to maven local before. 
+To do so, run:
+```
+./DataSpaceConnector/gradlew -p ./DataSpaceConnector publishToMavenLocal
+```

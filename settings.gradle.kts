@@ -1,5 +1,4 @@
 rootProject.name = "connector"
-includeBuild("trustee-platform/services/edc")
 includeBuild("trustee-platform/services/broker")
 include("dataland-edc-client")
 include("dataland-edc-dummyserver")
@@ -26,6 +25,20 @@ dependencyResolutionManagement {
 
             library("awaitility", "org.awaitility:awaitility:4.2.0")
             library("awaitility-kotlin", "org.awaitility:awaitility-kotlin:4.2.0")
+
+            library("edc-core", "org.eclipse.dataspaceconnector:core:0.0.1-SNAPSHOT")
+            library("edc-assetindex-memory", "org.eclipse.dataspaceconnector:assetindex-memory:0.0.1-SNAPSHOT")
+            library("edc-transfer-process-store-memory", "org.eclipse.dataspaceconnector:transfer-process-store-memory:0.0.1-SNAPSHOT")
+            library("edc-contractnegotiation-store-memory", "org.eclipse.dataspaceconnector:contractnegotiation-store-memory:0.0.1-SNAPSHOT")
+            library("edc-contractdefinition-store-memory", "org.eclipse.dataspaceconnector:contractdefinition-store-memory:0.0.1-SNAPSHOT")
+            library("edc-http", "org.eclipse.dataspaceconnector:http:0.0.1-SNAPSHOT")
+            library("edc-configuration-fs", "org.eclipse.dataspaceconnector:configuration-fs:0.0.1-SNAPSHOT")
+            library("edc-vault-fs", "org.eclipse.dataspaceconnector:vault-fs:0.0.1-SNAPSHOT")
+            library("edc-oauth2-core", "org.eclipse.dataspaceconnector:oauth2-core:0.0.1-SNAPSHOT")
+            library("edc-control", "org.eclipse.dataspaceconnector:control:0.0.1-SNAPSHOT")
+            library("edc-ids", "org.eclipse.dataspaceconnector:ids:0.0.1-SNAPSHOT")
+            library("edc-dataloading", "org.eclipse.dataspaceconnector:dataloading:0.0.1-SNAPSHOT")
+            library("edc-spi", "org.eclipse.dataspaceconnector:spi:0.0.1-SNAPSHOT")
         }
     }
 }
