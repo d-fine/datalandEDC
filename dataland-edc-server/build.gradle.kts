@@ -34,25 +34,19 @@ tasks.test {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven("https://maven.iais.fraunhofer.de/artifactory/eis-ids-public")
 }
 
 dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("org.eclipse.dataspaceconnector:core")
-    implementation("org.eclipse.dataspaceconnector:in-memory:assetindex-memory")
-    implementation("org.eclipse.dataspaceconnector:in-memory:transfer-store-memory")
-    implementation("org.eclipse.dataspaceconnector:in-memory:negotiation-store-memory")
-    implementation("org.eclipse.dataspaceconnector:in-memory:contractdefinition-store-memory")
-    implementation("org.eclipse.dataspaceconnector:http")
-    implementation("org.eclipse.dataspaceconnector:configuration-fs")
-    implementation("org.eclipse.dataspaceconnector:vault-fs:$connectorVersion")
-    implementation("org.eclipse.dataspaceconnector:oauth2-core:$connectorVersion")
-    implementation("org.eclipse.dataspaceconnector:control")
-    implementation("org.eclipse.dataspaceconnector:ids")
-    implementation("org.eclipse.dataspaceconnector:dataloading")
-    implementation("org.eclipse.dataspaceconnector:spi")
+
+    implementation(libs.edc.filesystem.configuration)
+    implementation(libs.edc.filesystem.vault)
+    implementation(libs.edc.oauth2.core)
+    implementation(libs.edc.ids)
+
     implementation("org.eurodat.connector:transfer-file")
     implementation("org.eurodat.broker:broker-rest-model")
     implementation(libs.swagger.jaxrs2.jakarta)

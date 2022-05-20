@@ -1,5 +1,4 @@
 rootProject.name = "connector"
-includeBuild("trustee-platform/services/edc")
 includeBuild("trustee-platform/services/broker")
 include("dataland-edc-client")
 include("dataland-edc-dummyserver")
@@ -26,6 +25,14 @@ dependencyResolutionManagement {
 
             library("awaitility", "org.awaitility:awaitility:4.2.0")
             library("awaitility-kotlin", "org.awaitility:awaitility-kotlin:4.2.0")
+
+            library(
+                "edc-filesystem-configuration",
+                "org.eclipse.dataspaceconnector:filesystem-configuration:0.0.1-SNAPSHOT"
+            )
+            library("edc-filesystem-vault", "org.eclipse.dataspaceconnector:filesystem-vault:0.0.1-SNAPSHOT")
+            library("edc-oauth2-core", "org.eclipse.dataspaceconnector:oauth2-core:0.0.1-SNAPSHOT")
+            library("edc-ids", "org.eclipse.dataspaceconnector:ids:0.0.1-SNAPSHOT")
         }
     }
 }
