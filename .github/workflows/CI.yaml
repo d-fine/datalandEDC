@@ -12,6 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
+          fetch-depth: 0
           submodules: recursive
       - uses: actions/setup-java@v2
         with:
@@ -28,12 +29,6 @@ jobs:
         with:
           name: TestReport
           path: ./**/build/reports
-      - name: Upload JaCoCo Unit Tests Results
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: JaCoCoEDCUnitTests
-          path: ./*/build/jacoco/*.exec
       - name: Run e2etest
         if: always()
         run: ./dataland-edc-server/test/e2etest.sh
@@ -49,38 +44,6 @@ jobs:
         with:
           name: EdcServerLog
           path: ./edc_server.log
-      - name: Upload JaCoCo E2E Tests Results
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: JaCoCoEDCE2ETests
-          path: ./dataland-edc-server/build/jacoco/*.exec
-
-  sonar:
-    runs-on: ubuntu-latest
-    if: always()
-    needs:
-      - unit-tests
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-          submodules: recursive
-      - uses: actions/setup-java@v2
-        with:
-          distribution: temurin
-          java-version: 11
-          cache: gradle
-      - name: Build DataSpaceConnector
-        run: ./DataSpaceConnector/gradlew -p ./DataSpaceConnector publishToMavenLocal
-      - name: Build project
-        run: ./gradlew assemble --no-daemon --stacktrace
-      - uses: actions/download-artifact@v2
-        with:
-          name: JaCoCoEDCUnitTests
-      - uses: actions/download-artifact@v2
-        with:
-          name: JaCoCoEDCE2ETests
       - name: Generate jacocoTestReport and run Sonar
         if: always()
         run: |
@@ -94,7 +57,7 @@ jobs:
     runs-on: ubuntu-latest
     if: success()
     needs:
-      - sonar
+      - unit-tests
     steps:
       - name: Summary of this workflow's overall outcome
         run: exit 0
