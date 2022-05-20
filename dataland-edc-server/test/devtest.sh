@@ -1,5 +1,5 @@
 #!/bin/bash
-# This script executes a DevTest against EuroDaT. It will upload a datasat, and download it again
+# This script executes a DevTest against EuroDaT. It will upload a dataset, and download it again
 # Prerequisites:
 # - Set all env variables according the DatalandInternal Wiki
 # - Build the current version of the DataSpaceConnector (see Readme on how to update
