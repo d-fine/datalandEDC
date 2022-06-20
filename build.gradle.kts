@@ -62,12 +62,12 @@ plugins {
     id("org.springframework.boot") version "2.7.0" apply false
     id("io.gitlab.arturbosch.detekt") version "1.20.0"
     id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
-    kotlin("jvm") version "1.6.21"
-    kotlin("plugin.spring") version "1.6.21" apply false
-    id("org.sonarqube") version "3.3"
+    kotlin("jvm") version "1.7.0"
+    kotlin("plugin.spring") version "1.7.0" apply false
+    id("org.sonarqube") version "3.4.0.2513"
     id("org.openapi.generator") version "5.4.0" apply false
     id("org.springdoc.openapi-gradle-plugin") version "1.3.4" apply false
-    id("io.swagger.core.v3.swagger-gradle-plugin") version "2.2.0" apply false
+    id("io.swagger.core.v3.swagger-gradle-plugin") version "2.2.1" apply false
     jacoco
     id("com.github.ben-manes.versions") version "0.42.0"
     id("com.github.johnrengelman.shadow") version "7.1.2" apply false
@@ -121,7 +121,7 @@ tasks.jacocoTestReport {
 
 dependencies {
     detekt("io.gitlab.arturbosch.detekt:detekt-cli:1.20.0")
-    detekt("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.6.21")
+    detekt("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.7.0")
 }
 
 detekt {
