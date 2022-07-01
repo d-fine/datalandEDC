@@ -1,6 +1,7 @@
 package org.dataland.edcDummyServer.controller
 
 import org.dataland.edcDummyServer.openApiServer.api.DefaultApi
+import org.dataland.edcDummyServer.openApiServer.model.CheckHealthResponse
 import org.dataland.edcDummyServer.openApiServer.model.InsertDataResponse
 import org.dataland.edcDummyServer.service.InMemoryDataStore
 import org.springframework.http.ResponseEntity
@@ -19,5 +20,9 @@ class DummyController : DefaultApi {
 
     override fun insertData(body: String?): ResponseEntity<InsertDataResponse> {
         return ResponseEntity.ok(InsertDataResponse(dataStore.insertDataSet(body ?: "")))
+    }
+
+    override fun checkHealth(): ResponseEntity<CheckHealthResponse> {
+        return ResponseEntity.ok(CheckHealthResponse("I am alive!"))
     }
 }

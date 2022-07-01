@@ -1,6 +1,7 @@
 package org.dataland.edcDummyServer
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.dataland.edcDummyServer.openApiServer.model.CheckHealthResponse
 import org.dataland.edcDummyServer.openApiServer.model.InsertDataResponse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -25,6 +26,16 @@ class DummyEdcControllerTest(
         return mockMvc.perform(requestBuilder).andExpectAll(
             MockMvcResultMatchers.status().isOk,
             MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON),
+        )
+    }
+
+    @Test
+    fun `check health endpoint`() {
+        val body = objectMapper.writeValueAsString(CheckHealthResponse("I am alive!"))
+        performWithBasicResultsChecks(
+            MockMvcRequestBuilders.get("/dataland/health")
+        ).andExpect(
+            MockMvcResultMatchers.content().string(body)
         )
     }
 
