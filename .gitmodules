@@ -3,4 +3,4 @@
 	url = https://gitlab.com/eurodat.org/trustee-platform.git
 [submodule "DataSpaceConnector"]
 	path = DataSpaceConnector
-	url = https://github.com/dcandas/DataSpaceConnector
+	url = https://github.com/eclipse-dataspaceconnector/DataSpaceConnector.git
