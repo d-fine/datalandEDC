@@ -33,7 +33,7 @@ config_web_http_data_port=9393
 
 is_eurodat_up () {
   echo "Checking if EuroDaT is available."
-  if ! curl -f -X 'GET' "$eurodat_health_endpoint" -H 'accept: application/json' >/dev/null 2>&1; then
+if ! curl -f -X 'GET' "$eurodat_health_endpoint" -H 'accept: application/json' 2>/dev/null | grep -q '"isHealthy":true}],"isSystemHealthy":true'; then
     echo "EuroDaT is not available."
     exit 1
   fi
