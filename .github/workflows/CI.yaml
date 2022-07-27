@@ -20,7 +20,7 @@ jobs:
           java-version: 11
           cache: gradle
       - name: Build DataSpaceConnector
-        run: ./DataSpaceConnector/gradlew -p ./DataSpaceConnector publishToMavenLocal
+        run: ./DataSpaceConnector/gradlew -Pskip.signing=true -p ./DataSpaceConnector publishToMavenLocal
       - name: Build, check and test project
         run: ./gradlew assemble ktlintCheck detekt test --no-daemon --stacktrace
       - name: Upload Test Reports
