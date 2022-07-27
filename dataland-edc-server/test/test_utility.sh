@@ -21,7 +21,7 @@ export dataland_tunnel_uri=dataland-tunnel.duckdns.org
 dataland_edc_server_uri=dataland-tunnel.duckdns.org
 export dataland_tunnel_startup_link=$TUNNEL_STARTUP_LINK
 
-eurodat_health_endpoint="${TRUSTEE_WEB_URI}/ids/description"
+eurodat_health_endpoint="${TRUSTEE_WEB_URI}/check/health"
 
 export dataland_edc_server_web_http_port=9191
 dataland_edc_server_web_http_ids_port=9292
