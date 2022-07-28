@@ -47,8 +47,13 @@ dependencies {
     implementation(libs.edc.oauth2.core)
     implementation(libs.edc.ids)
 
-    implementation("org.eurodat.connector:transfer-file")
-    implementation("org.eurodat.broker:broker-rest-model")
+    // TEMP DATA MANAGEMENT
+    implementation("org.eclipse.dataspaceconnector:data-management-api:0.0.1-SNAPSHOT")
+    implementation("org.eclipse.dataspaceconnector:auth-tokenbased:0.0.1-SNAPSHOT")
+
+
+    implementation("org.eclipse.dataspaceconnector:core:0.0.1-SNAPSHOT")
+
     implementation(libs.swagger.jaxrs2.jakarta)
     implementation(libs.rs.api)
     implementation(libs.awaitility)
