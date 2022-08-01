@@ -21,7 +21,7 @@ export dataland_tunnel_uri=dataland-tunnel.duckdns.org
 dataland_edc_server_uri=dataland-tunnel.duckdns.org
 export dataland_tunnel_startup_link=$TUNNEL_STARTUP_LINK
 
-eurodat_health_endpoint="${TRUSTEE_WEB_URI}/check/health"
+eurodat_health_endpoint="${TRUSTEE_BASE_URL}/${TRUSTEE_ENVIRONMENT_NAME}/api/check/health"
 
 export dataland_edc_server_web_http_port=9191
 dataland_edc_server_web_http_ids_port=9292
@@ -31,7 +31,7 @@ config_web_http_ids_port=9292
 
 is_eurodat_up_and_healthy () {
   echo "Checking if EuroDaT is available."
-if ! curl -f -X 'GET' "$eurodat_health_endpoint" -H 'accept: application/json' 2>/dev/null | grep -q '"isHealthy":true}],"isSystemHealthy":true'; then
+if ! curl -f -X 'GET' "$eurodat_health_endpoint" -H 'accept: application/json' 2>/dev/null | grep -q '"isHealthy":true}],"isSystemHealthy":true}'; then
     echo "EuroDaT is not available."
     exit 1
   fi
