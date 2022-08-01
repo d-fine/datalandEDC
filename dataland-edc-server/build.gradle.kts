@@ -46,13 +46,7 @@ dependencies {
     implementation(libs.edc.filesystem.vault)
     implementation(libs.edc.oauth2.core)
     implementation(libs.edc.ids)
-
-    // TEMP DATA MANAGEMENT
-    implementation("org.eclipse.dataspaceconnector:data-management-api:0.0.1-SNAPSHOT")
-    implementation("org.eclipse.dataspaceconnector:auth-tokenbased:0.0.1-SNAPSHOT")
-
-
-    implementation("org.eclipse.dataspaceconnector:core:0.0.1-SNAPSHOT")
+    implementation(libs.edc.core)
 
     implementation(libs.swagger.jaxrs2.jakarta)
     implementation(libs.rs.api)
