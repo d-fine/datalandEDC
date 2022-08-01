@@ -25,11 +25,9 @@ eurodat_health_endpoint="${TRUSTEE_WEB_URI}/check/health"
 
 export dataland_edc_server_web_http_port=9191
 dataland_edc_server_web_http_ids_port=9292
-dataland_edc_server_web_http_data_port=9393
 
 config_web_http_port=9191
 config_web_http_ids_port=9292
-config_web_http_data_port=9393
 
 is_eurodat_up_and_healthy () {
   echo "Checking if EuroDaT is available."
@@ -61,7 +59,7 @@ execute_eurodat_test () {
 
   echo "Posting test data: $test_data."
   response=$(curl -X POST "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/data" -H "accept: application/json" -H "Content-Type: application/json" -d "$test_data")
-  regex="\"([a-f0-9\-]+:[a-f0-9\-]+)\""
+  regex="\"([a-f0-9\-:]+_[a-f0-9\-]+)\""
   if [[ $response =~ $regex ]]; then
     dataId=${BASH_REMATCH[1]}
   else

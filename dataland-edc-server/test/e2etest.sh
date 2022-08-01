@@ -38,7 +38,6 @@ timeout 240 bash -c "while ! is_tunnel_server_up_and_healthy; do echo 'Tunnel se
 echo "Open all three SSH tunnels between tunnel server and the host system."
 ssh -R \*:"$dataland_edc_server_web_http_port":localhost:"$config_web_http_port" -N -f ubuntu@"$dataland_tunnel_uri"
 ssh -R \*:"$dataland_edc_server_web_http_ids_port":localhost:"$config_web_http_ids_port" -N -f ubuntu@"$dataland_tunnel_uri"
-ssh -R \*:"$dataland_edc_server_web_http_data_port":localhost:"$config_web_http_data_port" -N -f ubuntu@"$dataland_tunnel_uri"
 
 execute_eurodat_test
 

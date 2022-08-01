@@ -41,7 +41,6 @@ done
 echo "Open all three SSH tunnels from the Dataland-Tunnel-Server to your host system"
 ssh -R \*:"$dataland_edc_server_web_http_port":$HOSTNAME:"$config_web_http_port" -N -f ubuntu@"$dataland_tunnel_uri"
 ssh -R \*:"$dataland_edc_server_web_http_ids_port":$HOSTNAME:"$config_web_http_ids_port" -N -f ubuntu@"$dataland_tunnel_uri"
-ssh -R \*:"$dataland_edc_server_web_http_data_port":$HOSTNAME:"$config_web_http_data_port" -N -f ubuntu@"$dataland_tunnel_uri"
 
 start_edc_server
 
