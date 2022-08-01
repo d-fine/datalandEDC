@@ -11,20 +11,24 @@ import org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcessS
 
 object AwaitUtils {
 
-    fun awaitContractConfirm(contractNegotiationStore: ContractNegotiationStore, contractNegotiation : ContractNegotiation) : ContractAgreement {
+    fun awaitContractConfirm(
+        contractNegotiationStore: ContractNegotiationStore,
+        contractNegotiation: ContractNegotiation
+    ): ContractAgreement {
         metaAwait {
-            ContractNegotiationStates.from(contractNegotiationStore.find(contractNegotiation.id)!!.state) == ContractNegotiationStates.CONFIRMED
+            ContractNegotiationStates.from(contractNegotiationStore.find(contractNegotiation.id)!!.state) ==
+                    ContractNegotiationStates.CONFIRMED
         }
         return contractNegotiationStore.find(contractNegotiation.id)!!.contractAgreement
     }
 
-    fun awaitTransferCompletion(transferProcessStore: TransferProcessStore, transferId : String) {
+    fun awaitTransferCompletion(transferProcessStore: TransferProcessStore, transferId: String) {
         metaAwait {
             TransferProcessStates.from(transferProcessStore.find(transferId)!!.state) == TransferProcessStates.COMPLETED
         }
     }
 
-    fun metaAwait(condition : () -> Boolean) {
+    fun metaAwait(condition: () -> Boolean) {
         await()
             .atMost(Constants.TIMEOUT)
             .pollInterval(Constants.POLL_INTERVAL)

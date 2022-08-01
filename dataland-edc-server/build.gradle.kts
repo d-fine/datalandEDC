@@ -51,7 +51,6 @@ dependencies {
     implementation("org.eclipse.dataspaceconnector:data-management-api:0.0.1-SNAPSHOT")
     implementation("org.eclipse.dataspaceconnector:auth-tokenbased:0.0.1-SNAPSHOT")
 
-
     implementation("org.eclipse.dataspaceconnector:core:0.0.1-SNAPSHOT")
 
     implementation(libs.swagger.jaxrs2.jakarta)

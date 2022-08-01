@@ -159,9 +159,12 @@ class DataManager(
         return datalandAssetId
     }
 
-    fun registerAssetEuroDat(datalandAssetId : String) {
+    fun registerAssetEuroDat(datalandAssetId: String) {
         context.monitor.info("Registering asset $datalandAssetId with EuroDat")
-        val assetForAssetManagementContractConfirmation = AwaitUtils.awaitContractConfirm(contractNegotiationStore, AssetForAssetManagementContractExtension.assetForAssetManagementNegotiation!!)
+        val assetForAssetManagementContractConfirmation = AwaitUtils.awaitContractConfirm(
+            contractNegotiationStore,
+            AssetForAssetManagementContractExtension.assetForAssetManagementNegotiation!!
+        )
 
         val dummyDataDestination = DataAddress.Builder.newInstance()
             .type("")
