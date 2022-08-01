@@ -1,13 +1,13 @@
 #!/bin/bash
 
-is_edc_server_up () {
+is_edc_server_up_and_healthy () {
   server_uri="${1:-localhost}"
   health_response=$(curl -s -f -X GET "http://${server_uri}:${dataland_edc_server_web_http_port}/api/dataland/health" -H "accept: application/json")
   if [[ ! $health_response =~ "I am alive!" ]]; then
     return 1
   fi
 }
-export -f is_edc_server_up
+export -f is_edc_server_up_and_healthy
 
 is_tunnel_server_up () {
   if ! ssh -o ConnectTimeout=10 ubuntu@"$dataland_tunnel_uri" "echo Connected to tunnel server"; then
@@ -31,7 +31,7 @@ config_web_http_port=9191
 config_web_http_ids_port=9292
 config_web_http_data_port=9393
 
-is_eurodat_up () {
+is_eurodat_up_and_healthy () {
   echo "Checking if EuroDaT is available."
 if ! curl -f -X 'GET' "$eurodat_health_endpoint" -H 'accept: application/json' 2>/dev/null | grep -q '"isHealthy":true}],"isSystemHealthy":true'; then
     echo "EuroDaT is not available."
@@ -51,7 +51,7 @@ start_edc_server () {
 
 execute_eurodat_test () {
   echo "Checking health endpoint via tunnel server."
-  if ! is_edc_server_up "$dataland_edc_server_uri"; then
+  if ! is_edc_server_up_and_healthy "$dataland_edc_server_uri"; then
     echo "Unable to reach EDC server via tunnel."
     exit 1
   fi
