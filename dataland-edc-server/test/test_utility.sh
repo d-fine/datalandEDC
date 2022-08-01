@@ -59,7 +59,7 @@ execute_eurodat_test () {
 
   echo "Posting test data: $test_data."
   response=$(curl -X POST "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/data" -H "accept: application/json" -H "Content-Type: application/json" -d "$test_data")
-  regex="\"([a-f0-9\-:]+_[a-f0-9\-]+)\""
+  regex=":\"(.+_.+)\""
   if [[ $response =~ $regex ]]; then
     dataId=${BASH_REMATCH[1]}
   else
