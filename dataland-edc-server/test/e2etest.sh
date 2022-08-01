@@ -10,7 +10,7 @@ source ./.env
 
 source ./test_utility.sh
 
-is_eurodat_up
+is_eurodat_up_and_healthy
 
 echo "Enable runner to connect to ssh tunnel server."
 mkdir -p ~/.ssh/
@@ -26,14 +26,14 @@ fi
 start_edc_server
 
 echo "Checking health endpoint of dataland edc server locally."
-timeout 240 bash -c "while ! is_edc_server_up; do echo 'Dataland EDC server not yet there - retrying in 5s'; sleep 5; done; echo 'Dataland EDC server up!'"
+timeout 240 bash -c "while ! is_edc_server_up_and_healthy; do echo 'Dataland EDC server not yet there - retrying in 5s'; sleep 5; done; echo 'Dataland EDC server up!'"
 
 echo "Starting tunnel server."
 curl "$dataland_tunnel_startup_link"
 sleep 10
 
 echo "Checking availability of tunnel server."
-timeout 240 bash -c "while ! is_tunnel_server_up; do echo 'Tunnel server not yet there - retrying in 5s'; sleep 5; done; echo 'Tunnel server up!'"
+timeout 240 bash -c "while ! is_tunnel_server_up_and_healthy; do echo 'Tunnel server not yet there - retrying in 5s'; sleep 5; done; echo 'Tunnel server up!'"
 
 echo "Open all three SSH tunnels between tunnel server and the host system."
 ssh -R \*:"$dataland_edc_server_web_http_port":localhost:"$config_web_http_port" -N -f ubuntu@"$dataland_tunnel_uri"
