@@ -27,18 +27,17 @@ class DatalandEuroDaTExtension : ServiceExtension {
     private lateinit var consumerContractNegotiationManager: ConsumerContractNegotiationManager
 
     @Inject
-    private lateinit var transferProcessStore : TransferProcessStore
+    private lateinit var transferProcessStore: TransferProcessStore
 
     @Inject
     private lateinit var dispatcher: RemoteMessageDispatcherRegistry
-
 
     /**
      * Creates a EuroDaTService Instance with the required injects
      * and makes it available to other components
      */
     @Provider
-    fun provideEuroDatController(context: ServiceExtensionContext) : EuroDaTService {
+    fun provideEuroDatController(context: ServiceExtensionContext): EuroDaTService {
         return EuroDaTService(
             transferProcessManager,
             contractNegotiationStore,

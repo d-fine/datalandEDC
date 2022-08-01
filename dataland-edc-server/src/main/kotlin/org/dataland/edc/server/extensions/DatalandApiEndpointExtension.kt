@@ -14,7 +14,7 @@ import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
 /**
  * Extends the EDC with the functionality required for Dataland
  */
-class DatalandApiEndpointExtension : ServiceExtension  {
+class DatalandApiEndpointExtension : ServiceExtension {
 
     @Inject
     private lateinit var webService: WebService

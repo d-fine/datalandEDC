@@ -24,7 +24,7 @@ import org.eclipse.dataspaceconnector.spi.types.domain.contract.negotiation.Cont
 import org.eclipse.dataspaceconnector.spi.types.domain.contract.offer.ContractOffer
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataRequest
 import java.net.URI
-import java.util.*
+import java.util.UUID
 
 /**
  * A service class that handles all the EDC-based communication
@@ -39,10 +39,10 @@ import java.util.*
 class EuroDaTService(
     private val transferProcessManager: TransferProcessManager,
     private val contractNegotiationStore: ContractNegotiationStore,
-    private val transferProcessStore : TransferProcessStore,
+    private val transferProcessStore: TransferProcessStore,
     private val consumerContractNegotiationManager: ConsumerContractNegotiationManager,
     private val context: ServiceExtensionContext,
-    private val dispatcher : RemoteMessageDispatcherRegistry,
+    private val dispatcher: RemoteMessageDispatcherRegistry,
 ) {
 
     private val connectorAddressEuroDat = context.getSetting("trustee.ids.uri", "default")
@@ -54,11 +54,12 @@ class EuroDaTService(
      * @param localAssetId the dataland asset id
      * @param localAssetAccessURL a publicly reachable URl under which EuroDaT can retrieve the asset
      */
-    fun registerAssetEuroDat(localAssetId : String, localAssetAccessURL : String) {
+    fun registerAssetEuroDat(localAssetId: String, localAssetAccessURL: String) {
         context.monitor.info("Registering asset $localAssetId with EuroDat")
-        val assetForAssetManagementContractConfirmation
-            = AwaitUtils.awaitContractConfirm(contractNegotiationStore,
-            AssetForAssetManagementContractExtension.assetForAssetManagementNegotiation!!)
+        val assetForAssetManagementContractConfirmation = AwaitUtils.awaitContractConfirm(
+            contractNegotiationStore,
+            AssetForAssetManagementContractExtension.assetForAssetManagementNegotiation!!
+        )
 
         val dummyDataDestination = DataAddress.Builder.newInstance()
             .type("")
@@ -74,17 +75,19 @@ class EuroDaTService(
             .contractId(assetForAssetManagementContractConfirmation.id)
             .dataDestination(dummyDataDestination)
             .managedResources(false)
-            .properties(mapOf(
-                "type" to Constants.TYPE_HTTP_ASSET_REGISTRATION,
-                "endpoint" to localAssetAccessURL,
-                "providerId" to Constants.PROVIDER_ID_DATALAND,
-                "ownerId" to Constants.OWNER_ID_DATALAND,
-                "contentType" to Constants.CONTENT_TYPE_PERSISTENT,
-                "policyTemplateId" to Constants.POLICY_TEMPLATE_ID,
-                "assetName" to localAssetId,
-                "providerAssetId" to "",
-                "queryAgreementId" to "",
-            ))
+            .properties(
+                mapOf(
+                    "type" to Constants.TYPE_HTTP_ASSET_REGISTRATION,
+                    "endpoint" to localAssetAccessURL,
+                    "providerId" to Constants.PROVIDER_ID_DATALAND,
+                    "ownerId" to Constants.OWNER_ID_DATALAND,
+                    "contentType" to Constants.CONTENT_TYPE_PERSISTENT,
+                    "policyTemplateId" to Constants.POLICY_TEMPLATE_ID,
+                    "assetName" to localAssetId,
+                    "providerAssetId" to "",
+                    "queryAgreementId" to "",
+                )
+            )
             .build()
         val transferId = transferProcessManager.initiateConsumerRequest(dataRequest).content
         AwaitUtils.awaitTransferCompletion(transferProcessStore, transferId)
@@ -96,7 +99,7 @@ class EuroDaTService(
      * registers the asset under the name of the localAssetId
      * @param localAssetID the dataland asset id
      */
-    fun getAssetFromEuroDatCatalog(localAssetID: String) : EuroDaTAssetLocation {
+    fun getAssetFromEuroDatCatalog(localAssetID: String): EuroDaTAssetLocation {
         val request = CatalogRequest.Builder.newInstance()
             .protocol(Constants.PROTOCOL_IDS_MULTIPART)
             .connectorId(Constants.CONNECTOR_ID_PROVIDER)
@@ -122,7 +125,7 @@ class EuroDaTService(
      * @param retrievalContractId the contract made to retrieve the asset
      * @param targetURL the URl where the asset is supposed to be sent to
      */
-    fun requestData(euroDatAssetId: String, retrievalContractId : String, targetURL : String) {
+    fun requestData(euroDatAssetId: String, retrievalContractId: String, targetURL: String) {
         val dataDestination = DataAddress.Builder.newInstance()
             .property("type", "")
             .property("baseUrl", targetURL)
@@ -136,21 +139,22 @@ class EuroDaTService(
             .contractId(retrievalContractId)
             .dataDestination(dataDestination)
             .managedResources(false)
-            .properties(mapOf(
-                "type" to "HttpFV",
-                "endpoint" to targetURL
-            ))
+            .properties(
+                mapOf(
+                    "type" to "HttpFV",
+                    "endpoint" to targetURL
+                )
+            )
             .build()
         val transferId = transferProcessManager.initiateConsumerRequest(dataRequest).content
         AwaitUtils.awaitTransferCompletion(transferProcessStore, transferId)
     }
 
-
     /**
      * Negotiates a read contract for the specified asset
      * @param assetLocation the location of the asset the contract is for
      */
-    fun negotiateReadContract(assetLocation : EuroDaTAssetLocation): ContractAgreement {
+    fun negotiateReadContract(assetLocation: EuroDaTAssetLocation): ContractAgreement {
         val action = Action.Builder.newInstance()
             .type(Constants.ACTION_TYPE_USE)
             .build()
@@ -181,7 +185,6 @@ class EuroDaTService(
             .contractOffer(assetContractOffer)
             .build()
 
-
         val negotiation = consumerContractNegotiationManager.initiate(contractOfferRequest).content
         return AwaitUtils.awaitContractConfirm(contractNegotiationStore, negotiation)
     }
@@ -190,7 +193,7 @@ class EuroDaTService(
      * Negotiates a use contract for the Asset for Asset management - A Meta Asset
      * used for asset management tasks
      */
-    fun negotiateAssetForAssetManagementContract() : ContractNegotiation {
+    fun negotiateAssetForAssetManagementContract(): ContractNegotiation {
         val action = Action.Builder.newInstance()
             .type(Constants.ACTION_TYPE_USE)
             .build()

@@ -42,7 +42,8 @@ class DataManager(
         euroDaTService.requestData(
             euroDatAssetId = dataLocation.assetId,
             retrievalContractId = agreement.id,
-            targetURL = getLocalAssetAccessURl(dataLocation.assetId))
+            targetURL = getLocalAssetAccessURl(dataLocation.assetId)
+        )
         return AwaitUtils.awaitAssetArrival(euroDatCache, dataLocation.assetId)
     }
 
