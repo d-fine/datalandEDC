@@ -6,13 +6,13 @@ import java.util.concurrent.ConcurrentHashMap
  * An in-memory store of assets provided to EuroDaT
  */
 class LocalAssetStore {
-    private val store : ConcurrentHashMap<String, String> = ConcurrentHashMap()
+    private val store: ConcurrentHashMap<String, String> = ConcurrentHashMap()
 
     /**
      * Retrieves an asset from the store
      * @param id the id of the asset
      */
-    fun retrieveFromStore(id : String) : String? {
+    fun retrieveFromStore(id: String): String? {
         return store[id]
     }
 
@@ -21,7 +21,7 @@ class LocalAssetStore {
      * @param id the id of the asset
      * @param asset the actual asset data
      */
-    fun insertIntoStore(id : String, asset : String) {
+    fun insertIntoStore(id: String, asset: String) {
         store[id] = asset
     }
 
@@ -29,7 +29,7 @@ class LocalAssetStore {
      * Deletes an asset from the store
      * @param id the id of the asset
      */
-    fun deleteFromStore(id : String) {
+    fun deleteFromStore(id: String) {
         store.remove(id)
     }
 }
