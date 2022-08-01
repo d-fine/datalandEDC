@@ -23,6 +23,7 @@ interface DatalandEurodatApi {
      */
     fun provideAsset(@PathParam("datalandAssetId") datalandAssetId: String): String
 
+
     @Consumes(MediaType.APPLICATION_OCTET_STREAM)
     @Produces(MediaType.APPLICATION_JSON)
     @POST

@@ -1,57 +1,55 @@
-package org.dataland.edc.server.api
+package org.dataland.edc.server.extensions
 
 import org.dataland.edc.server.controller.DatalandEurodatController
 import org.dataland.edc.server.controller.DatalandInternalEdcController
 import org.dataland.edc.server.service.DataManager
-import org.eclipse.dataspaceconnector.dataloading.AssetLoader
 import org.eclipse.dataspaceconnector.spi.WebService
 import org.eclipse.dataspaceconnector.spi.contract.negotiation.ConsumerContractNegotiationManager
 import org.eclipse.dataspaceconnector.spi.contract.negotiation.store.ContractNegotiationStore
 import org.eclipse.dataspaceconnector.spi.contract.offer.store.ContractDefinitionStore
+import org.eclipse.dataspaceconnector.spi.message.RemoteMessageDispatcherRegistry
 import org.eclipse.dataspaceconnector.spi.system.Inject
-import org.eclipse.dataspaceconnector.spi.system.Requires
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtension
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
 import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessManager
+import org.eclipse.dataspaceconnector.spi.transfer.store.TransferProcessStore
 
-/**
- * Extends the EDC with the functionality required for Dataland
- */
-@Requires(WebService::class)
-class DatalandApiEndpointExtension : ServiceExtension {
+class DatalandApiEndpointExtension : ServiceExtension  {
 
     @Inject
-    val assetLoader: AssetLoader? = null
+    private lateinit var transferProcessManager: TransferProcessManager
 
     @Inject
-    val contractDefinitionStore: ContractDefinitionStore? = null
+    private lateinit var contractNegotiationStore: ContractNegotiationStore
 
     @Inject
-    private val transferProcessManager: TransferProcessManager? = null
+    private lateinit var consumerContractNegotiationManager: ConsumerContractNegotiationManager
 
     @Inject
-    private val contractNegotiationStore: ContractNegotiationStore? = null
+    private lateinit var transferProcessStore : TransferProcessStore
 
     @Inject
-    private val consumerContractNegotiationManager: ConsumerContractNegotiationManager? = null
+    private lateinit var dispatcher: RemoteMessageDispatcherRegistry
 
     @Inject
-    val webService: WebService? = null
+    private lateinit var webService: WebService
 
     override fun name(): String {
         return "API Endpoint"
     }
 
     override fun initialize(context: ServiceExtensionContext) {
+
         val dataManager = DataManager(
-            assetLoader!!,
-            contractDefinitionStore!!,
-            transferProcessManager!!,
-            contractNegotiationStore!!,
-            consumerContractNegotiationManager!!,
-            context
+            transferProcessManager,
+            contractNegotiationStore,
+            transferProcessStore,
+            consumerContractNegotiationManager,
+            context,
+            dispatcher
         )
-        webService!!.registerResource(DatalandInternalEdcController(dataManager, context))
+
+        webService.registerResource(DatalandInternalEdcController(dataManager, context))
         webService.registerResource(DatalandEurodatController(dataManager, context))
     }
 }

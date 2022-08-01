@@ -1,134 +1,40 @@
 package org.dataland.edc.server.service
 
-import org.awaitility.Awaitility.await
-import org.dataland.edc.server.models.TrusteeClient
-import org.eclipse.dataspaceconnector.dataloading.AssetLoader
+import org.dataland.edc.server.extensions.AssetForAssetManagementContractExtension
+import org.dataland.edc.server.utils.AwaitUtils
+import org.dataland.edc.server.utils.Constants
 import org.eclipse.dataspaceconnector.policy.model.Action
 import org.eclipse.dataspaceconnector.policy.model.Permission
 import org.eclipse.dataspaceconnector.policy.model.Policy
-import org.eclipse.dataspaceconnector.spi.asset.AssetSelectorExpression
 import org.eclipse.dataspaceconnector.spi.contract.negotiation.ConsumerContractNegotiationManager
 import org.eclipse.dataspaceconnector.spi.contract.negotiation.store.ContractNegotiationStore
-import org.eclipse.dataspaceconnector.spi.contract.offer.store.ContractDefinitionStore
+import org.eclipse.dataspaceconnector.spi.message.Range
+import org.eclipse.dataspaceconnector.spi.message.RemoteMessageDispatcherRegistry
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
 import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessManager
+import org.eclipse.dataspaceconnector.spi.transfer.store.TransferProcessStore
 import org.eclipse.dataspaceconnector.spi.types.domain.DataAddress
 import org.eclipse.dataspaceconnector.spi.types.domain.asset.Asset
-import org.eclipse.dataspaceconnector.spi.types.domain.contract.negotiation.ContractNegotiationStates
+import org.eclipse.dataspaceconnector.spi.types.domain.catalog.Catalog
+import org.eclipse.dataspaceconnector.spi.types.domain.catalog.CatalogRequest
+import org.eclipse.dataspaceconnector.spi.types.domain.contract.agreement.ContractAgreement
 import org.eclipse.dataspaceconnector.spi.types.domain.contract.negotiation.ContractOfferRequest
-import org.eclipse.dataspaceconnector.spi.types.domain.contract.offer.ContractDefinition
 import org.eclipse.dataspaceconnector.spi.types.domain.contract.offer.ContractOffer
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataRequest
-import org.eurodat.broker.model.ProviderRequest
 import java.net.URI
-import java.time.Duration
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-private const val PROVIDER_URN_KEY = "urn:connector:provider"
-private const val CONSUMER_URN_KEY = "urn:connector:consumer"
-
-/**
- * Entity orchestrating the required steps for trustee data exchange
- * @param assetLoader holds all registered assets of the Dataland EDC
- * @param contractDefinitionStore holds all available contracts of the Dataland EDC
- * @param transferProcessManager manages the transfer process
- * @param contractNegotiationStore holds the contract negotiations of the Dataland EDC
- * @param consumerContractNegotiationManager manages contract negotiations
- * @param context the context containing constants and the monitor for logging
- */
 class DataManager(
-    private val assetLoader: AssetLoader,
-    contractDefinitionStore: ContractDefinitionStore,
     private val transferProcessManager: TransferProcessManager,
     private val contractNegotiationStore: ContractNegotiationStore,
+    private val transferProcessStore : TransferProcessStore,
     private val consumerContractNegotiationManager: ConsumerContractNegotiationManager,
-    private val context: ServiceExtensionContext
+    private val context: ServiceExtensionContext,
+    private val dispatcher : RemoteMessageDispatcherRegistry,
 ) {
-    companion object {
-        private val timeout = Duration.ofSeconds(120)
-        private val pollInterval = Duration.ofMillis(100)
-    }
-
-    private val trusteeWebUrl = context.getSetting("trustee.web.uri", "default")
-    private val trusteeIdsUrl = context.getSetting("trustee.ids.uri", "default")
-
-    private val trusteeClient = TrusteeClient(trusteeWebUrl, context.getSetting("trustee.credentials", "password"))
-
-    private val receivedAssets: ConcurrentHashMap<String, String> = ConcurrentHashMap()
     private val providedAssets: ConcurrentHashMap<String, String> = ConcurrentHashMap()
-
-    private val endpointForAssetPickup = context.getSetting("dataland.edc.web.uri", "default")
-    private val participantId = "dataland"
-    private val datalandConnectorAddress = context.getSetting("dataland.edc.ids.uri", "default")
-    private val dataOwnerId = "dataland"
-    private val storageType = "persistent"
-
-    private val dummyDatalandAssetId = "test-asset"
-    private val dummyPolicyUid = "956e172f-2de1-4501-8881-057a57fd0e60"
-    private val dummyActionType = "USE"
-    private val dummyAction = Action.Builder.newInstance().type(dummyActionType).build()
-    private val dummyPermission = Permission.Builder.newInstance().target(dummyDatalandAssetId)
-        .action(dummyAction).build()
-    private val dummyPolicy = Policy.Builder.newInstance().id(dummyPolicyUid).permission(dummyPermission).build()
-    private val dummyAsset = Asset.Builder.newInstance().build()
-
-    // This is a workaround to enable multiple asset upload even-though EuroDaT supports only the ID 1 (see DALA-146)
-    private val dummyContractDefinition = ContractDefinition.Builder.newInstance()
-        .id("1")
-        .accessPolicyId(dummyPolicyUid)
-        .contractPolicyId(dummyPolicyUid)
-        .selectorExpression(
-            AssetSelectorExpression.Builder.newInstance().whenEquals(Asset.PROPERTY_ID, dummyDatalandAssetId).build()
-        )
-        .build()
-
-    init {
-        contractDefinitionStore.save(dummyContractDefinition)
-    }
-
-    private fun buildProviderRequest(asset: Asset): ProviderRequest {
-        return ProviderRequest(
-            participantId = participantId,
-            participantConnectorAddress = datalandConnectorAddress,
-            ownerId = dataOwnerId,
-            contentType = storageType,
-            asset = asset,
-            policy = dummyPolicy,
-            provider = URI(PROVIDER_URN_KEY),
-            consumer = URI(CONSUMER_URN_KEY),
-            contractDefinitionId = "1"
-        )
-    }
-
-    private fun registerAssetLocally(data: String): Pair<Asset, String> {
-        val datalandAssetId = UUID.randomUUID().toString()
-        providedAssets[datalandAssetId] = data
-
-        val asset = Asset.Builder.newInstance().id(dummyDatalandAssetId)
-            .property("endpoint", "$endpointForAssetPickup/$datalandAssetId").build()
-
-        val dataAddress = DataAddress.Builder.newInstance().type("Http")
-            .property("endpoint", "$endpointForAssetPickup/$datalandAssetId").build()
-
-        assetLoader.accept(asset, dataAddress)
-        return Pair(asset, datalandAssetId)
-    }
-
-    /**
-     * Method to store data as an asset in the trustee
-     * @param data the data to be stored in the trustee
-     */
-    fun provideAssetToTrustee(data: String): String {
-        val (asset, datalandAssetId) = registerAssetLocally(data)
-        context.monitor.info("Asset successfully registered with Dataland EDC.")
-        val trusteeResponse = trusteeClient.registerAsset(buildProviderRequest(asset))
-        providedAssets.remove(datalandAssetId)
-        context.monitor.info("Asset successfully registered with Trustee.")
-        val trusteeAssetId = trusteeResponse["asset"]["properties"]["asset:prop:id"].asText()
-        val contractDefinitionId = trusteeResponse["contractDefinition"]["id"].asText()
-        return "$trusteeAssetId:$contractDefinitionId"
-    }
+    private val receivedAssets: ConcurrentHashMap<String, String> = ConcurrentHashMap()
 
     /**
      * Method to make data available for pickup from trustee
@@ -139,82 +45,26 @@ class DataManager(
         return providedAssets[datalandAssetId] ?: "No data with ID $datalandAssetId found."
     }
 
-    private fun retrieveAssetFromTrustee(trusteeAssetId: String, contractDefinitionId: String): String {
-        val negotiationId = initiateNegotiations(trusteeAssetId, contractDefinitionId)
-        val agreementId = getAgreementId(negotiationId)
-        requestData(agreementId, trusteeAssetId)
-        return getReceivedAsset(trusteeAssetId)
+    fun provideAssetToTrustee(data : String) : String {
+        val localAssetId = registerAssetLocally(data);
+        registerAssetEuroDat(localAssetId)
+        val (offerId, euroDaTAssetId) = getAssetFromEuroDatCatalog(localAssetId)
+        return "${offerId}_${euroDaTAssetId}"
     }
 
-    private fun requestData(agreementId: String, trusteeAssetId: String) {
-        val dataDestination = DataAddress.Builder.newInstance()
-            .property("type", "HttpFV")
-            .property("endpoint", endpointForAssetPickup)
-            .build()
-        val dataRequest = DataRequest.Builder.newInstance()
-            .id("process-id:$agreementId")
-            .connectorAddress(trusteeIdsUrl)
-            .protocol("ids-multipart")
-            .connectorId("consumer")
-            .assetId(trusteeAssetId)
-            .contractId(agreementId)
-            .dataDestination(dataDestination)
-            .managedResources(false)
-            .build()
-        transferProcessManager.initiateConsumerRequest(dataRequest)
-    }
-
-    private fun getAgreementId(negotiationId: String): String {
-        await()
-            .atMost(timeout)
-            .pollInterval(pollInterval)
-            .until {
-                ContractNegotiationStates.from(contractNegotiationStore.find(negotiationId)!!.state) ==
-                    ContractNegotiationStates.CONFIRMED
-            }
-        return contractNegotiationStore.find(negotiationId)!!.contractAgreement.id
-    }
-
-    private fun initiateNegotiations(trusteeAssetId: String, contractDefinitionId: String): String {
-        val assetPermission = Permission.Builder.newInstance().target(trusteeAssetId).action(dummyAction).build()
-        val assetPolicy = Policy.Builder.newInstance().id(dummyPolicyUid).permission(assetPermission).build()
-        val assetContractOffer = ContractOffer.Builder.newInstance()
-            .id("$contractDefinitionId:3a75736e-001d-4364-8bd4-9888490edb59")
-            .policy(assetPolicy)
-            .asset(dummyAsset)
-            .provider(URI(PROVIDER_URN_KEY))
-            .consumer(URI(PROVIDER_URN_KEY))
+    private fun getAssetFromEuroDatCatalog(localAssetID: String) : Pair<String, String>  {
+        val request = CatalogRequest.Builder.newInstance()
+            .protocol(Constants.PROTOCOL_IDS_MULTIPART)
+            .connectorId(Constants.CONNECTOR_ID_PROVIDER)
+            .connectorAddress(Constants.CONNECTOR_ADDRESS_EURODAT)
+            .range(Range(0, Integer.MAX_VALUE))
             .build()
 
-        val contractOfferRequest = ContractOfferRequest.Builder.newInstance()
-            .contractOffer(assetContractOffer)
-            .protocol("ids-multipart")
-            .connectorId("consumer")
-            .connectorAddress(trusteeIdsUrl)
-            .type(ContractOfferRequest.Type.INITIAL)
-            .build()
+        val catalogFuture = dispatcher.send(Catalog::class.java, request) { null }
+        val catalog = catalogFuture.join()
 
-        return consumerContractNegotiationManager.initiate(contractOfferRequest).content.id
-    }
-
-    private fun getReceivedAsset(trusteeAssetId: String): String {
-        await()
-            .atMost(timeout)
-            .pollInterval(pollInterval)
-            .until {
-                receivedAssets.containsKey(trusteeAssetId)
-            }
-        return receivedAssets[trusteeAssetId] ?: "No data under ID $trusteeAssetId found."
-    }
-
-    /**
-     * Stores given data under a given asset ID in the in memory store
-     * @param trusteeAssetId uuid as provided by the trustee
-     * @param data the data to be stored in string format
-     */
-    fun storeReceivedAsset(trusteeAssetId: String, data: String) {
-        context.monitor.info("Received and stored data with ID: $trusteeAssetId")
-        receivedAssets[trusteeAssetId] = data
+        val result = catalog.contractOffers.firstOrNull() { it.asset.properties["assetName"] == localAssetID }!!
+        return Pair(result.id, result.asset.properties["asset:prop:id"].toString())
     }
 
     /**
@@ -222,14 +72,128 @@ class DataManager(
      * @param dataId The identifier to uniquely determine the data in question
      */
     fun getDataById(dataId: String): String {
-        val splitDataId = dataId.split(":")
+        val splitDataId = dataId.split("_")
         if (splitDataId.size != 2) throw IllegalArgumentException("The data ID $dataId has an invalid format.")
-        val trusteeAssetId = splitDataId[0]
+        val contractDefId = splitDataId[0]
+        val trusteeAssetId = splitDataId[1]
 
         return if (receivedAssets.containsKey(trusteeAssetId)) {
             receivedAssets[trusteeAssetId]!!
         } else {
-            retrieveAssetFromTrustee(trusteeAssetId = trusteeAssetId, contractDefinitionId = splitDataId[1])
+           retrieveAssetFromTrustee(trusteeAssetId = trusteeAssetId, contractDefinitionId = contractDefId)
         }
     }
+
+    private fun requestData(agreementId: String, trusteeAssetId: String) {
+        val dataDestination = DataAddress.Builder.newInstance()
+            .property("type", "")
+            .property("baseUrl", getLocalAssetAccessURl(trusteeAssetId))
+            .build()
+        val dataRequest = DataRequest.Builder.newInstance()
+            .id("process-id:${UUID.randomUUID()}")
+            .connectorAddress(Constants.CONNECTOR_ADDRESS_EURODAT)
+            .protocol(Constants.PROTOCOL_IDS_MULTIPART)
+            .connectorId(Constants.CONNECTOR_ID_CONSUMER)
+            .assetId(trusteeAssetId)
+            .contractId(agreementId)
+            .dataDestination(dataDestination)
+            .managedResources(false)
+            .properties(mapOf(
+                "type" to "HttpFV",
+                "endpoint" to getLocalAssetAccessURl(trusteeAssetId)
+            ))
+            .build()
+        val transferId = transferProcessManager.initiateConsumerRequest(dataRequest).content
+        AwaitUtils.awaitTransferCompletion(transferProcessStore, transferId)
+    }
+    private fun retrieveAssetFromTrustee(trusteeAssetId: String, contractDefinitionId: String): String {
+        val agreement = initiateNegotiations(trusteeAssetId, contractDefinitionId)
+        requestData(agreement.id, trusteeAssetId)
+        return ""
+    }
+
+    private fun initiateNegotiations(trusteeAssetId: String, contractDefinitionId: String): ContractAgreement {
+        val action = Action.Builder.newInstance()
+            .type(Constants.ACTION_TYPE_USE)
+            .build()
+
+        val assetPermission = Permission.Builder.newInstance()
+            .target(trusteeAssetId)
+            .action(action)
+            .build()
+
+        val assetPolicy = Policy.Builder.newInstance()
+            .target(trusteeAssetId)
+            .permission(assetPermission)
+            .build()
+
+        val assetContractOffer = ContractOffer.Builder.newInstance()
+            .id(contractDefinitionId)
+            .assetId(trusteeAssetId)
+            .policy(assetPolicy)
+            .provider(URI(Constants.URN_KEY_PROVIDER))
+            .consumer(URI(Constants.URN_KEY_CONSUMER))
+            .build()
+
+        val contractOfferRequest = ContractOfferRequest.Builder.newInstance()
+            .type(ContractOfferRequest.Type.INITIAL)
+            .connectorId(Constants.CONNECTOR_ID_PROVIDER)
+            .connectorAddress(Constants.CONNECTOR_ADDRESS_EURODAT)
+            .protocol("ids-multipart")
+            .contractOffer(assetContractOffer)
+            .build()
+
+
+        val negotiation = consumerContractNegotiationManager.initiate(contractOfferRequest).content
+        return AwaitUtils.awaitContractConfirm(contractNegotiationStore, negotiation);
+    }
+
+    private fun getLocalAssetAccessURl(localAssetID: String) : String {
+        return "${Constants.BASE_ADDRESS_DATALAND_TO_EURODAT_API}/asset/$localAssetID"
+    }
+
+    private fun registerAssetLocally(data: String): String {
+        val datalandAssetId = UUID.randomUUID().toString()
+        providedAssets[datalandAssetId] = data
+        context.monitor.info("Registered new local asset under ID $datalandAssetId)")
+        return datalandAssetId
+    }
+
+    fun registerAssetEuroDat(datalandAssetId : String) {
+        context.monitor.info("Registering asset $datalandAssetId with EuroDat")
+        val assetForAssetManagementContractConfirmation = AwaitUtils.awaitContractConfirm(contractNegotiationStore, AssetForAssetManagementContractExtension.assetForAssetManagementNegotiation!!)
+
+        val dummyDataDestination = DataAddress.Builder.newInstance()
+            .type("")
+            .property("endpoint", "unused-endpoint")
+            .build()
+
+        val dataRequest = DataRequest.Builder.newInstance()
+            .id("process-id:$datalandAssetId")
+            .protocol(Constants.PROTOCOL_IDS_MULTIPART)
+            .connectorAddress(Constants.CONNECTOR_ADDRESS_EURODAT)
+            .connectorId(Constants.CONNECTOR_ID_PROVIDER)
+            .assetId(Constants.ASSET_ID_ASSET_FOR_ASSET_MANAGEMENT)
+            .contractId(assetForAssetManagementContractConfirmation.id)
+            .dataDestination(dummyDataDestination)
+            .managedResources(false)
+            .properties(mapOf(
+                "type" to Constants.TYPE_HTTP_ASSET_REGISTRATION,
+                "endpoint" to getLocalAssetAccessURl(datalandAssetId),
+                "providerId" to Constants.PROVIDER_ID_DATALAND,
+                "ownerId" to Constants.OWNER_ID_DATALAND,
+                "contentType" to Constants.CONTENT_TYPE_PERSISTENT,
+                "policyTemplateId" to Constants.POLICY_TEMPLATE_ID,
+                "assetName" to datalandAssetId,
+                "providerAssetId" to "",
+                "queryAgreementId" to "",
+            ))
+            .build()
+        val transferId = transferProcessManager.initiateConsumerRequest(dataRequest).content
+        AwaitUtils.awaitTransferCompletion(transferProcessStore, transferId)
+
+
+    }
+
+
 }

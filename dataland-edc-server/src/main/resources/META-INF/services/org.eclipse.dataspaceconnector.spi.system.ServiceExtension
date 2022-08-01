@@ -1,1 +1,2 @@
-org.dataland.edc.server.api.DatalandApiEndpointExtension
+org.dataland.edc.server.extensions.AssetForAssetManagementContractExtension
+org.dataland.edc.server.extensions.DatalandApiEndpointExtension
