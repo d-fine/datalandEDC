@@ -100,6 +100,7 @@ class EuroDaTService(
      * @param localAssetID the dataland asset id
      */
     fun getAssetFromEuroDatCatalog(localAssetID: String): EuroDaTAssetLocation {
+        context.monitor.info("Searching for asset $localAssetID in EuroDaT catalog")
         val request = CatalogRequest.Builder.newInstance()
             .protocol(Constants.PROTOCOL_IDS_MULTIPART)
             .connectorId(Constants.CONNECTOR_ID_PROVIDER)

@@ -29,7 +29,9 @@ class DataManager(
     fun provideAssetToTrustee(data: String): EuroDaTAssetLocation {
         val localAssetId = registerAssetLocally(data)
         euroDaTService.registerAssetEuroDat(localAssetId, getLocalAssetAccessURl(localAssetId))
-        return euroDaTService.getAssetFromEuroDatCatalog(localAssetId)
+        val location = euroDaTService.getAssetFromEuroDatCatalog(localAssetId)
+        context.monitor.info("Asset $localAssetId is stored in EuroDaT under $location")
+        return location
     }
 
     /**
