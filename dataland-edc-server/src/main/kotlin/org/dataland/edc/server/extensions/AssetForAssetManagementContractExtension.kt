@@ -22,12 +22,10 @@ class AssetForAssetManagementContractExtension : ServiceExtension {
     private lateinit var context: ServiceExtensionContext
 
     override fun initialize(context: ServiceExtensionContext) {
-        super.initialize(context)
         this.context = context
     }
 
     override fun start() {
-        super.start()
         context.monitor.info("Starting negotiation for the ASSET-FOR-ASSET-MANAGEMENT Meta Asset")
         assetForAssetManagementNegotiation = euroDatService.negotiateAssetForAssetManagementContract()
     }

@@ -27,7 +27,7 @@ class DataManager(
      * @param data The data to store in EuroDaT
      */
     fun provideAssetToTrustee(data: String): EuroDaTAssetLocation {
-        val localAssetId = registerAssetLocally(data)
+        val localAssetId = storeAssetLocally(data)
         euroDaTService.registerAssetEuroDat(localAssetId, getLocalAssetAccessURl(localAssetId))
         val location = euroDaTService.getAssetFromEuroDatCatalog(localAssetId)
         context.monitor.info("Asset $localAssetId is stored in EuroDaT under $location")
@@ -39,11 +39,11 @@ class DataManager(
      * @param dataLocation The location of the data in EuroDaT
      */
     fun retrieveAssetFromTrustee(dataLocation: EuroDaTAssetLocation): String {
-        val agreement = euroDaTService.negotiateReadContract(dataLocation)
+        val contractAgreement = euroDaTService.negotiateReadContract(dataLocation)
         euroDatCache.expectAsset(dataLocation.assetId)
         euroDaTService.requestData(
             euroDatAssetId = dataLocation.assetId,
-            retrievalContractId = agreement.id,
+            retrievalContractId = contractAgreement.id,
             targetURL = getLocalAssetAccessURl(dataLocation.assetId)
         )
         return AwaitUtils.awaitAssetArrival(euroDatCache, dataLocation.assetId)
@@ -52,7 +52,7 @@ class DataManager(
     private fun getLocalAssetAccessURl(localAssetID: String): String =
         "$baseAddressDatalandToEuroDatAssetUrl/$localAssetID"
 
-    private fun registerAssetLocally(data: String): String {
+    private fun storeAssetLocally(data: String): String {
         val datalandAssetId = UUID.randomUUID().toString()
         context.monitor.info("Registered new local asset under ID $datalandAssetId)")
         localAssetStore.insertIntoStore(datalandAssetId, data)

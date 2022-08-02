@@ -11,7 +11,7 @@ import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
 /**
  * Implementation of the Dataland EDC Api
  * @param localAssetStore a store of the assets provided to EuroDaT
- * @param euroDaTAssetCache a cache of assets provided by EuroDaT
+ * @param euroDaTAssetCache a cache of assets received by EuroDaT
  * @param context the context containing constants and the monitor for logging
  */
 class DatalandEurodatController(
@@ -24,9 +24,9 @@ class DatalandEurodatController(
 
     override fun provideAsset(datalandAssetId: String): String {
         context.monitor.info("Asset with dataland asset ID $datalandAssetId is requested.")
-        val returnValue = localAssetStore.retrieveFromStore(datalandAssetId) ?: ""
+        val assetToProvide = localAssetStore.retrieveFromStore(datalandAssetId) ?: ""
         localAssetStore.deleteFromStore(datalandAssetId)
-        return returnValue
+        return assetToProvide
     }
 
     override fun storeReceivedAsset(trusteeAssetId: String, data: ByteArray): Response {

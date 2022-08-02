@@ -16,7 +16,7 @@ import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
 class DatalandInternalEdcController(
     private val dataManager: DataManager,
     private val context: ServiceExtensionContext,
-    private val euroDaTAssetCache : EuroDaTAssetCache
+    private val euroDaTAssetCache: EuroDaTAssetCache
 ) : DatalandInternalEdcApi {
 
     override fun checkHealth(): CheckHealthResponse {
