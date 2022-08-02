@@ -19,7 +19,7 @@ class DataManager(
     private val euroDatCache: EuroDaTAssetCache
 ) {
 
-    private val baseAddressDatalandToEuroDatAssetUrl: String = context.getSetting("dataland.edc.web.uri", "default")
+    private val baseAddressDatalandToEuroDatAssetUrl: String = context.getSetting("dataland.edc.asset.access.uri", "default")
 
     /**
      * Registers a new asset with EuroDaT and returns
