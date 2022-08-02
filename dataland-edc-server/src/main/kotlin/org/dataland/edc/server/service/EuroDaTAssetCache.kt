@@ -28,6 +28,7 @@ class EuroDaTAssetCache {
     fun insertIntoCache(id: String, asset: String) {
         if (expectedAssetIds.contains(id)) {
             cache[id] = asset
+            expectedAssetIds.remove(id)
         }
     }
 
