@@ -99,7 +99,7 @@ class EuroDaTService(
         AwaitUtils.awaitTransferCompletion(transferProcessStore, transferId)
     }
 
-    private fun retrieveEuroDatCatalog(startIndex : Int, endIndex : Int) : Catalog {
+    private fun retrieveEuroDatCatalog(startIndex: Int, endIndex: Int): Catalog {
         val request = CatalogRequest.Builder.newInstance()
             .protocol(Constants.PROTOCOL_IDS_MULTIPART)
             .connectorId(Constants.CONNECTOR_ID_PROVIDER)

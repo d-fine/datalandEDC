@@ -25,14 +25,13 @@ class DatalandApiEndpointExtension : ServiceExtension {
     private lateinit var euroDaTAssetCache: EuroDaTAssetCache
 
     @Inject
-    private lateinit var dataManager : DataManager
+    private lateinit var dataManager: DataManager
 
     override fun name(): String {
         return "API Endpoint"
     }
 
     override fun initialize(context: ServiceExtensionContext) {
-
         webService.registerResource(DatalandInternalEdcController(dataManager, context, euroDaTAssetCache))
         webService.registerResource(DatalandEurodatController(context, localAssetStore, euroDaTAssetCache))
     }
