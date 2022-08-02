@@ -41,11 +41,10 @@ class EuroDaTAssetCache {
     }
 
     /**
-     * Marks an asset as expected and evicts the cache for that asset id
+     * Marks an asset as expected
      * @param id the asset id
      */
     fun expectAsset(id: String) {
         expectedAssetIds.add(id)
-        cache.remove(id)
     }
 }

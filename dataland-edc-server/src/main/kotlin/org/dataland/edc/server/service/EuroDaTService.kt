@@ -169,7 +169,7 @@ class EuroDaTService(
             .managedResources(false)
             .properties(
                 mapOf(
-                    "type" to "HttpFV",
+                    "type" to Constants.TYPE_HTTP_FV,
                     "endpoint" to targetURL
                 )
             )

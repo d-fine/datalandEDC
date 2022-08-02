@@ -19,6 +19,7 @@ object Constants {
     const val OWNER_ID_DATALAND = "dataland-owner-id"
     const val CONTENT_TYPE_PERSISTENT = "persistent"
     const val POLICY_TEMPLATE_ID = "policy-template"
+    const val TYPE_HTTP_FV = "HttpFV"
 
     const val URN_KEY_PROVIDER = "urn:connector:provider"
     const val URN_KEY_CONSUMER = "urn:connector:consumer"
