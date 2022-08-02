@@ -32,7 +32,7 @@ class DatalandEurodatController(
     override fun storeReceivedAsset(trusteeAssetId: String, data: ByteArray): Response {
         if (!euroDaTAssetCache.isAssetExpected(trusteeAssetId)) {
             context.monitor.info("Received asset POST request by EuroDaT for UNEXPECTED asset ID $trusteeAssetId.")
-            return Response.status(Response.Status.FORBIDDEN).build()
+            return Response.status(Response.Status.BAD_REQUEST).build()
         }
 
         context.monitor.info("Received asset POST request by EuroDaT with ID $trusteeAssetId.")
