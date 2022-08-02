@@ -44,12 +44,33 @@ class EuroDaTService(
     private val context: ServiceExtensionContext,
     private val dispatcher: RemoteMessageDispatcherRegistry,
 ) {
+    private val constantDummyDataDestination = DataAddress.Builder.newInstance()
+        .type("")
+        .property("endpoint", "unused-endpoint")
+        .build()
 
     private val connectorAddressEuroDat = context.getSetting("trustee.ids.uri", "default")
 
+
+    private fun buildPropertiesForAssetRegistration(endpoint : String, assetName : String) : Map<String, String> {
+        return mapOf(
+            "type" to Constants.TYPE_HTTP_ASSET_REGISTRATION,
+            "endpoint" to endpoint,
+            "providerId" to Constants.PROVIDER_ID_DATALAND,
+            "ownerId" to Constants.OWNER_ID_DATALAND,
+            "contentType" to Constants.CONTENT_TYPE_PERSISTENT,
+            "policyTemplateId" to Constants.POLICY_TEMPLATE_ID,
+            "assetName" to assetName,
+            "providerAssetId" to "",
+            "queryAgreementId" to "",
+        )
+    }
+
     /**
      * Registers an asset with EuroDaT using the "asset-for-asset-management" Meta
-     * Asset (Ref https://gitlab.com/eurodat.org/trustee-platform/-/blob/88fb32f46c87e9ed3016ef340fb6c09a9bcc9d65/docs/eurodat-user-tutorial/broker.md)
+     * Asset (Ref
+     * https://gitlab.com/eurodat.org/trustee-platform/-/blob/88fb32f46c87e9ed3016ef340fb6c09a9bcc9d65
+     * /docs/eurodat-user-tutorial/broker.md
      * The asset is registered which EuroDaT. EuroDaT then performs an HTTP Get Request to the localAssetAccesURL
      * @param localAssetId the dataland asset id
      * @param localAssetAccessURL a publicly reachable URl under which EuroDaT can retrieve the asset
@@ -61,11 +82,6 @@ class EuroDaTService(
             AssetForAssetManagementContractExtension.assetForAssetManagementNegotiation!!
         )
 
-        val dummyDataDestination = DataAddress.Builder.newInstance()
-            .type("")
-            .property("endpoint", "unused-endpoint")
-            .build()
-
         val dataRequest = DataRequest.Builder.newInstance()
             .id("process-id:$localAssetId")
             .protocol(Constants.PROTOCOL_IDS_MULTIPART)
@@ -73,20 +89,10 @@ class EuroDaTService(
             .connectorId(Constants.CONNECTOR_ID_PROVIDER)
             .assetId(Constants.ASSET_ID_ASSET_FOR_ASSET_MANAGEMENT)
             .contractId(assetForAssetManagementContractConfirmation.id)
-            .dataDestination(dummyDataDestination)
+            .dataDestination(constantDummyDataDestination)
             .managedResources(false)
             .properties(
-                mapOf(
-                    "type" to Constants.TYPE_HTTP_ASSET_REGISTRATION,
-                    "endpoint" to localAssetAccessURL,
-                    "providerId" to Constants.PROVIDER_ID_DATALAND,
-                    "ownerId" to Constants.OWNER_ID_DATALAND,
-                    "contentType" to Constants.CONTENT_TYPE_PERSISTENT,
-                    "policyTemplateId" to Constants.POLICY_TEMPLATE_ID,
-                    "assetName" to localAssetId,
-                    "providerAssetId" to "",
-                    "queryAgreementId" to "",
-                )
+                buildPropertiesForAssetRegistration(endpoint = localAssetAccessURL, assetName =  localAssetId)
             )
             .build()
         val transferId = transferProcessManager.initiateConsumerRequest(dataRequest).content
@@ -151,29 +157,35 @@ class EuroDaTService(
         AwaitUtils.awaitTransferCompletion(transferProcessStore, transferId)
     }
 
-    /**
-     * Negotiates a read contract for the specified asset
-     * @param assetLocation the location of the asset the contract is for
-     */
-    fun negotiateReadContract(assetLocation: EuroDaTAssetLocation): ContractAgreement {
+    private fun buildAssetPolicyForUse(assetId : String) : Policy {
         val action = Action.Builder.newInstance()
             .type(Constants.ACTION_TYPE_USE)
             .build()
 
         val assetPermission = Permission.Builder.newInstance()
-            .target(assetLocation.assetId)
+            .target(assetId)
             .action(action)
             .build()
 
         val assetPolicy = Policy.Builder.newInstance()
-            .target(assetLocation.assetId)
+            .target(assetId)
             .permission(assetPermission)
             .build()
+
+        return assetPolicy
+    }
+
+    /**
+     * Negotiates a read contract for the specified asset
+     * @param assetLocation the location of the asset the contract is for
+     */
+    fun negotiateReadContract(assetLocation: EuroDaTAssetLocation): ContractAgreement {
+        val useAssetPolicy = buildAssetPolicyForUse(assetLocation.assetId)
 
         val assetContractOffer = ContractOffer.Builder.newInstance()
             .id(assetLocation.contractOfferId)
             .assetId(assetLocation.assetId)
-            .policy(assetPolicy)
+            .policy(useAssetPolicy)
             .provider(URI(Constants.URN_KEY_PROVIDER))
             .consumer(URI(Constants.URN_KEY_CONSUMER))
             .build()
@@ -195,19 +207,7 @@ class EuroDaTService(
      * used for asset management tasks
      */
     fun negotiateAssetForAssetManagementContract(): ContractNegotiation {
-        val action = Action.Builder.newInstance()
-            .type(Constants.ACTION_TYPE_USE)
-            .build()
-
-        val assetPermission = Permission.Builder.newInstance()
-            .target(Constants.ASSET_ID_ASSET_FOR_ASSET_MANAGEMENT)
-            .action(action)
-            .build()
-
-        val assetPolicy = Policy.Builder.newInstance()
-            .target(Constants.ASSET_ID_ASSET_FOR_ASSET_MANAGEMENT)
-            .permission(assetPermission)
-            .build()
+        val useAssetPolicy = buildAssetPolicyForUse(Constants.ASSET_ID_ASSET_FOR_ASSET_MANAGEMENT)
 
         val asset = Asset.Builder.newInstance()
             .id(Constants.ASSET_ID_ASSET_FOR_ASSET_MANAGEMENT)
@@ -216,7 +216,7 @@ class EuroDaTService(
         val assetContractOffer = ContractOffer.Builder.newInstance()
             .id("contract-def-id:${UUID.randomUUID()}")
             .asset(asset)
-            .policy(assetPolicy)
+            .policy(useAssetPolicy)
             .provider(URI(Constants.URN_KEY_PROVIDER))
             .consumer(URI(Constants.URN_KEY_CONSUMER))
             .build()
