@@ -70,9 +70,9 @@ class EuroDaTService(
      * Asset (Ref
      * https://gitlab.com/eurodat.org/trustee-platform/-/blob/88fb32f46c87e9ed3016ef340fb6c09a9bcc9d65
      * /docs/eurodat-user-tutorial/broker.md
-     * The asset is registered which EuroDaT. EuroDaT then performs an HTTP Get Request to the localAssetAccesURL
+     * The asset is registered with EuroDaT. EuroDaT then performs an HTTP Get request to the localAssetAccessURL
      * @param localAssetId the dataland asset id
-     * @param localAssetAccessURL a publicly reachable URl under which EuroDaT can retrieve the asset
+     * @param localAssetAccessURL a publicly reachable URL under which EuroDaT can retrieve the asset
      */
     fun registerAssetEuroDat(localAssetId: String, localAssetAccessURL: String) {
         context.monitor.info("Registering asset $localAssetId with EuroDat")
@@ -124,8 +124,8 @@ class EuroDaTService(
     }
 
     /**
-     * Requests an asset from EuroDaT using the euroDatAssetId retrieved from the catalog
-     * a fresh contract id for a read-contract regarding the asset and a targetURL.
+     * Requests an asset from EuroDaT using the euroDatAssetId retrieved from the catalog,
+     * a fresh contract id for a read-contract regarding the asset, and a targetURL.
      * EuroDaT will then HTTP-POST the asset to the targetURL
      * @param euroDatAssetId the EuroDaT asset id
      * @param retrievalContractId the contract made to retrieve the asset
