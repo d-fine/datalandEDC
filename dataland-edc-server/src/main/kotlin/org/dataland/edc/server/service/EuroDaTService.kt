@@ -75,6 +75,7 @@ class EuroDaTService(
      * @param localAssetId the dataland asset id
      * @param localAssetAccessURL a publicly reachable URL under which EuroDaT can retrieve the asset
      */
+    @Suppress("kotlin:S138")
     fun registerAssetEuroDat(localAssetId: String, localAssetAccessURL: String) {
         context.monitor.info("Registering asset $localAssetId with EuroDat")
         val assetForAssetManagementContractConfirmation = AwaitUtils.awaitContractConfirm(
@@ -95,6 +96,7 @@ class EuroDaTService(
                 buildPropertiesForAssetRegistration(endpoint = localAssetAccessURL, assetName = localAssetId)
             )
             .build()
+
         val transferId = transferProcessManager.initiateConsumerRequest(dataRequest).content
         AwaitUtils.awaitTransferCompletion(transferProcessStore, transferId)
     }
@@ -126,21 +128,17 @@ class EuroDaTService(
                 index * Constants.EURODAT_CATALOG_PAGE_SIZE,
                 (index + 1) * Constants.EURODAT_CATALOG_PAGE_SIZE
             )
-
             if (catalogPage.contractOffers.isEmpty()) {
                 context.monitor.severe("Could not locate asset $localAssetID in EuroDaT catalog")
                 throw EdcException("Could not locate asset $localAssetID in EuroDaT catalog")
             }
-
             val result = catalogPage.contractOffers.firstOrNull { it.asset.properties["assetName"] == localAssetID }
-
             if (result != null) {
                 return EuroDaTAssetLocation(
                     contractOfferId = result.id,
                     assetId = result.asset.properties["asset:prop:id"].toString()
                 )
             }
-
             index++
         }
     }
@@ -153,11 +151,13 @@ class EuroDaTService(
      * @param retrievalContractId the contract made to retrieve the asset
      * @param targetURL the URl where the asset is supposed to be sent to
      */
+    @Suppress("kotlin:S138")
     fun requestData(euroDatAssetId: String, retrievalContractId: String, targetURL: String) {
         val dataDestination = DataAddress.Builder.newInstance()
             .property("type", "")
             .property("baseUrl", targetURL)
             .build()
+
         val dataRequest = DataRequest.Builder.newInstance()
             .id("process-id:${UUID.randomUUID()}")
             .connectorAddress(connectorAddressEuroDat)
@@ -174,6 +174,7 @@ class EuroDaTService(
                 )
             )
             .build()
+
         val transferId = transferProcessManager.initiateConsumerRequest(dataRequest).content
         AwaitUtils.awaitTransferCompletion(transferProcessStore, transferId)
     }
@@ -249,7 +250,6 @@ class EuroDaTService(
             .protocol(Constants.PROTOCOL_IDS_MULTIPART)
             .contractOffer(assetContractOffer)
             .build()
-
         return consumerContractNegotiationManager.initiate(contractOfferRequest).content
     }
 }
