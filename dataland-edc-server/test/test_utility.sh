@@ -9,13 +9,13 @@ is_edc_server_up_and_healthy () {
 }
 export -f is_edc_server_up_and_healthy
 
-is_tunnel_server_up_and_healthy () {
+is_tunnel_server_up () {
   if ! ssh -o ConnectTimeout=10 ubuntu@"$dataland_tunnel_uri" "echo Connected to tunnel server"; then
     curl "$dataland_tunnel_startup_link"
     return 1
   fi
 }
-export -f is_tunnel_server_up_and_healthy
+export -f is_tunnel_server_up
 
 export dataland_tunnel_uri=dataland-tunnel.duckdns.org
 dataland_edc_server_uri=dataland-tunnel.duckdns.org
