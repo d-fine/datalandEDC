@@ -51,8 +51,7 @@ class EuroDaTService(
 
     private val connectorAddressEuroDat = context.getSetting("trustee.ids.uri", "default")
 
-
-    private fun buildPropertiesForAssetRegistration(endpoint : String, assetName : String) : Map<String, String> {
+    private fun buildPropertiesForAssetRegistration(endpoint: String, assetName: String): Map<String, String> {
         return mapOf(
             "type" to Constants.TYPE_HTTP_ASSET_REGISTRATION,
             "endpoint" to endpoint,
@@ -92,7 +91,7 @@ class EuroDaTService(
             .dataDestination(constantDummyDataDestination)
             .managedResources(false)
             .properties(
-                buildPropertiesForAssetRegistration(endpoint = localAssetAccessURL, assetName =  localAssetId)
+                buildPropertiesForAssetRegistration(endpoint = localAssetAccessURL, assetName = localAssetId)
             )
             .build()
         val transferId = transferProcessManager.initiateConsumerRequest(dataRequest).content
@@ -157,7 +156,7 @@ class EuroDaTService(
         AwaitUtils.awaitTransferCompletion(transferProcessStore, transferId)
     }
 
-    private fun buildAssetPolicyForUse(assetId : String) : Policy {
+    private fun buildAssetPolicyForUse(assetId: String): Policy {
         val action = Action.Builder.newInstance()
             .type(Constants.ACTION_TYPE_USE)
             .build()
