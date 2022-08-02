@@ -33,7 +33,7 @@ curl "$dataland_tunnel_startup_link"
 sleep 10
 
 echo "Checking availability of tunnel server."
-timeout 240 bash -c "while ! is_tunnel_server_up_and_healthy; do echo 'Tunnel server not yet there - retrying in 5s'; sleep 5; done; echo 'Tunnel server up!'"
+timeout 240 bash -c "while ! is_tunnel_server_up; do echo 'Tunnel server not yet there - retrying in 5s'; sleep 5; done; echo 'Tunnel server up!'"
 
 echo "Open all three SSH tunnels between tunnel server and the host system."
 ssh -R \*:"$dataland_edc_server_web_http_port":localhost:"$config_web_http_port" -N -f ubuntu@"$dataland_tunnel_uri"
