@@ -6,6 +6,7 @@ package org.dataland.edc.server.utils
 object Constants {
     const val TIMEOUT_MS = 120L * 1000L
     const val POLL_INTERVAL_MS = 50L
+    const val EURODAT_CATALOG_PAGE_SIZE = 50
 
     const val ASSET_ID_ASSET_FOR_ASSET_MANAGEMENT = "asset-for-asset-management"
     const val ACTION_TYPE_USE = "USE"

@@ -7,6 +7,7 @@ import org.dataland.edc.server.utils.Constants
 import org.eclipse.dataspaceconnector.policy.model.Action
 import org.eclipse.dataspaceconnector.policy.model.Permission
 import org.eclipse.dataspaceconnector.policy.model.Policy
+import org.eclipse.dataspaceconnector.spi.EdcException
 import org.eclipse.dataspaceconnector.spi.contract.negotiation.ConsumerContractNegotiationManager
 import org.eclipse.dataspaceconnector.spi.contract.negotiation.store.ContractNegotiationStore
 import org.eclipse.dataspaceconnector.spi.message.Range
@@ -98,6 +99,19 @@ class EuroDaTService(
         AwaitUtils.awaitTransferCompletion(transferProcessStore, transferId)
     }
 
+    private fun retrieveEuroDatCatalog(startIndex : Int, endIndex : Int) : Catalog {
+        val request = CatalogRequest.Builder.newInstance()
+            .protocol(Constants.PROTOCOL_IDS_MULTIPART)
+            .connectorId(Constants.CONNECTOR_ID_PROVIDER)
+            .connectorAddress(connectorAddressEuroDat)
+            .range(Range(startIndex, endIndex))
+            .build()
+
+        val catalogFuture = dispatcher.send(Catalog::class.java, request) { null }
+        val catalog = catalogFuture.join()
+        return catalog
+    }
+
     /**
      * Searches the EuroDaT asset catalog for an asset that has been registered with
      * EuroDaT under the localAssetId. This only works because the registerAssetEuroDat function
@@ -106,21 +120,29 @@ class EuroDaTService(
      */
     fun getAssetFromEuroDatCatalog(localAssetID: String): EuroDaTAssetLocation {
         context.monitor.info("Searching for asset $localAssetID in EuroDaT catalog")
-        val request = CatalogRequest.Builder.newInstance()
-            .protocol(Constants.PROTOCOL_IDS_MULTIPART)
-            .connectorId(Constants.CONNECTOR_ID_PROVIDER)
-            .connectorAddress(connectorAddressEuroDat)
-            .range(Range(0, Integer.MAX_VALUE))
-            .build()
+        var index = 0
+        while (true) {
+            val catalogPage = retrieveEuroDatCatalog(
+                index * Constants.EURODAT_CATALOG_PAGE_SIZE,
+                (index + 1) * Constants.EURODAT_CATALOG_PAGE_SIZE
+            )
 
-        val catalogFuture = dispatcher.send(Catalog::class.java, request) { null }
-        val catalog = catalogFuture.join()
+            if (catalogPage.contractOffers.isEmpty()) {
+                context.monitor.severe("Could not locate asset $localAssetID in EuroDaT catalog")
+                throw EdcException("Could not locate asset $localAssetID in EuroDaT catalog")
+            }
 
-        val result = catalog.contractOffers.firstOrNull { it.asset.properties["assetName"] == localAssetID }!!
-        return EuroDaTAssetLocation(
-            contractOfferId = result.id,
-            assetId = result.asset.properties["asset:prop:id"].toString()
-        )
+            val result = catalogPage.contractOffers.firstOrNull { it.asset.properties["assetName"] == localAssetID }
+
+            if (result != null) {
+                return EuroDaTAssetLocation(
+                    contractOfferId = result.id,
+                    assetId = result.asset.properties["asset:prop:id"].toString()
+                )
+            }
+
+            index++
+        }
     }
 
     /**
