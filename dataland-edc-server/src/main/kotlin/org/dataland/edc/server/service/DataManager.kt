@@ -58,7 +58,7 @@ class DataManager(
     private fun storeAssetLocally(data: String): String {
         val datalandAssetId = UUID.randomUUID().toString()
         localAssetStore.insertIntoStore(datalandAssetId, data)
-        context.monitor.info("Registered new local asset under ID $datalandAssetId)")
+        context.monitor.info("Stored new local asset under ID $datalandAssetId)")
         return datalandAssetId
     }
 }

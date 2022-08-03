@@ -152,6 +152,7 @@ class EuroDaTService(
                 index * Constants.EURODAT_CATALOG_PAGE_SIZE,
                 (index + 1) * Constants.EURODAT_CATALOG_PAGE_SIZE
             )
+            index++
             val result = catalogPage.contractOffers.firstOrNull { it.asset.properties["assetName"] == localAssetID }
             if (result != null) {
                 return EuroDaTAssetLocation(
@@ -159,7 +160,6 @@ class EuroDaTService(
                     assetId = result.asset.properties["asset:prop:id"].toString()
                 )
             }
-            index++
         } while (catalogPage.contractOffers.isNotEmpty())
         context.monitor.severe("Could not locate asset $localAssetID in EuroDaT catalog")
         throw EdcException("Could not locate asset $localAssetID in EuroDaT catalog")
