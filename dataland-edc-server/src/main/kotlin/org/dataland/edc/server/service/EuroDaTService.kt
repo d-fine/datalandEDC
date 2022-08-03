@@ -153,13 +153,11 @@ class EuroDaTService(
                 (index + 1) * Constants.EURODAT_CATALOG_PAGE_SIZE
             )
             index++
-            val resultContractOffer = catalogPage.contractOffers.firstOrNull {
-                it.asset.properties["assetName"] == localAssetID
-            }
-            if (resultContractOffer != null) {
+            val result = catalogPage.contractOffers.firstOrNull { it.asset.properties["assetName"] == localAssetID }
+            if (result != null) {
                 return EuroDaTAssetLocation(
-                    contractOfferId = resultContractOffer.id,
-                    assetId = resultContractOffer.asset.properties["asset:prop:id"].toString()
+                    contractOfferId = result.id,
+                    assetId = result.asset.properties["asset:prop:id"].toString()
                 )
             }
         } while (catalogPage.contractOffers.isNotEmpty())
