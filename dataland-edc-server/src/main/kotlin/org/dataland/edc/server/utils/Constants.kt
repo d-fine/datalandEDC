@@ -4,7 +4,7 @@ package org.dataland.edc.server.utils
  * An object containing frequently used constants
  */
 object Constants {
-    const val TIMEOUT_MS = 120L * 1000L
+    const val TIMEOUT_MS = 60L * 1000L
     const val POLL_INTERVAL_MS = 50L
     const val EURODAT_CATALOG_PAGE_SIZE = 50
 

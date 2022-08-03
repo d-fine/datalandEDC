@@ -1,5 +1,6 @@
 package org.dataland.edc.server.service
 
+import org.awaitility.core.ConditionTimeoutException
 import org.dataland.edc.server.extensions.AssetForAssetManagementContractExtension
 import org.dataland.edc.server.models.EuroDaTAssetLocation
 import org.dataland.edc.server.utils.AwaitUtils
@@ -67,6 +68,32 @@ class EuroDaTService(
     }
 
     /**
+     * Awaits the confirmation of the Asset-For-Asset-Management contract
+     * that is negotiated at the startup of this service. If the contract does not
+     * get confirmed in one timeout session
+     * (because e.g. EuroDaT might not have been available at the start of this EDC)
+     * A new contract for the Asset-For-Asset-Management asset is negotiated
+     */
+    private fun awaitAssetForAssetManagementContractConfirm(): ContractAgreement {
+        return try {
+            AwaitUtils.awaitContractConfirm(
+                contractNegotiationStore,
+                AssetForAssetManagementContractExtension.assetForAssetManagementNegotiation!!
+            )
+        } catch (ex: ConditionTimeoutException) {
+            context.monitor.severe("Negotiation for the ASSET-FOR-ASSET-MANAGEMENT failed ($ex). Renegotiating...")
+            val assetForAssetManagementContractNegotiation = negotiateAssetForAssetManagementContract()
+            val contractAgreement = AwaitUtils.awaitContractConfirm(
+                contractNegotiationStore,
+                assetForAssetManagementContractNegotiation
+            )
+            AssetForAssetManagementContractExtension.assetForAssetManagementNegotiation =
+                assetForAssetManagementContractNegotiation
+            contractAgreement
+        }
+    }
+
+    /**
      * Registers an asset with EuroDaT using the "asset-for-asset-management" Meta
      * Asset (Ref
      * https://gitlab.com/eurodat.org/trustee-platform/-/blob/88fb32f46c87e9ed3016ef340fb6c09a9bcc9d65
@@ -78,10 +105,7 @@ class EuroDaTService(
     @Suppress("kotlin:S138")
     fun registerAssetEuroDat(localAssetId: String, localAssetAccessURL: String) {
         context.monitor.info("Registering asset $localAssetId with EuroDat")
-        val assetForAssetManagementContractConfirmation = AwaitUtils.awaitContractConfirm(
-            contractNegotiationStore,
-            AssetForAssetManagementContractExtension.assetForAssetManagementNegotiation!!
-        )
+        val assetForAssetManagementContractConfirmation = awaitAssetForAssetManagementContractConfirm()
 
         val dataRequest = DataRequest.Builder.newInstance()
             .id("process-id:$localAssetId")
@@ -123,15 +147,11 @@ class EuroDaTService(
     fun getAssetFromEuroDatCatalog(localAssetID: String): EuroDaTAssetLocation {
         context.monitor.info("Searching for asset $localAssetID in EuroDaT catalog")
         var index = 0
-        while (true) {
+        do {
             val catalogPage = retrieveEuroDatCatalog(
                 index * Constants.EURODAT_CATALOG_PAGE_SIZE,
                 (index + 1) * Constants.EURODAT_CATALOG_PAGE_SIZE
             )
-            if (catalogPage.contractOffers.isEmpty()) {
-                context.monitor.severe("Could not locate asset $localAssetID in EuroDaT catalog")
-                throw EdcException("Could not locate asset $localAssetID in EuroDaT catalog")
-            }
             val result = catalogPage.contractOffers.firstOrNull { it.asset.properties["assetName"] == localAssetID }
             if (result != null) {
                 return EuroDaTAssetLocation(
@@ -140,7 +160,9 @@ class EuroDaTService(
                 )
             }
             index++
-        }
+        } while (catalogPage.contractOffers.isNotEmpty())
+        context.monitor.severe("Could not locate asset $localAssetID in EuroDaT catalog")
+        throw EdcException("Could not locate asset $localAssetID in EuroDaT catalog")
     }
 
     /**
@@ -228,6 +250,7 @@ class EuroDaTService(
      * Negotiates a use contract for the Asset for Asset management - A Meta Asset
      * used for asset management tasks
      */
+    @Suppress("kotlin:S138")
     fun negotiateAssetForAssetManagementContract(): ContractNegotiation {
         val useAssetPolicy = buildAssetPolicyForUse(Constants.ASSET_ID_ASSET_FOR_ASSET_MANAGEMENT)
 
