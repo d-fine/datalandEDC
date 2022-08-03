@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap
  * A cache holding retrieved assets from EuroDaT
  * to make duplicate requests considerably faster
  */
-class EuroDaTAssetCache {
+class EurodatAssetCache {
     private val cache: ConcurrentHashMap<String, String> = ConcurrentHashMap()
     private val expectedAssetIds: MutableSet<String> = ConcurrentHashMap.newKeySet()
 

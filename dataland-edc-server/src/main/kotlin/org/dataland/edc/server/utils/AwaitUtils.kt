@@ -1,7 +1,7 @@
 package org.dataland.edc.server.utils
 
 import org.awaitility.Awaitility.await
-import org.dataland.edc.server.service.EuroDaTAssetCache
+import org.dataland.edc.server.service.EurodatAssetCache
 import org.eclipse.dataspaceconnector.spi.contract.negotiation.store.ContractNegotiationStore
 import org.eclipse.dataspaceconnector.spi.transfer.store.TransferProcessStore
 import org.eclipse.dataspaceconnector.spi.types.domain.contract.agreement.ContractAgreement
@@ -47,7 +47,7 @@ object AwaitUtils {
      * @param cache the asset cache
      * @param id the id of the asset to wait for
      */
-    fun awaitAssetArrival(cache: EuroDaTAssetCache, id: String): String {
+    fun awaitAssetArrival(cache: EurodatAssetCache, id: String): String {
         metaAwait {
             cache.retrieveFromCache(id) != null
         }

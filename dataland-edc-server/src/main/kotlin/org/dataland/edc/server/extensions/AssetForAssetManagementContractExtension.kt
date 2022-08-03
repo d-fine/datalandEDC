@@ -1,6 +1,6 @@
 package org.dataland.edc.server.extensions
 
-import org.dataland.edc.server.service.EuroDaTService
+import org.dataland.edc.server.service.EurodatService
 import org.eclipse.dataspaceconnector.spi.system.Inject
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtension
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
@@ -17,7 +17,7 @@ class AssetForAssetManagementContractExtension : ServiceExtension {
     }
 
     @Inject
-    private lateinit var euroDatService: EuroDaTService
+    private lateinit var eurodatService: EurodatService
 
     private lateinit var context: ServiceExtensionContext
 
@@ -27,6 +27,6 @@ class AssetForAssetManagementContractExtension : ServiceExtension {
 
     override fun start() {
         context.monitor.info("Starting negotiation for the ASSET-FOR-ASSET-MANAGEMENT Meta Asset")
-        assetForAssetManagementNegotiation = euroDatService.negotiateAssetForAssetManagementContract()
+        assetForAssetManagementNegotiation = eurodatService.negotiateAssetForAssetManagementContract()
     }
 }

@@ -1,8 +1,8 @@
 package org.dataland.edc.server.extensions
 
 import org.dataland.edc.server.service.DataManager
-import org.dataland.edc.server.service.EuroDaTAssetCache
-import org.dataland.edc.server.service.EuroDaTService
+import org.dataland.edc.server.service.EurodatAssetCache
+import org.dataland.edc.server.service.EurodatService
 import org.dataland.edc.server.service.LocalAssetStore
 import org.eclipse.dataspaceconnector.spi.system.Inject
 import org.eclipse.dataspaceconnector.spi.system.Provider
@@ -19,10 +19,10 @@ class DatalandDataManagerExtension : ServiceExtension {
     private lateinit var localAssetStore: LocalAssetStore
 
     @Inject
-    private lateinit var euroDaTAssetCache: EuroDaTAssetCache
+    private lateinit var eurodatAssetCache: EurodatAssetCache
 
     @Inject
-    private lateinit var euroDaTService: EuroDaTService
+    private lateinit var eurodatService: EurodatService
 
     /**
      * Returns the DataManager object - A central object used for requesting
@@ -32,9 +32,9 @@ class DatalandDataManagerExtension : ServiceExtension {
     fun getDataManager(context: ServiceExtensionContext): DataManager {
         return DataManager(
             context,
-            euroDaTService,
+            eurodatService,
             localAssetStore,
-            euroDaTAssetCache
+            eurodatAssetCache
         )
     }
 }

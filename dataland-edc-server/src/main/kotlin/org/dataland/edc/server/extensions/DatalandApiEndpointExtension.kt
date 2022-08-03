@@ -3,7 +3,7 @@ package org.dataland.edc.server.extensions
 import org.dataland.edc.server.controller.DatalandEurodatController
 import org.dataland.edc.server.controller.DatalandInternalEdcController
 import org.dataland.edc.server.service.DataManager
-import org.dataland.edc.server.service.EuroDaTAssetCache
+import org.dataland.edc.server.service.EurodatAssetCache
 import org.dataland.edc.server.service.LocalAssetStore
 import org.eclipse.dataspaceconnector.spi.WebService
 import org.eclipse.dataspaceconnector.spi.system.Inject
@@ -22,7 +22,7 @@ class DatalandApiEndpointExtension : ServiceExtension {
     private lateinit var localAssetStore: LocalAssetStore
 
     @Inject
-    private lateinit var euroDaTAssetCache: EuroDaTAssetCache
+    private lateinit var eurodatAssetCache: EurodatAssetCache
 
     @Inject
     private lateinit var dataManager: DataManager
@@ -32,7 +32,7 @@ class DatalandApiEndpointExtension : ServiceExtension {
     }
 
     override fun initialize(context: ServiceExtensionContext) {
-        webService.registerResource(DatalandInternalEdcController(dataManager, context, euroDaTAssetCache))
-        webService.registerResource(DatalandEurodatController(context, localAssetStore, euroDaTAssetCache))
+        webService.registerResource(DatalandInternalEdcController(dataManager, context, eurodatAssetCache))
+        webService.registerResource(DatalandEurodatController(context, localAssetStore, eurodatAssetCache))
     }
 }

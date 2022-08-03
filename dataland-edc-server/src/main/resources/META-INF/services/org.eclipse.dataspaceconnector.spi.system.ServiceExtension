@@ -1,5 +1,5 @@
 org.dataland.edc.server.extensions.AssetForAssetManagementContractExtension
 org.dataland.edc.server.extensions.DatalandApiEndpointExtension
-org.dataland.edc.server.extensions.DatalandEuroDaTExtension
+org.dataland.edc.server.extensions.DatalandEurodatServiceExtension
 org.dataland.edc.server.extensions.DatalandAssetStoreExtension
 org.dataland.edc.server.extensions.DatalandDataManagerExtension

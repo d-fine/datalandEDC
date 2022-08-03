@@ -1,6 +1,6 @@
 package org.dataland.edc.server.extensions
 
-import org.dataland.edc.server.service.EuroDaTAssetCache
+import org.dataland.edc.server.service.EurodatAssetCache
 import org.dataland.edc.server.service.LocalAssetStore
 import org.eclipse.dataspaceconnector.spi.system.Provider
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtension
@@ -24,7 +24,7 @@ class DatalandAssetStoreExtension : ServiceExtension {
      * to make subsequent requests for the same asset significantly faster
      */
     @Provider
-    fun getEuroDaTAssetCache(): EuroDaTAssetCache {
-        return EuroDaTAssetCache()
+    fun getEurodatAssetCache(): EurodatAssetCache {
+        return EurodatAssetCache()
     }
 }

@@ -1,6 +1,6 @@
 package org.dataland.edc.server.extensions
 
-import org.dataland.edc.server.service.EuroDaTService
+import org.dataland.edc.server.service.EurodatService
 import org.eclipse.dataspaceconnector.spi.contract.negotiation.ConsumerContractNegotiationManager
 import org.eclipse.dataspaceconnector.spi.contract.negotiation.store.ContractNegotiationStore
 import org.eclipse.dataspaceconnector.spi.message.RemoteMessageDispatcherRegistry
@@ -15,7 +15,7 @@ import org.eclipse.dataspaceconnector.spi.transfer.store.TransferProcessStore
  * Creates a EuroDaTService Instance with the required injects
  * and makes it available to other components
  */
-class DatalandEuroDaTExtension : ServiceExtension {
+class DatalandEurodatServiceExtension : ServiceExtension {
 
     @Inject
     private lateinit var transferProcessManager: TransferProcessManager
@@ -37,8 +37,8 @@ class DatalandEuroDaTExtension : ServiceExtension {
      * and makes it available to other components
      */
     @Provider
-    fun provideEuroDatController(context: ServiceExtensionContext): EuroDaTService {
-        return EuroDaTService(
+    fun provideEurodatController(context: ServiceExtensionContext): EurodatService {
+        return EurodatService(
             transferProcessManager,
             contractNegotiationStore,
             transferProcessStore,

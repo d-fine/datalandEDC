@@ -2,7 +2,7 @@ package org.dataland.edc.server.service
 
 import org.awaitility.core.ConditionTimeoutException
 import org.dataland.edc.server.extensions.AssetForAssetManagementContractExtension
-import org.dataland.edc.server.models.EuroDaTAssetLocation
+import org.dataland.edc.server.models.EurodatAssetLocation
 import org.dataland.edc.server.utils.AwaitUtils
 import org.dataland.edc.server.utils.Constants
 import org.eclipse.dataspaceconnector.policy.model.Action
@@ -38,7 +38,7 @@ import java.util.UUID
  * @param consumerContractNegotiationManager manages contract negotiations
  * @param context the context containing constants and the monitor for logging
  */
-class EuroDaTService(
+class EurodatService(
     private val transferProcessManager: TransferProcessManager,
     private val contractNegotiationStore: ContractNegotiationStore,
     private val transferProcessStore: TransferProcessStore,
@@ -51,7 +51,7 @@ class EuroDaTService(
         .property("endpoint", "unused-endpoint")
         .build()
 
-    private val connectorAddressEuroDat = context.getSetting("trustee.ids.uri", "default")
+    private val connectorAddressEurodat = context.getSetting("trustee.ids.uri", "default")
 
     private fun buildPropertiesForAssetRegistration(endpoint: String, assetName: String): Map<String, String> {
         return mapOf(
@@ -99,25 +99,25 @@ class EuroDaTService(
      * https://gitlab.com/eurodat.org/trustee-platform/-/blob/88fb32f46c87e9ed3016ef340fb6c09a9bcc9d65
      * /docs/eurodat-user-tutorial/broker.md
      * The asset is registered with EuroDaT. EuroDaT then performs an HTTP Get request to the localAssetAccessURL
-     * @param localAssetId the dataland asset id
-     * @param localAssetAccessURL a publicly reachable URL under which EuroDaT can retrieve the asset
+     * @param datalandAssetId the dataland asset id
+     * @param datalandAssetAccessURL a publicly reachable URL under which EuroDaT can retrieve the asset
      */
     @Suppress("kotlin:S138")
-    fun registerAssetEuroDat(localAssetId: String, localAssetAccessURL: String) {
-        context.monitor.info("Registering asset $localAssetId with EuroDat")
+    fun registerAssetEurodat(datalandAssetId: String, datalandAssetAccessURL: String) {
+        context.monitor.info("Registering asset $datalandAssetId with EuroDat")
         val assetForAssetManagementContractConfirmation = awaitAssetForAssetManagementContractConfirm()
 
         val dataRequest = DataRequest.Builder.newInstance()
-            .id("process-id:$localAssetId")
+            .id("process-id:$datalandAssetId")
             .protocol(Constants.PROTOCOL_IDS_MULTIPART)
-            .connectorAddress(connectorAddressEuroDat)
+            .connectorAddress(connectorAddressEurodat)
             .connectorId(Constants.CONNECTOR_ID_PROVIDER)
             .assetId(Constants.ASSET_ID_ASSET_FOR_ASSET_MANAGEMENT)
             .contractId(assetForAssetManagementContractConfirmation.id)
             .dataDestination(constantDummyDataDestination)
             .managedResources(false)
             .properties(
-                buildPropertiesForAssetRegistration(endpoint = localAssetAccessURL, assetName = localAssetId)
+                buildPropertiesForAssetRegistration(endpoint = datalandAssetAccessURL, assetName = datalandAssetId)
             )
             .build()
 
@@ -125,11 +125,11 @@ class EuroDaTService(
         AwaitUtils.awaitTransferCompletion(transferProcessStore, transferId)
     }
 
-    private fun retrieveEuroDatCatalog(startIndex: Int, endIndex: Int): Catalog {
+    private fun retrieveEurodatCatalog(startIndex: Int, endIndex: Int): Catalog {
         val request = CatalogRequest.Builder.newInstance()
             .protocol(Constants.PROTOCOL_IDS_MULTIPART)
             .connectorId(Constants.CONNECTOR_ID_PROVIDER)
-            .connectorAddress(connectorAddressEuroDat)
+            .connectorAddress(connectorAddressEurodat)
             .range(Range(startIndex, endIndex))
             .build()
 
@@ -142,39 +142,39 @@ class EuroDaTService(
      * Searches the EuroDaT asset catalog for an asset that has been registered with
      * EuroDaT under the localAssetId. This only works because the registerAssetEuroDat function
      * registers the asset under the name of the localAssetId
-     * @param localAssetID the dataland asset id
+     * @param datalandAssetId the dataland asset id
      */
-    fun getAssetFromEuroDatCatalog(localAssetID: String): EuroDaTAssetLocation {
-        context.monitor.info("Searching for asset $localAssetID in EuroDaT catalog")
+    fun getAssetFromEurodatCatalog(datalandAssetId: String): EurodatAssetLocation {
+        context.monitor.info("Searching for asset $datalandAssetId in EuroDaT catalog")
         var index = 0
         do {
-            val catalogPage = retrieveEuroDatCatalog(
+            val catalogPage = retrieveEurodatCatalog(
                 index * Constants.EURODAT_CATALOG_PAGE_SIZE,
                 (index + 1) * Constants.EURODAT_CATALOG_PAGE_SIZE
             )
             index++
-            val result = catalogPage.contractOffers.firstOrNull { it.asset.properties["assetName"] == localAssetID }
+            val result = catalogPage.contractOffers.firstOrNull { it.asset.properties["assetName"] == datalandAssetId }
             if (result != null) {
-                return EuroDaTAssetLocation(
+                return EurodatAssetLocation(
                     contractOfferId = result.id,
-                    assetId = result.asset.properties["asset:prop:id"].toString()
+                    eurodatAssetId = result.asset.properties["asset:prop:id"].toString()
                 )
             }
         } while (catalogPage.contractOffers.isNotEmpty())
-        context.monitor.severe("Could not locate asset $localAssetID in EuroDaT catalog")
-        throw EdcException("Could not locate asset $localAssetID in EuroDaT catalog")
+        context.monitor.severe("Could not locate asset $datalandAssetId in EuroDaT catalog")
+        throw EdcException("Could not locate asset $datalandAssetId in EuroDaT catalog")
     }
 
     /**
      * Requests an asset from EuroDaT using the euroDatAssetId retrieved from the catalog,
      * a fresh contract id for a read-contract regarding the asset, and a targetURL.
      * EuroDaT will then HTTP-POST the asset to the targetURL
-     * @param euroDatAssetId the EuroDaT asset id
+     * @param eurodatAssetId the EuroDaT asset id
      * @param retrievalContractId the contract made to retrieve the asset
      * @param targetURL the URl where the asset is supposed to be sent to
      */
     @Suppress("kotlin:S138")
-    fun requestData(euroDatAssetId: String, retrievalContractId: String, targetURL: String) {
+    fun requestData(eurodatAssetId: String, retrievalContractId: String, targetURL: String) {
         val dataDestination = DataAddress.Builder.newInstance()
             .property("type", "")
             .property("baseUrl", targetURL)
@@ -182,10 +182,10 @@ class EuroDaTService(
 
         val dataRequest = DataRequest.Builder.newInstance()
             .id("process-id:${UUID.randomUUID()}")
-            .connectorAddress(connectorAddressEuroDat)
+            .connectorAddress(connectorAddressEurodat)
             .protocol(Constants.PROTOCOL_IDS_MULTIPART)
             .connectorId(Constants.CONNECTOR_ID_CONSUMER)
-            .assetId(euroDatAssetId)
+            .assetId(eurodatAssetId)
             .contractId(retrievalContractId)
             .dataDestination(dataDestination)
             .managedResources(false)
@@ -223,12 +223,12 @@ class EuroDaTService(
      * Negotiates a read contract for the specified asset
      * @param assetLocation the location of the asset the contract is for
      */
-    fun negotiateReadContract(assetLocation: EuroDaTAssetLocation): ContractAgreement {
-        val useAssetPolicy = buildAssetPolicyForUse(assetLocation.assetId)
+    fun negotiateReadContract(assetLocation: EurodatAssetLocation): ContractAgreement {
+        val useAssetPolicy = buildAssetPolicyForUse(assetLocation.eurodatAssetId)
 
         val assetContractOffer = ContractOffer.Builder.newInstance()
             .id(assetLocation.contractOfferId)
-            .assetId(assetLocation.assetId)
+            .assetId(assetLocation.eurodatAssetId)
             .policy(useAssetPolicy)
             .provider(URI(Constants.URN_KEY_PROVIDER))
             .consumer(URI(Constants.URN_KEY_CONSUMER))
@@ -237,7 +237,7 @@ class EuroDaTService(
         val contractOfferRequest = ContractOfferRequest.Builder.newInstance()
             .type(ContractOfferRequest.Type.INITIAL)
             .connectorId(Constants.CONNECTOR_ID_PROVIDER)
-            .connectorAddress(connectorAddressEuroDat)
+            .connectorAddress(connectorAddressEurodat)
             .protocol(Constants.PROTOCOL_IDS_MULTIPART)
             .contractOffer(assetContractOffer)
             .build()
@@ -269,7 +269,7 @@ class EuroDaTService(
         val contractOfferRequest = ContractOfferRequest.Builder.newInstance()
             .type(ContractOfferRequest.Type.INITIAL)
             .connectorId(Constants.CONNECTOR_ID_PROVIDER)
-            .connectorAddress(connectorAddressEuroDat)
+            .connectorAddress(connectorAddressEurodat)
             .protocol(Constants.PROTOCOL_IDS_MULTIPART)
             .contractOffer(assetContractOffer)
             .build()
