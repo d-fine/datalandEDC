@@ -46,9 +46,8 @@ dependencies {
     implementation(libs.edc.filesystem.vault)
     implementation(libs.edc.oauth2.core)
     implementation(libs.edc.ids)
+    implementation(libs.edc.core)
 
-    implementation("org.eurodat.connector:transfer-file")
-    implementation("org.eurodat.broker:broker-rest-model")
     implementation(libs.swagger.jaxrs2.jakarta)
     implementation(libs.rs.api)
     implementation(libs.awaitility)

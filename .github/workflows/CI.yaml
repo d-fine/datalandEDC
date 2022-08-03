@@ -20,7 +20,7 @@ jobs:
           java-version: 11
           cache: gradle
       - name: Build DataSpaceConnector
-        run: ./DataSpaceConnector/gradlew -p ./DataSpaceConnector publishToMavenLocal
+        run: ./DataSpaceConnector/gradlew -Pskip.signing=true -p ./DataSpaceConnector publishToMavenLocal
       - name: Build, check and test project
         run: ./gradlew assemble ktlintCheck detekt test --no-daemon --stacktrace
       - name: Upload Test Reports
@@ -35,7 +35,6 @@ jobs:
         env:
           TRUSTEE_BASE_URL: ${{ secrets.TRUSTEE_BASE_URL }}
           TRUSTEE_ENVIRONMENT_NAME: ${{ secrets.TRUSTEE_ENVIRONMENT_NAME }}
-          TRUSTEE_CREDENTIALS: ${{ secrets.TRUSTEE_CREDENTIALS }}
           TUNNEL_STARTUP_LINK: ${{ secrets.TUNNEL_STARTUP_LINK }}
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Upload EDC Server log file

@@ -1,5 +1,4 @@
 rootProject.name = "connector"
-includeBuild("trustee-platform/services/broker")
 include("dataland-edc-client")
 include("dataland-edc-dummyserver")
 include("dataland-edc-server")
@@ -33,6 +32,7 @@ dependencyResolutionManagement {
             library("edc-filesystem-vault", "org.eclipse.dataspaceconnector:filesystem-vault:0.0.1-SNAPSHOT")
             library("edc-oauth2-core", "org.eclipse.dataspaceconnector:oauth2-core:0.0.1-SNAPSHOT")
             library("edc-ids", "org.eclipse.dataspaceconnector:ids:0.0.1-SNAPSHOT")
+            library("edc-core", "org.eclipse.dataspaceconnector:core:0.0.1-SNAPSHOT")
         }
     }
 }

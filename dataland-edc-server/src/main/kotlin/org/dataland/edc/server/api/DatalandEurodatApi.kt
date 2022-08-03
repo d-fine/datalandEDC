@@ -26,11 +26,11 @@ interface DatalandEurodatApi {
     @Consumes(MediaType.APPLICATION_OCTET_STREAM)
     @Produces(MediaType.APPLICATION_JSON)
     @POST
-    @Path("/asset/{trusteeAssetId}")
+    @Path("/asset/{eurodatAssetId}")
     /**
      * Endpoint to receive data delivered by the trustee
-     * @param trusteeAssetId the identifier for the asset used on trustee side
+     * @param eurodatAssetId the identifier for the asset used on trustee side
      * @param data the data coming from the trustee in a byte array format
      */
-    fun storeReceivedAsset(@PathParam("trusteeAssetId") trusteeAssetId: String, data: ByteArray): Response
+    fun storeReceivedAsset(@PathParam("eurodatAssetId") eurodatAssetId: String, data: ByteArray): Response
 }

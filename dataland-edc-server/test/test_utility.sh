@@ -1,13 +1,13 @@
 #!/bin/bash
 
-is_edc_server_up () {
+is_edc_server_up_and_healthy () {
   server_uri="${1:-localhost}"
   health_response=$(curl -s -f -X GET "http://${server_uri}:${dataland_edc_server_web_http_port}/api/dataland/health" -H "accept: application/json")
   if [[ ! $health_response =~ "I am alive!" ]]; then
     return 1
   fi
 }
-export -f is_edc_server_up
+export -f is_edc_server_up_and_healthy
 
 is_tunnel_server_up () {
   if ! ssh -o ConnectTimeout=10 ubuntu@"$dataland_tunnel_uri" "echo Connected to tunnel server"; then
@@ -21,19 +21,17 @@ export dataland_tunnel_uri=dataland-tunnel.duckdns.org
 dataland_edc_server_uri=dataland-tunnel.duckdns.org
 export dataland_tunnel_startup_link=$TUNNEL_STARTUP_LINK
 
-eurodat_health_endpoint="${TRUSTEE_WEB_URI}/ids/description"
+eurodat_health_endpoint="${TRUSTEE_BASE_URL}/${TRUSTEE_ENVIRONMENT_NAME}/api/check/health"
 
 export dataland_edc_server_web_http_port=9191
 dataland_edc_server_web_http_ids_port=9292
-dataland_edc_server_web_http_data_port=9393
 
 config_web_http_port=9191
 config_web_http_ids_port=9292
-config_web_http_data_port=9393
 
-is_eurodat_up () {
+is_eurodat_up_and_healthy () {
   echo "Checking if EuroDaT is available."
-  if ! curl -f -X 'GET' "$eurodat_health_endpoint" -H 'accept: application/json' >/dev/null 2>&1; then
+if ! curl -f -X 'GET' "$eurodat_health_endpoint" -H 'accept: application/json' 2>/dev/null | grep -q '"isHealthy":true}],"isSystemHealthy":true}'; then
     echo "EuroDaT is not available."
     exit 1
   fi
@@ -51,7 +49,7 @@ start_edc_server () {
 
 execute_eurodat_test () {
   echo "Checking health endpoint via tunnel server."
-  if ! is_edc_server_up "$dataland_edc_server_uri"; then
+  if ! is_edc_server_up_and_healthy "$dataland_edc_server_uri"; then
     echo "Unable to reach EDC server via tunnel."
     exit 1
   fi
@@ -61,7 +59,7 @@ execute_eurodat_test () {
 
   echo "Posting test data: $test_data."
   response=$(curl -X POST "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/data" -H "accept: application/json" -H "Content-Type: application/json" -d "$test_data")
-  regex="\"([a-f0-9\-]+:[a-f0-9\-]+)\""
+  regex=":\"(.+_.+)\""
   if [[ $response =~ $regex ]]; then
     dataId=${BASH_REMATCH[1]}
   else
@@ -82,4 +80,11 @@ execute_eurodat_test () {
   runtime=$(($(date +%s) - start_time))
 
   echo "Test successfully run. Up- and download took $runtime seconds."
+
+  echo "Testing 400 error on unexpected asset transmission"
+  if ! curl -X 'POST' "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/eurodat/asset/non-existent" | grep -q 'HTTP ERROR 400 Bad Request'; then
+    echo "ERROR: Did not receive 400 Response"
+    exit 1
+  fi
+  echo "Test complete"
 }

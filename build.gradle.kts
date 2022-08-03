@@ -77,12 +77,6 @@ tasks.dependencyUpdates.configure {
     gradleReleaseChannel = "current"
 }
 
-ktlint {
-    filter {
-        exclude("**/trustee-platform/**")
-    }
-}
-
 sonarqube {
     properties {
         property("sonar.projectKey", "d-fine_datalandEDC")
@@ -91,7 +85,7 @@ sonarqube {
         property("sonar.qualitygate.wait", true)
         property(
             "sonar.coverage.exclusions",
-            "**/test/**, **/trustee-platform/**, **/DummyEdc.kt"
+            "**/test/**, **/DummyEdc.kt"
         )
         property(
             "sonar.sources",
@@ -131,7 +125,6 @@ detekt {
     val detektFileTree = fileTree("$projectDir")
     detektFileTree
         .exclude("**/build/**")
-        .exclude("**/trustee-platform/**")
         .exclude("**/DataSpaceConnector/**")
         .exclude(".gradle")
     source = files(detektFileTree)
