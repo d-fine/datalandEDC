@@ -53,7 +53,7 @@ dependencies {
     implementation(libs.springdoc.openapi.ui)
     implementation(libs.junit.jupiter)
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    implementation(libs.jakarta.annotation.api)
+    compileOnly(libs.jakarta.annotation.api)
 
     openApiSpecConfig(project(mapOf("path" to ":dataland-edc-server", "configuration" to "openApiSpec")))
 }
