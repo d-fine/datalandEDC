@@ -1,4 +1,4 @@
-FROM eclipse-temurin:11.0.15_10-jre-alpine
+FROM eclipse-temurin:17.0.4_8-jre-alpine
 COPY ./build/libs/dataland-edc-server-*-all.jar /app/edc-server.jar
 COPY ./vault.properties ./keystore.jks ./config.properties /app/
 EXPOSE 8080
