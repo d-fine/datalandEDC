@@ -1,6 +1,7 @@
 // main
 val jacocoVersion: String by project
 val connectorVersion: String by project
+val ktlintVersion: String by project
 
 allprojects {
     repositories {
@@ -33,6 +34,9 @@ subprojects {
     apply(plugin = "maven-publish")
     apply(plugin = "java-library")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
+    ktlint {
+        version.set(ktlintVersion)
+    }
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions {
             freeCompilerArgs = listOf("-Xjsr305=strict", "-opt-in=kotlin.RequiresOptIn")
@@ -92,6 +96,10 @@ sonarqube {
             subprojects.flatMap { project -> project.properties["sonarSources"] as Iterable<*> }
         )
     }
+}
+
+ktlint {
+    version.set(ktlintVersion)
 }
 
 jacoco {

@@ -97,5 +97,6 @@ sourceSets {
 ktlint {
     filter {
         exclude("**/openApiServer/**")
+        exclude("**/openapitools/**")
     }
 }
