@@ -6,7 +6,7 @@ include("dataland-edc-server")
 dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
-            library("springdoc-openapi-ui", "org.springdoc:springdoc-openapi-ui:1.6.9")
+            library("springdoc-openapi-ui", "org.springdoc:springdoc-openapi-ui:1.6.11")
 
             library("junit-jupiter", "org.junit.jupiter:junit-jupiter:5.9.0")
             library("junit-jupiter-engine", "org.junit.jupiter:junit-jupiter-engine:5.9.0")

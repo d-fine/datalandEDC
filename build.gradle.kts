@@ -1,6 +1,7 @@
 // main
 val jacocoVersion: String by project
 val connectorVersion: String by project
+val ktlintVersion: String by project
 
 allprojects {
     repositories {
@@ -33,6 +34,9 @@ subprojects {
     apply(plugin = "maven-publish")
     apply(plugin = "java-library")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
+    ktlint {
+        version.set(ktlintVersion)
+    }
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions {
             freeCompilerArgs = listOf("-Xjsr305=strict", "-opt-in=kotlin.RequiresOptIn")
@@ -59,14 +63,14 @@ subprojects {
 }
 
 plugins {
-    id("org.springframework.boot") version "2.7.2" apply false
+    id("org.springframework.boot") version "2.7.3" apply false
     id("io.gitlab.arturbosch.detekt") version "1.20.0"
     id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
     kotlin("jvm") version "1.7.10"
     kotlin("plugin.spring") version "1.7.10" apply false
     id("org.sonarqube") version "3.4.0.2513"
     id("org.openapi.generator") version "6.0.1" apply false
-    id("org.springdoc.openapi-gradle-plugin") version "1.3.4" apply false
+    id("org.springdoc.openapi-gradle-plugin") version "1.4.0" apply false
     id("io.swagger.core.v3.swagger-gradle-plugin") version "2.2.2" apply false
     jacoco
     id("com.github.ben-manes.versions") version "0.42.0"
@@ -92,6 +96,10 @@ sonarqube {
             subprojects.flatMap { project -> project.properties["sonarSources"] as Iterable<*> }
         )
     }
+}
+
+ktlint {
+    version.set(ktlintVersion)
 }
 
 jacoco {
