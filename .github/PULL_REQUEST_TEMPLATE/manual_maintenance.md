@@ -1,5 +1,6 @@
 # Manual Maintenance Sprint [NR]
 Note: To create a PR using this template add the query parameter `template=manual_maintenance.md` to the merge request creation URL (or simply copy this md file into the description)
+
 # Maintenance tasks (to be completed by the assignee)
 ## EDC
 ### Gradle update
@@ -7,13 +8,14 @@ Note: To create a PR using this template add the query parameter `template=manua
 - [ ] Update `settings.gradle.kts` (for libraries), `build.gradle.kts` (for plugins) and `gradle.properties` (for jacoco and ktlint)
   Note: fasterXML is managed by spring, thus NO manual version update should be conducted
 - [ ] update the gradle wrapper: execute `gradle wrapper --gradle-version X.Y.Z`
+
 ### OpenAPI update
 - [ ] If you updated the OpenAPI-Generator, also update the `dataland-edc-client/openApiTemplate` folder as described in the README.md
+
 ### Dockerfile updates
 Update versions in the following dockerfiles
 - [ ] `./dataland-edc-dummyserver/Dockerfile`
 - [ ] `./dataland-edc-server/Dockerfile`
-
 
 ## Conclusion
 - [ ] After updating all components check if everything still works
