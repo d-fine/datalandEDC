@@ -31,7 +31,7 @@ class DatalandEurodatController(
         localAssetStore.insertEurodatAssetLocationIntoStore(
             datalandAssetId,
             EurodatAssetLocation(
-                contractOfferId = "$eurodatContractId:${Constants.DUMMY_UUID}", eurodatAssetId = eurodatAssetId
+                contractOfferId = "$eurodatContractId:${Constants.DUMMY_STRING}", eurodatAssetId = eurodatAssetId
             )
         )
         return localAssetStore.retrieveDataFromStore(datalandAssetId) ?: ""

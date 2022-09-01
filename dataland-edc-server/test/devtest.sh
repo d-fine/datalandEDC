@@ -13,7 +13,6 @@ trap stopEDCServer EXIT
 function stopEDCServer() {
   if [[ -n $edc_server_pid ]]; then
     echo "Shutting down EDC server running under: $edc_server_pid"
-    sleep 5
     kill "$edc_server_pid"
   fi
 }

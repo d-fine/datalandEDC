@@ -6,7 +6,7 @@ package org.dataland.edc.server.utils
 object Constants {
     const val TIMEOUT_MS = 60L * 1000L
     const val POLL_INTERVAL_MS = 50L
-    const val DUMMY_UUID = "abc-123"
+    const val DUMMY_STRING = "abc-123"
 
     const val ASSET_ID_ASSET_FOR_ASSET_MANAGEMENT = "asset-for-asset-management"
     const val ACTION_TYPE_USE = "USE"

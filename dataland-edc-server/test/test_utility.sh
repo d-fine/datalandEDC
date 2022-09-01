@@ -66,14 +66,16 @@ start_edc_server () {
 
 execute_eurodat_test () {
   echo "Checking health endpoint via tunnel server."
-  timeout 60 bash -c "is_edc_server_up_and_healthy \"$dataland_edc_server_uri\""
+  timeout 60 bash -c "is_edc_server_up_and_healthy \"$dataland_edc_server_uri\"" || exit 1
+
+  data_url="http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/data"
+  echo "Using $data_url for requests."
 
   test_data="Test Data from: "$(date "+%d.%m.%Y %H:%M:%S")
   start_time=$(date +%s)
 
   echo "Posting test data: $test_data."
-  echo "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/data"
-  response=$(curl --max-time 780 -X POST "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/data" -H "accept: application/json" -H "Content-Type: application/json" -d "$test_data")
+  response=$(curl --max-time 780 -X POST "$data_url" -H "accept: application/json" -H "Content-Type: application/json" -d "$test_data")
   regex="\"dataId\":\"([0-9a-f:\-]+_[0-9a-f\-]+)\""
   if [[ $response =~ $regex ]]; then
     dataId=${BASH_REMATCH[1]}
@@ -84,7 +86,7 @@ execute_eurodat_test () {
   echo "Received response from post request with data ID: $dataId"
 
   echo "Retrieving test data."
-  get_response=$(curl --max-time 780 -X GET "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/data/$dataId" -H "accept: application/json")
+  get_response=$(curl --max-time 780 -X GET "$data_url/$dataId" -H "accept: application/json")
   if [[ ! $get_response =~ $test_data ]]; then
     echo "Response was unexpected: $get_response"
     echo "Expected was substring: $test_data"
@@ -97,7 +99,7 @@ execute_eurodat_test () {
   echo "Test successfully run. Up- and download took $runtime seconds."
 
   echo "Testing 400 error on unexpected asset transmission"
-  if ! curl -X 'POST' "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/eurodat/asset/non-existent" | grep -q 'HTTP ERROR 400 Bad Request'; then
+  if ! curl -X 'POST' "$data_url/asset/non-existent" | grep -q 'HTTP ERROR 400 Bad Request'; then
     echo "ERROR: Did not receive 400 Response"
     exit 1
   fi
