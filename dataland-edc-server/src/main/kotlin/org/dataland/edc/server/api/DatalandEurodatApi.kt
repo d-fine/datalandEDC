@@ -25,7 +25,7 @@ interface DatalandEurodatApi {
     fun provideAsset(
         @PathParam("datalandAssetId") datalandAssetId: String,
         @HeaderParam("eurodat-asset-id") eurodatAssetId: String,
-        @HeaderParam("eurodat-contract-definition-id") eurodatContractId: String
+        @HeaderParam("eurodat-contract-definition-id") eurodatContractDefinitionId: String
     ): String
 
     @Consumes(MediaType.APPLICATION_OCTET_STREAM)

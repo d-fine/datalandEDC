@@ -23,15 +23,15 @@ class DatalandEurodatController(
     override fun provideAsset(
         datalandAssetId: String,
         eurodatAssetId: String,
-        eurodatContractId: String
+        eurodatContractDefinitionId: String
     ): String {
         context.monitor.info("EuroDat retrieves asset with dataland asset ID $datalandAssetId.")
         context.monitor.info("EuroDat Asset ID is given by $eurodatAssetId.")
-        context.monitor.info("EuroDat Contract ID is given by $eurodatContractId.")
+        context.monitor.info("EuroDat Contract ID is given by $eurodatContractDefinitionId.")
         localAssetStore.insertEurodatAssetLocationIntoStore(
             datalandAssetId,
             EurodatAssetLocation(
-                contractOfferId = "$eurodatContractId:${Constants.DUMMY_STRING}", eurodatAssetId = eurodatAssetId
+                contractOfferId = "$eurodatContractDefinitionId:${Constants.DUMMY_STRING}", eurodatAssetId = eurodatAssetId
             )
         )
         return localAssetStore.retrieveDataFromStore(datalandAssetId) ?: ""
