@@ -8,18 +8,13 @@ import org.dataland.edc.server.utils.Constants
 import org.eclipse.dataspaceconnector.policy.model.Action
 import org.eclipse.dataspaceconnector.policy.model.Permission
 import org.eclipse.dataspaceconnector.policy.model.Policy
-import org.eclipse.dataspaceconnector.spi.EdcException
 import org.eclipse.dataspaceconnector.spi.contract.negotiation.ConsumerContractNegotiationManager
 import org.eclipse.dataspaceconnector.spi.contract.negotiation.store.ContractNegotiationStore
-import org.eclipse.dataspaceconnector.spi.message.Range
-import org.eclipse.dataspaceconnector.spi.message.RemoteMessageDispatcherRegistry
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
 import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessManager
 import org.eclipse.dataspaceconnector.spi.transfer.store.TransferProcessStore
 import org.eclipse.dataspaceconnector.spi.types.domain.DataAddress
 import org.eclipse.dataspaceconnector.spi.types.domain.asset.Asset
-import org.eclipse.dataspaceconnector.spi.types.domain.catalog.Catalog
-import org.eclipse.dataspaceconnector.spi.types.domain.catalog.CatalogRequest
 import org.eclipse.dataspaceconnector.spi.types.domain.contract.agreement.ContractAgreement
 import org.eclipse.dataspaceconnector.spi.types.domain.contract.negotiation.ContractNegotiation
 import org.eclipse.dataspaceconnector.spi.types.domain.contract.negotiation.ContractOfferRequest
@@ -33,7 +28,6 @@ import java.util.UUID
  * with EuroDat
  * @param transferProcessManager manages the transfer process
  * @param transferProcessStore holds information about transfers
- * @param dispatcher used to send commands to EuroDaT
  * @param contractNegotiationStore holds the contract negotiations of the Dataland EDC
  * @param consumerContractNegotiationManager manages contract negotiations
  * @param context the context containing constants and the monitor for logging
@@ -44,7 +38,6 @@ class EurodatService(
     private val transferProcessStore: TransferProcessStore,
     private val consumerContractNegotiationManager: ConsumerContractNegotiationManager,
     private val context: ServiceExtensionContext,
-    private val dispatcher: RemoteMessageDispatcherRegistry,
 ) {
     private val constantDummyDataDestination = DataAddress.Builder.newInstance()
         .type("")
@@ -125,48 +118,8 @@ class EurodatService(
         AwaitUtils.awaitTransferCompletion(transferProcessStore, transferId)
     }
 
-    private fun retrieveEurodatCatalog(startIndex: Int, endIndex: Int): Catalog {
-        val request = CatalogRequest.Builder.newInstance()
-            .protocol(Constants.PROTOCOL_IDS_MULTIPART)
-            .connectorId(Constants.CONNECTOR_ID_PROVIDER)
-            .connectorAddress(connectorAddressEurodat)
-            .range(Range(startIndex, endIndex))
-            .build()
-
-        val catalogFuture = dispatcher.send(Catalog::class.java, request) { null }
-        val catalog = catalogFuture.join()
-        return catalog
-    }
-
     /**
-     * Searches the EuroDaT asset catalog for an asset that has been registered with
-     * EuroDaT under the localAssetId. This only works because the registerAssetEuroDat function
-     * registers the asset under the name of the localAssetId
-     * @param datalandAssetId the dataland asset id
-     */
-    fun getAssetFromEurodatCatalog(datalandAssetId: String): EurodatAssetLocation {
-        context.monitor.info("Searching for asset $datalandAssetId in EuroDaT catalog")
-        var index = 0
-        do {
-            val catalogPage = retrieveEurodatCatalog(
-                index * Constants.EURODAT_CATALOG_PAGE_SIZE,
-                (index + 1) * Constants.EURODAT_CATALOG_PAGE_SIZE
-            )
-            index++
-            val result = catalogPage.contractOffers.firstOrNull { it.asset.properties["assetName"] == datalandAssetId }
-            if (result != null) {
-                return EurodatAssetLocation(
-                    contractOfferId = result.id,
-                    eurodatAssetId = result.asset.properties["asset:prop:id"].toString()
-                )
-            }
-        } while (catalogPage.contractOffers.isNotEmpty())
-        context.monitor.severe("Could not locate asset $datalandAssetId in EuroDaT catalog")
-        throw EdcException("Could not locate asset $datalandAssetId in EuroDaT catalog")
-    }
-
-    /**
-     * Requests an asset from EuroDaT using the euroDatAssetId retrieved from the catalog,
+     * Requests an asset from EuroDaT using the euroDatAssetId,
      * a fresh contract id for a read-contract regarding the asset, and a targetURL.
      * EuroDaT will then HTTP-POST the asset to the targetURL
      * @param eurodatAssetId the EuroDaT asset id

@@ -17,21 +17,35 @@ is_tunnel_server_up () {
 }
 export -f is_tunnel_server_up
 
-export dataland_tunnel_uri=dataland-tunnel.duckdns.org
-dataland_edc_server_uri=dataland-tunnel.duckdns.org
-export dataland_tunnel_startup_link=$TUNNEL_STARTUP_LINK
+export dataland_edc_server_web_http_ids_port=9292
+export config_web_http_port=9191
+export config_web_http_ids_port=9292
 
+export dataland_tunnel_uri=dataland-tunnel.duckdns.org
+export dataland_tunnel_startup_link=$TUNNEL_STARTUP_LINK
+export dataland_edc_server_web_http_port=9191
+
+dataland_edc_server_uri=dataland-tunnel.duckdns.org
 eurodat_health_endpoint="${TRUSTEE_BASE_URL}/${TRUSTEE_ENVIRONMENT_NAME}/api/check/health"
 
-export dataland_edc_server_web_http_port=9191
-dataland_edc_server_web_http_ids_port=9292
+restart_tunnel_server () {
+  echo "Stop tunnel server if it is currently running."
+  if ssh ubuntu@"$dataland_tunnel_uri" "sudo shutdown now"; then
+    echo "Tunnel server was running and has been stopped."
+    sleep 5
+  fi
 
-config_web_http_port=9191
-config_web_http_ids_port=9292
+  echo "Starting tunnel server."
+  curl "$dataland_tunnel_startup_link"
+  sleep 10
+
+  echo "Checking availability of tunnel server."
+  timeout 240 bash -c "while ! is_tunnel_server_up; do echo 'Tunnel server not yet there - retrying in 10s'; sleep 10; done; echo 'Tunnel server up!'"
+}
 
 is_eurodat_up_and_healthy () {
   echo "Checking if EuroDaT is available."
-if ! curl -f -X 'GET' "$eurodat_health_endpoint" -H 'accept: application/json' 2>/dev/null | grep -q '"isHealthy":true}],"isSystemHealthy":true}'; then
+  if ! curl -f -X 'GET' "$eurodat_health_endpoint" -H 'accept: application/json' 2>/dev/null | grep -q '"isHealthy":true}],"isSystemHealthy":true}'; then
     echo "EuroDaT is not available."
     exit 1
   fi
@@ -43,23 +57,24 @@ start_edc_server () {
   current_dir=$(pwd)
   cd ../../ || exit
   ./gradlew :dataland-edc-server:run --stacktrace >edc_server.log 2>&1 &
-  edc_server_pid=$!
+  export edc_server_pid=$!
   cd "$current_dir" || exit
+
+  echo "Checking health endpoint of dataland edc server locally."
+  timeout 240 bash -c "while ! is_edc_server_up_and_healthy; do echo 'Dataland EDC server not yet there - retrying in 10s'; sleep 10; done; echo 'Dataland EDC server up!'"
 }
 
 execute_eurodat_test () {
   echo "Checking health endpoint via tunnel server."
-  if ! is_edc_server_up_and_healthy "$dataland_edc_server_uri"; then
-    echo "Unable to reach EDC server via tunnel."
-    exit 1
-  fi
+  timeout 60 bash -c "is_edc_server_up_and_healthy \"$dataland_edc_server_uri\""
 
   test_data="Test Data from: "$(date "+%d.%m.%Y %H:%M:%S")
   start_time=$(date +%s)
 
   echo "Posting test data: $test_data."
-  response=$(curl -X POST "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/data" -H "accept: application/json" -H "Content-Type: application/json" -d "$test_data")
-  regex=":\"(.+_.+)\""
+  echo "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/data"
+  response=$(curl --max-time 780 -X POST "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/data" -H "accept: application/json" -H "Content-Type: application/json" -d "$test_data")
+  regex="\"dataId\":\"([0-9a-f:\-]+_[0-9a-f\-]+)\""
   if [[ $response =~ $regex ]]; then
     dataId=${BASH_REMATCH[1]}
   else
@@ -69,7 +84,7 @@ execute_eurodat_test () {
   echo "Received response from post request with data ID: $dataId"
 
   echo "Retrieving test data."
-  get_response=$(curl -X GET "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/data/$dataId" -H "accept: application/json")
+  get_response=$(curl --max-time 780 -X GET "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/data/$dataId" -H "accept: application/json")
   if [[ ! $get_response =~ $test_data ]]; then
     echo "Response was unexpected: $get_response"
     echo "Expected was substring: $test_data"
