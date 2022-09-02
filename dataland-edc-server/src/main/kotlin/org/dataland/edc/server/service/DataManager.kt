@@ -32,8 +32,9 @@ class DataManager(
     fun provideAssetToTrustee(data: String): EurodatAssetLocation {
         val datalandAssetId = storeAssetLocally(data)
         eurodatService.registerAssetEurodat(datalandAssetId, getLocalAssetAccessUrl(datalandAssetId))
-        val location = eurodatService.getAssetFromEurodatCatalog(datalandAssetId)
+        val location = AwaitUtils.awaitAssetPickup(localAssetStore, datalandAssetId)
         context.monitor.info("Asset $datalandAssetId is stored in EuroDaT under $location")
+        localAssetStore.deleteFromStore(datalandAssetId)
         return location
     }
 
@@ -57,7 +58,7 @@ class DataManager(
 
     private fun storeAssetLocally(data: String): String {
         val datalandAssetId = UUID.randomUUID().toString()
-        localAssetStore.insertIntoStore(datalandAssetId, data)
+        localAssetStore.insertDataIntoStore(datalandAssetId, data)
         context.monitor.info("Stored new local asset under ID $datalandAssetId)")
         return datalandAssetId
     }

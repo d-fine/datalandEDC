@@ -1,11 +1,11 @@
 package org.dataland.edc.server.controller
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.ws.rs.core.Response
 import org.dataland.edc.server.api.DatalandEurodatApi
+import org.dataland.edc.server.models.EurodatAssetLocation
 import org.dataland.edc.server.service.EurodatAssetCache
 import org.dataland.edc.server.service.LocalAssetStore
+import org.dataland.edc.server.utils.Constants
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
 
 /**
@@ -20,13 +20,22 @@ class DatalandEurodatController(
     private val eurodatAssetCache: EurodatAssetCache
 ) : DatalandEurodatApi {
 
-    private val objectMapper = jacksonObjectMapper()
-
-    override fun provideAsset(datalandAssetId: String): String {
-        context.monitor.info("Asset with dataland asset ID $datalandAssetId is requested.")
-        val assetToProvide = localAssetStore.retrieveFromStore(datalandAssetId) ?: ""
-        localAssetStore.deleteFromStore(datalandAssetId)
-        return assetToProvide
+    override fun provideAsset(
+        datalandAssetId: String,
+        eurodatAssetId: String,
+        eurodatContractDefinitionId: String
+    ): String {
+        context.monitor.info("EuroDat retrieves asset with dataland asset ID $datalandAssetId.")
+        context.monitor.info("EuroDat Asset ID is given by $eurodatAssetId.")
+        context.monitor.info("EuroDat Contract ID is given by $eurodatContractDefinitionId.")
+        localAssetStore.insertEurodatAssetLocationIntoStore(
+            datalandAssetId,
+            EurodatAssetLocation(
+                contractOfferId = "$eurodatContractDefinitionId:${Constants.DUMMY_STRING}",
+                eurodatAssetId = eurodatAssetId
+            )
+        )
+        return localAssetStore.retrieveDataFromStore(datalandAssetId) ?: ""
     }
 
     override fun storeReceivedAsset(eurodatAssetId: String, data: ByteArray): Response {
@@ -36,9 +45,7 @@ class DatalandEurodatController(
         }
 
         context.monitor.info("Received asset POST request by EuroDaT with ID $eurodatAssetId.")
-        val decodedData: Map<String, String> = objectMapper.readValue(data.decodeToString())
-
-        eurodatAssetCache.insertIntoCache(eurodatAssetId, decodedData["content"]!!)
+        eurodatAssetCache.insertIntoCache(eurodatAssetId, data.decodeToString())
         return Response.ok("Dataland-connector received asset with asset ID $eurodatAssetId").build()
     }
 }

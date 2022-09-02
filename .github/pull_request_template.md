@@ -12,4 +12,4 @@ Please check all boxes before the Pull Request is merged. In case you skip a box
 - [ ] The automated deployment is updated if required
 - [ ] There is at least one picture for each story, which was created before coding has started
 - [ ] The test-script `dataland-edc-server/test/devtest.sh` still works. Run it locally!
-- [ ] If the behaviour of the EDC has changed from an external perspective, the dummyEDC has also been adopted to those changes
+- [ ] If the Dataland-internal API of the EDC has changed (in spec or behaviour), the dummyEDC has also been adopted to those changes
