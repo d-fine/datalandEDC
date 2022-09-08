@@ -1,7 +1,7 @@
 package org.dataland.edc.server.extensions
 
 import org.dataland.edc.server.service.EurodatService
-import org.dataland.edc.server.service.ThreadAwareMonitor
+import org.eclipse.dataspaceconnector.spi.monitor.Monitor
 import org.eclipse.dataspaceconnector.spi.system.Inject
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtension
 import org.eclipse.dataspaceconnector.spi.types.domain.contract.negotiation.ContractNegotiation
@@ -20,10 +20,10 @@ class AssetForAssetManagementContractExtension : ServiceExtension {
     private lateinit var eurodatService: EurodatService
 
     @Inject
-    private lateinit var threadAwareMonitor: ThreadAwareMonitor
+    private lateinit var monitor: Monitor
 
     override fun start() {
-        threadAwareMonitor.info("Starting negotiation for the ASSET-FOR-ASSET-MANAGEMENT Meta Asset")
+        monitor.info("Starting negotiation for the ASSET-FOR-ASSET-MANAGEMENT Meta Asset")
         assetForAssetManagementNegotiation = eurodatService.negotiateAssetForAssetManagementContract()
     }
 }

@@ -6,41 +6,41 @@ import org.dataland.edc.server.models.EurodatAssetLocation
 import org.dataland.edc.server.models.InsertDataResponse
 import org.dataland.edc.server.service.DataManager
 import org.dataland.edc.server.service.EurodatAssetCache
-import org.dataland.edc.server.service.ThreadAwareMonitor
+import org.eclipse.dataspaceconnector.spi.monitor.Monitor
 
 /**
  * Implementation of the Dataland EDC Api
  * @param dataManager the in memory data manager orchestrating the required tasks
  * @param eurodatAssetCache a cache for files that already were received by EuroDaT
- * @param threadAwareMonitor a monitor that also exposes thread information
+ * @param monitor a monitor that also exposes thread information
  */
 class DatalandInternalEdcController(
     private val dataManager: DataManager,
     private val eurodatAssetCache: EurodatAssetCache,
-    private val threadAwareMonitor: ThreadAwareMonitor
+    private val monitor: Monitor
 ) : DatalandInternalEdcApi {
 
     override fun checkHealth(): CheckHealthResponse {
-        threadAwareMonitor.info("Received a health request.")
+        monitor.info("Received a health request.")
         return CheckHealthResponse("I am alive!")
     }
 
     override fun insertData(data: String): InsertDataResponse {
         val dataId: String
         try {
-            threadAwareMonitor.info("Received data to store in the trustee.")
+            monitor.info("Received data to store in the trustee.")
             val eurodatAssetLocation = dataManager.provideAssetToTrustee(data)
             dataId = "${eurodatAssetLocation.contractOfferId}_${eurodatAssetLocation.eurodatAssetId}"
-            threadAwareMonitor.info("Data with ID $dataId stored in trustee")
+            monitor.info("Data with ID $dataId stored in trustee")
         } catch (ignore_e: Error) {
-            threadAwareMonitor.info("Error inserting Data. Errormessage: ${ignore_e.message}")
+            monitor.info("Error inserting Data. Errormessage: ${ignore_e.message}")
             throw ignore_e
         }
         return InsertDataResponse(dataId)
     }
 
     override fun selectDataById(dataId: String): String {
-        threadAwareMonitor.info("Asset with data ID $dataId is requested.")
+        monitor.info("Asset with data ID $dataId is requested.")
         val response: String
         try {
             val splitDataId = dataId.split("_")
@@ -52,9 +52,9 @@ class DatalandInternalEdcController(
 
             val cacheResponse = eurodatAssetCache.retrieveFromCache(eurodatAssetLocation.eurodatAssetId)
             response = cacheResponse ?: dataManager.retrieveAssetFromTrustee(eurodatAssetLocation)
-            threadAwareMonitor.info("Data with ID $dataId retrieved internally - Returning Data via REST")
+            monitor.info("Data with ID $dataId retrieved internally - Returning Data via REST")
         } catch (ignore_e: Exception) {
-            threadAwareMonitor.info(
+            monitor.info(
                 "Error getting Asset with data ID $dataId from EuroDat." +
                     "Errormessage: ${ignore_e.message}"
             )

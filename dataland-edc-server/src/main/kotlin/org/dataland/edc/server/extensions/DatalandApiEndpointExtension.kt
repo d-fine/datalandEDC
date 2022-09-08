@@ -5,8 +5,8 @@ import org.dataland.edc.server.controller.DatalandInternalEdcController
 import org.dataland.edc.server.service.DataManager
 import org.dataland.edc.server.service.EurodatAssetCache
 import org.dataland.edc.server.service.LocalAssetStore
-import org.dataland.edc.server.service.ThreadAwareMonitor
 import org.eclipse.dataspaceconnector.spi.WebService
+import org.eclipse.dataspaceconnector.spi.monitor.Monitor
 import org.eclipse.dataspaceconnector.spi.system.Inject
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtension
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
@@ -29,7 +29,7 @@ class DatalandApiEndpointExtension : ServiceExtension {
     private lateinit var dataManager: DataManager
 
     @Inject
-    private lateinit var threadAwareMonitor: ThreadAwareMonitor
+    private lateinit var monitor: Monitor
 
     override fun name(): String {
         return "API Endpoint"
@@ -40,14 +40,14 @@ class DatalandApiEndpointExtension : ServiceExtension {
             DatalandInternalEdcController(
                 dataManager,
                 eurodatAssetCache,
-                threadAwareMonitor
+                monitor
             )
         )
         webService.registerResource(
             DatalandEurodatController(
                 localAssetStore,
                 eurodatAssetCache,
-                threadAwareMonitor
+                monitor
             )
         )
     }

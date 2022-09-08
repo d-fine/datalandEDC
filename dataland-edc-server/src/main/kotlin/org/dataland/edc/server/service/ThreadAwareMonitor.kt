@@ -1,12 +1,11 @@
 package org.dataland.edc.server.service
 
-import org.eclipse.dataspaceconnector.spi.monitor.Monitor
+import org.eclipse.dataspaceconnector.spi.monitor.ConsoleMonitor
 
 /**
  * A monitor that also tells the log what thread the message came from
- * @param monitor the actual monitor to use
  */
-class ThreadAwareMonitor(private val monitor: Monitor) {
+class ThreadAwareMonitor: ConsoleMonitor() {
     private fun addThreadToMessage(message: String): String {
         return "${Thread.currentThread().name} - $message"
     }
@@ -15,15 +14,15 @@ class ThreadAwareMonitor(private val monitor: Monitor) {
      * Puts a message to the monitor with severity INFO
      * @param message the message to be monitored
      */
-    fun info(message: String) {
-        monitor.info(addThreadToMessage(message))
+    override fun info(message: String, vararg errors: Throwable?) {
+        super.info(addThreadToMessage(message), *errors)
     }
 
     /**
      * Puts a message to the monitor with severity SEVERE
      * @param message the message to be monitored
      */
-    fun severe(message: String) {
-        monitor.severe(addThreadToMessage(message))
+    override fun severe(message: String, vararg errors: Throwable?) {
+        super.severe(addThreadToMessage(message), *errors)
     }
 }
