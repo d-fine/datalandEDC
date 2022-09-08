@@ -38,13 +38,13 @@ class DatalandEurodatController(
                 )
             )
             asset = localAssetStore.retrieveDataFromStore(datalandAssetId) ?: ""
-        } catch (e: Exception) {
+        } catch (ignore_e: Exception) {
             threadAwareMonitor.info(
                 "Error providing an Asset with dataland asset ID $datalandAssetId, " +
                     "EuroDat Asset ID $eurodatAssetId, Contract ID $eurodatContractDefinitionId " +
-                    "Errormessage: ${e.message}"
+                    "Errormessage: ${ignore_e.message}"
             )
-            throw e
+            throw ignore_e
         }
         return asset
     }
@@ -58,9 +58,9 @@ class DatalandEurodatController(
 
             threadAwareMonitor.info("Received asset POST request by EuroDaT with ID $eurodatAssetId.")
             eurodatAssetCache.insertIntoCache(eurodatAssetId, data.decodeToString())
-        } catch (e: Exception) {
-            threadAwareMonitor.info("Error receiving Asset with asset ID $eurodatAssetId. Errormessage: ${e.message}")
-            throw e
+        } catch (ignore_e: Exception) {
+            threadAwareMonitor.info("Error receiving Asset with asset ID $eurodatAssetId. Errormessage: ${ignore_e.message}")
+            throw ignore_e
         }
         return Response.ok("Dataland-connector received asset with asset ID $eurodatAssetId").build()
     }

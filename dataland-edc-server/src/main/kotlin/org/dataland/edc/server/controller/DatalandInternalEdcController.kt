@@ -32,9 +32,9 @@ class DatalandInternalEdcController(
             val eurodatAssetLocation = dataManager.provideAssetToTrustee(data)
             dataId = "${eurodatAssetLocation.contractOfferId}_${eurodatAssetLocation.eurodatAssetId}"
             threadAwareMonitor.info("Data with ID $dataId stored in trustee")
-        } catch (e: Error) {
-            threadAwareMonitor.info("Error inserting Data. Errormessage: ${e.message}")
-            throw e
+        } catch (ignore_e: Error) {
+            threadAwareMonitor.info("Error inserting Data. Errormessage: ${ignore_e.message}")
+            throw ignore_e
         }
         return InsertDataResponse(dataId)
     }
@@ -53,12 +53,12 @@ class DatalandInternalEdcController(
             val cacheResponse = eurodatAssetCache.retrieveFromCache(eurodatAssetLocation.eurodatAssetId)
             response = cacheResponse ?: dataManager.retrieveAssetFromTrustee(eurodatAssetLocation)
             threadAwareMonitor.info("Data with ID $dataId retrieved internally - Returning Data via REST")
-        } catch (e: Exception) {
+        } catch (ignore_e: Exception) {
             threadAwareMonitor.info(
                 "Error getting Asset with data ID $dataId from EuroDat." +
-                    "Errormessage: ${e.message}"
+                    "Errormessage: ${ignore_e.message}"
             )
-            throw e
+            throw ignore_e
         }
         return response
     }
