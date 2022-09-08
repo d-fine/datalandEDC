@@ -30,6 +30,7 @@ import java.util.UUID
  * @param transferProcessStore holds information about transfers
  * @param contractNegotiationStore holds the contract negotiations of the Dataland EDC
  * @param consumerContractNegotiationManager manages contract negotiations
+ * @param threadAwareMonitor a monitor that also exposes thread information
  * @param context the context containing constants and the monitor for logging
  */
 class EurodatService(
@@ -37,6 +38,7 @@ class EurodatService(
     private val contractNegotiationStore: ContractNegotiationStore,
     private val transferProcessStore: TransferProcessStore,
     private val consumerContractNegotiationManager: ConsumerContractNegotiationManager,
+    private val threadAwareMonitor: ThreadAwareMonitor,
     private val context: ServiceExtensionContext,
 ) {
     private val constantDummyDataDestination = DataAddress.Builder.newInstance()
@@ -74,7 +76,7 @@ class EurodatService(
                 AssetForAssetManagementContractExtension.assetForAssetManagementNegotiation!!
             )
         } catch (ex: ConditionTimeoutException) {
-            context.monitor.severe("Negotiation for the ASSET-FOR-ASSET-MANAGEMENT failed ($ex). Renegotiating...")
+            threadAwareMonitor.severe("Negotiation for the ASSET-FOR-ASSET-MANAGEMENT failed ($ex). Renegotiating...")
             val assetForAssetManagementContractNegotiation = negotiateAssetForAssetManagementContract()
             val contractAgreement = AwaitUtils.awaitContractConfirm(
                 contractNegotiationStore,
@@ -97,7 +99,7 @@ class EurodatService(
      */
     @Suppress("kotlin:S138")
     fun registerAssetEurodat(datalandAssetId: String, datalandAssetAccessURL: String) {
-        context.monitor.info("Registering asset $datalandAssetId with EuroDat")
+        threadAwareMonitor.info("Registering asset $datalandAssetId with EuroDat")
         val assetForAssetManagementContractConfirmation = awaitAssetForAssetManagementContractConfirm()
 
         val dataRequest = DataRequest.Builder.newInstance()

@@ -11,12 +11,14 @@ import java.util.UUID
  * @param eurodatService The euroDaT service responsible for communicating with EuroDat
  * @param localAssetStore The storage for local assets that are made available to EuroDat
  * @param eurodatAssetCache A cache holding retrieved EuroDaT assets
+ * @param threadAwareMonitor a monitor that also exposes thread information
  */
 class DataManager(
     private val context: ServiceExtensionContext,
     private val eurodatService: EurodatService,
     private val localAssetStore: LocalAssetStore,
-    private val eurodatAssetCache: EurodatAssetCache
+    private val eurodatAssetCache: EurodatAssetCache,
+    private val threadAwareMonitor: ThreadAwareMonitor,
 ) {
 
     private val baseAddressDatalandToEurodatAssetUrl: String = context.getSetting(
@@ -33,7 +35,7 @@ class DataManager(
         val datalandAssetId = storeAssetLocally(data)
         eurodatService.registerAssetEurodat(datalandAssetId, getLocalAssetAccessUrl(datalandAssetId))
         val location = AwaitUtils.awaitAssetPickup(localAssetStore, datalandAssetId)
-        context.monitor.info("Asset $datalandAssetId is stored in EuroDaT under $location")
+        threadAwareMonitor.info("Asset $datalandAssetId is stored in EuroDaT under $location")
         localAssetStore.deleteFromStore(datalandAssetId)
         return location
     }
@@ -59,7 +61,7 @@ class DataManager(
     private fun storeAssetLocally(data: String): String {
         val datalandAssetId = UUID.randomUUID().toString()
         localAssetStore.insertDataIntoStore(datalandAssetId, data)
-        context.monitor.info("Stored new local asset under ID $datalandAssetId)")
+        threadAwareMonitor.info("Stored new local asset under ID $datalandAssetId)")
         return datalandAssetId
     }
 }

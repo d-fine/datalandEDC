@@ -1,6 +1,7 @@
 package org.dataland.edc.server.extensions
 
 import org.dataland.edc.server.service.EurodatService
+import org.dataland.edc.server.service.ThreadAwareMonitor
 import org.eclipse.dataspaceconnector.spi.contract.negotiation.ConsumerContractNegotiationManager
 import org.eclipse.dataspaceconnector.spi.contract.negotiation.store.ContractNegotiationStore
 import org.eclipse.dataspaceconnector.spi.system.Inject
@@ -28,6 +29,9 @@ class DatalandEurodatServiceExtension : ServiceExtension {
     @Inject
     private lateinit var transferProcessStore: TransferProcessStore
 
+    @Inject
+    private lateinit var threadAwareMonitor: ThreadAwareMonitor
+
     /**
      * Creates a EuroDaTService Instance with the required injects
      * and makes it available to other components
@@ -39,6 +43,7 @@ class DatalandEurodatServiceExtension : ServiceExtension {
             contractNegotiationStore,
             transferProcessStore,
             consumerContractNegotiationManager,
+            threadAwareMonitor,
             context
         )
     }
