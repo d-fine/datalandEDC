@@ -35,7 +35,7 @@ class DataManager(
     fun provideAssetToTrustee(data: String): EurodatAssetLocation {
         val datalandAssetId = storeAssetLocally(data)
         eurodatService.registerAssetEurodat(datalandAssetId, getLocalAssetAccessUrl(datalandAssetId))
-        val location = AwaitUtils.awaitAssetPickup(localAssetStore, datalandAssetId)
+        val location = AwaitUtils.awaitAssetPickup(localAssetStore, datalandAssetId, monitor)
         monitor.info("Asset $datalandAssetId is stored in EuroDaT under $location")
         localAssetStore.deleteFromStore(datalandAssetId)
         return location
