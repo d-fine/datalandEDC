@@ -31,24 +31,40 @@ class DatalandEurodatController(
         threadAwareMonitor.info("EuroDat retrieves asset with dataland asset ID $datalandAssetId.")
         threadAwareMonitor.info("EuroDat Asset ID is given by $eurodatAssetId.")
         threadAwareMonitor.info("EuroDat Contract ID is given by $eurodatContractDefinitionId.")
-        localAssetStore.insertEurodatAssetLocationIntoStore(
-            datalandAssetId,
-            EurodatAssetLocation(
-                contractOfferId = "$eurodatContractDefinitionId:${Constants.DUMMY_STRING}",
-                eurodatAssetId = eurodatAssetId
+        val asset: String
+        try {
+            localAssetStore.insertEurodatAssetLocationIntoStore(
+                datalandAssetId,
+                EurodatAssetLocation(
+                    contractOfferId = "$eurodatContractDefinitionId:${Constants.DUMMY_STRING}",
+                    eurodatAssetId = eurodatAssetId
+                )
             )
-        )
-        return localAssetStore.retrieveDataFromStore(datalandAssetId) ?: ""
+            asset = localAssetStore.retrieveDataFromStore(datalandAssetId) ?: ""
+        } catch (e: Exception) {
+            threadAwareMonitor.info(
+                "Error providing an Asset with dataland asset ID $datalandAssetId, " +
+                    "EuroDat Asset ID $eurodatAssetId, Contract ID $eurodatContractDefinitionId " +
+                    "Errormessage: ${e.message}"
+            )
+            throw e
+        }
+        return asset
     }
 
     override fun storeReceivedAsset(eurodatAssetId: String, data: ByteArray): Response {
-        if (!eurodatAssetCache.isAssetExpected(eurodatAssetId)) {
-            threadAwareMonitor.info("Received asset POST request for an UNEXPECTED asset ID $eurodatAssetId.")
-            return Response.status(Response.Status.BAD_REQUEST).build()
-        }
+        try {
+            if (!eurodatAssetCache.isAssetExpected(eurodatAssetId)) {
+                threadAwareMonitor.info("Received asset POST request for an UNEXPECTED asset ID $eurodatAssetId.")
+                return Response.status(Response.Status.BAD_REQUEST).build()
+            }
 
-        threadAwareMonitor.info("Received asset POST request by EuroDaT with ID $eurodatAssetId.")
-        eurodatAssetCache.insertIntoCache(eurodatAssetId, data.decodeToString())
+            threadAwareMonitor.info("Received asset POST request by EuroDaT with ID $eurodatAssetId.")
+            eurodatAssetCache.insertIntoCache(eurodatAssetId, data.decodeToString())
+        } catch (e: Exception) {
+            threadAwareMonitor.info("Error receiving Asset with asset ID $eurodatAssetId. Errormessage: ${e.message}")
+            throw e
+        }
         return Response.ok("Dataland-connector received asset with asset ID $eurodatAssetId").build()
     }
 }

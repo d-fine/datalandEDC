@@ -29,25 +29,40 @@ class DatalandInternalEdcController(
     }
 
     override fun insertData(data: String): InsertDataResponse {
-        threadAwareMonitor.info("Received data to store in the trustee.")
-        val eurodatAssetLocation = dataManager.provideAssetToTrustee(data)
-        val dataId = "${eurodatAssetLocation.contractOfferId}_${eurodatAssetLocation.eurodatAssetId}"
-        threadAwareMonitor.info("Data with ID $dataId stored in trustee")
+        val dataId: String
+        try {
+            threadAwareMonitor.info("Received data to store in the trustee.")
+            val eurodatAssetLocation = dataManager.provideAssetToTrustee(data)
+            dataId = "${eurodatAssetLocation.contractOfferId}_${eurodatAssetLocation.eurodatAssetId}"
+            threadAwareMonitor.info("Data with ID $dataId stored in trustee")
+        } catch (e: Error) {
+            threadAwareMonitor.info("Error inserting Data. Errormessage: ${e.message}")
+            throw e
+        }
         return InsertDataResponse(dataId)
     }
 
     override fun selectDataById(dataId: String): String {
         threadAwareMonitor.info("Asset with data ID $dataId is requested.")
-        val splitDataId = dataId.split("_")
-        if (splitDataId.size != 2) throw IllegalArgumentException("The data ID $dataId has an invalid format.")
-        val eurodatAssetLocation = EurodatAssetLocation(
-            contractOfferId = splitDataId[0],
-            eurodatAssetId = splitDataId[1]
-        )
+        val response: String
+        try {
+            val splitDataId = dataId.split("_")
+            if (splitDataId.size != 2) throw IllegalArgumentException("The data ID $dataId has an invalid format.")
+            val eurodatAssetLocation = EurodatAssetLocation(
+                contractOfferId = splitDataId[0],
+                eurodatAssetId = splitDataId[1]
+            )
 
-        val cacheResponse = eurodatAssetCache.retrieveFromCache(eurodatAssetLocation.eurodatAssetId)
-        val response = cacheResponse ?: dataManager.retrieveAssetFromTrustee(eurodatAssetLocation)
-        threadAwareMonitor.info("Data with ID $dataId retrieved internally - Returning Data via REST")
+            val cacheResponse = eurodatAssetCache.retrieveFromCache(eurodatAssetLocation.eurodatAssetId)
+            response = cacheResponse ?: dataManager.retrieveAssetFromTrustee(eurodatAssetLocation)
+            threadAwareMonitor.info("Data with ID $dataId retrieved internally - Returning Data via REST")
+        } catch (e: Exception) {
+            threadAwareMonitor.info(
+                "Error getting Asset with data ID $dataId from EuroDat." +
+                    "Errormessage: ${e.message}"
+            )
+            throw e
+        }
         return response
     }
 }
