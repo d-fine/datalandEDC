@@ -5,7 +5,7 @@ import org.eclipse.dataspaceconnector.spi.monitor.ConsoleMonitor
 /**
  * A monitor that also tells the log what thread the message came from
  */
-class ThreadAwareMonitor: ConsoleMonitor() {
+class ThreadAwareMonitor : ConsoleMonitor() {
     private fun addThreadToMessage(message: String): String {
         return "${Thread.currentThread().name} - $message"
     }
