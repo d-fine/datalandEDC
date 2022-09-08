@@ -7,17 +7,14 @@ import org.dataland.edc.server.service.EurodatAssetCache
 import org.dataland.edc.server.service.LocalAssetStore
 import org.dataland.edc.server.service.ThreadAwareMonitor
 import org.dataland.edc.server.utils.Constants
-import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
 
 /**
  * Implementation of the Dataland EDC Api
- * @param context the context containing constants and the monitor for logging
  * @param localAssetStore a store of the assets provided to EuroDaT
  * @param eurodatAssetCache a cache of assets received by EuroDaT
  * @param threadAwareMonitor a monitor that also exposes thread information
  */
 class DatalandEurodatController(
-    private val context: ServiceExtensionContext,
     private val localAssetStore: LocalAssetStore,
     private val eurodatAssetCache: EurodatAssetCache,
     private val threadAwareMonitor: ThreadAwareMonitor

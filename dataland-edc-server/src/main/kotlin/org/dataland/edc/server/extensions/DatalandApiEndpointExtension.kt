@@ -39,14 +39,12 @@ class DatalandApiEndpointExtension : ServiceExtension {
         webService.registerResource(
             DatalandInternalEdcController(
                 dataManager,
-                context,
                 eurodatAssetCache,
                 threadAwareMonitor
             )
         )
         webService.registerResource(
             DatalandEurodatController(
-                context,
                 localAssetStore,
                 eurodatAssetCache,
                 threadAwareMonitor

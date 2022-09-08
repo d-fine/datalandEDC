@@ -5,7 +5,6 @@ import org.eclipse.dataspaceconnector.spi.monitor.Monitor
 import org.eclipse.dataspaceconnector.spi.system.Inject
 import org.eclipse.dataspaceconnector.spi.system.Provider
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtension
-import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
 
 /**
  * Creates a EuroDaTService Instance with the required injects
@@ -21,7 +20,7 @@ class ThreadAwareMonitorExtension : ServiceExtension {
      * and makes it available to other components
      */
     @Provider
-    fun provideThreadAwareMonitor(context: ServiceExtensionContext): ThreadAwareMonitor {
+    fun provideThreadAwareMonitor(): ThreadAwareMonitor {
         return ThreadAwareMonitor(
             monitor,
         )

@@ -7,18 +7,15 @@ import org.dataland.edc.server.models.InsertDataResponse
 import org.dataland.edc.server.service.DataManager
 import org.dataland.edc.server.service.EurodatAssetCache
 import org.dataland.edc.server.service.ThreadAwareMonitor
-import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
 
 /**
  * Implementation of the Dataland EDC Api
  * @param dataManager the in memory data manager orchestrating the required tasks
- * @param context the context containing constants and the monitor for logging
  * @param eurodatAssetCache a cache for files that already were received by EuroDaT
  * @param threadAwareMonitor a monitor that also exposes thread information
  */
 class DatalandInternalEdcController(
     private val dataManager: DataManager,
-    private val context: ServiceExtensionContext,
     private val eurodatAssetCache: EurodatAssetCache,
     private val threadAwareMonitor: ThreadAwareMonitor
 ) : DatalandInternalEdcApi {
