@@ -11,10 +11,18 @@ class ThreadAwareMonitor(private val monitor: Monitor) {
         return "${Thread.currentThread().name} - $message"
     }
 
+    /**
+     * Puts a message to the monitor with severity INFO
+     * @param message the message to be monitored
+     */
     fun info(message: String) {
         monitor.info(addThreadToMessage(message))
     }
 
+    /**
+     * Puts a message to the monitor with severity SEVERE
+     * @param message the message to be monitored
+     */
     fun severe(message: String) {
         monitor.severe(addThreadToMessage(message))
     }

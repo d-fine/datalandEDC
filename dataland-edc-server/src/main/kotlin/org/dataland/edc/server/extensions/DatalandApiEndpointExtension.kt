@@ -36,7 +36,21 @@ class DatalandApiEndpointExtension : ServiceExtension {
     }
 
     override fun initialize(context: ServiceExtensionContext) {
-        webService.registerResource(DatalandInternalEdcController(dataManager, context, eurodatAssetCache, threadAwareMonitor))
-        webService.registerResource(DatalandEurodatController(context, localAssetStore, eurodatAssetCache, threadAwareMonitor))
+        webService.registerResource(
+            DatalandInternalEdcController(
+                dataManager,
+                context,
+                eurodatAssetCache,
+                threadAwareMonitor
+            )
+        )
+        webService.registerResource(
+            DatalandEurodatController(
+                context,
+                localAssetStore,
+                eurodatAssetCache,
+                threadAwareMonitor
+            )
+        )
     }
 }
