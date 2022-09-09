@@ -41,25 +41,20 @@ class DatalandInternalEdcController(
 
     override fun selectDataById(dataId: String): String {
         monitor.info("Asset with data ID $dataId is requested.")
-        val response: String
         try {
             val splitDataId = dataId.split("_")
             if (splitDataId.size != 2) throw IllegalArgumentException("The data ID $dataId has an invalid format.")
-            val eurodatAssetLocation = EurodatAssetLocation(
-                contractOfferId = splitDataId[0],
-                eurodatAssetId = splitDataId[1]
-            )
-
+            val eurodatAssetLocation = EurodatAssetLocation(splitDataId[0], splitDataId[1])
             val cacheResponse = eurodatAssetCache.retrieveFromCache(eurodatAssetLocation.eurodatAssetId)
-            response = cacheResponse ?: dataManager.retrieveAssetFromTrustee(eurodatAssetLocation)
+            val response = cacheResponse ?: dataManager.retrieveAssetFromTrustee(eurodatAssetLocation)
             monitor.info("Data with ID $dataId retrieved internally - Returning Data via REST")
+            return response
         } catch (ignore_e: Exception) {
             monitor.info(
-                "Error getting Asset with data ID $dataId from EuroDat." +
+                "Error getting Asset with data ID $dataId from EuroDat. " +
                     "Errormessage: ${ignore_e.message}"
             )
             throw ignore_e
         }
-        return response
     }
 }

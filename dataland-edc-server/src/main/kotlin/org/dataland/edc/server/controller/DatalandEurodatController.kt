@@ -28,25 +28,19 @@ class DatalandEurodatController(
         monitor.info("EuroDat retrieves asset with dataland asset ID $datalandAssetId.")
         monitor.info("EuroDat Asset ID is given by $eurodatAssetId.")
         monitor.info("EuroDat Contract ID is given by $eurodatContractDefinitionId.")
-        val asset: String
         try {
             localAssetStore.insertEurodatAssetLocationIntoStore(
                 datalandAssetId,
-                EurodatAssetLocation(
-                    contractOfferId = "$eurodatContractDefinitionId:${Constants.DUMMY_STRING}",
-                    eurodatAssetId = eurodatAssetId
-                )
+                EurodatAssetLocation("$eurodatContractDefinitionId:${Constants.DUMMY_STRING}", eurodatAssetId)
             )
-            asset = localAssetStore.retrieveDataFromStore(datalandAssetId) ?: ""
+            return localAssetStore.retrieveDataFromStore(datalandAssetId) ?: ""
         } catch (ignore_e: Exception) {
             monitor.info(
-                "Error providing an Asset with dataland asset ID $datalandAssetId, " +
-                    "EuroDat Asset ID $eurodatAssetId, Contract ID $eurodatContractDefinitionId " +
-                    "Errormessage: ${ignore_e.message}"
+                "Error providing an Asset with dataland asset ID $datalandAssetId, EuroDat Asset ID " +
+                    "$eurodatAssetId, Contract ID $eurodatContractDefinitionId Errormessage: ${ignore_e.message}"
             )
             throw ignore_e
         }
-        return asset
     }
 
     override fun storeReceivedAsset(eurodatAssetId: String, data: ByteArray): Response {
