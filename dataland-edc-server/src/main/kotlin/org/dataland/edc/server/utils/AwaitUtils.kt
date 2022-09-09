@@ -2,6 +2,7 @@ package org.dataland.edc.server.utils
 
 import org.awaitility.Awaitility.await
 import org.awaitility.core.ConditionTimeoutException
+import org.dataland.edc.server.exceptions.EuroDatTimeoutException
 import org.dataland.edc.server.models.EurodatAssetLocation
 import org.dataland.edc.server.service.EurodatAssetCache
 import org.dataland.edc.server.service.LocalAssetStore
@@ -67,11 +68,16 @@ object AwaitUtils {
 
         metaAwait({
             localAssetStore.retrieveEurodatAssetLocationFromStore(id) != null
-        }, monitor, "asset pickup")
+        }, monitor, "asset pickup", { EuroDatTimeoutException("Timeout waiting for Asset Pickup", it) })
         return localAssetStore.retrieveEurodatAssetLocationFromStore(id)!!
     }
 
-    private fun metaAwait(condition: () -> Boolean, monitor: Monitor? = null, waitingForInformation: String = "") {
+    private fun metaAwait(
+        condition: () -> Boolean,
+        monitor: Monitor? = null,
+        waitingForInformation: String = "",
+        exceptionProvider: (Exception) -> Exception = { it }
+    ) {
         try {
             monitor?.info("Waiting for $waitingForInformation")
             await()
@@ -80,7 +86,7 @@ object AwaitUtils {
                 .until(condition)
         } catch (e: ConditionTimeoutException) {
             monitor?.info("Timeout waiting for $waitingForInformation")
-            throw e
+            throw exceptionProvider(e)
         }
     }
 }
