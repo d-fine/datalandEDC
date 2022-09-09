@@ -1,10 +1,12 @@
 package org.dataland.edc.server.service
 
+import org.dataland.edc.server.models.AssetProvisionContainer
 import org.dataland.edc.server.models.EurodatAssetLocation
 import org.dataland.edc.server.utils.AwaitUtils
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
 import java.util.UUID
+import java.util.concurrent.locks.ReentrantLock
 
 /**
  * Entity orchestrating the required steps for trustee data exchange
@@ -33,12 +35,20 @@ class DataManager(
      * @param data The data to store in EuroDaT
      */
     fun provideAssetToTrustee(data: String): EurodatAssetLocation {
-        val datalandAssetId = storeAssetLocally(data)
+        val lock = ReentrantLock()
+        lock.lock()
+        val assetProvisionContainer = AssetProvisionContainer(data, null, lock)
+        val datalandAssetId = storeAssetLocally(assetProvisionContainer)
         eurodatService.registerAssetEurodat(datalandAssetId, getLocalAssetAccessUrl(datalandAssetId))
-        val location = AwaitUtils.awaitAssetPickup(localAssetStore, datalandAssetId, monitor)
-        monitor.info("Asset $datalandAssetId is stored in EuroDaT under $location")
-        localAssetStore.deleteFromStore(datalandAssetId)
-        return location
+        try {
+            monitor.info("Trying to get a lock after provision of Asset with ID $datalandAssetId to EuroDaT")
+            lock.lock()
+            val location = assetProvisionContainer.eurodatAssetLocation!!
+            monitor.info("Asset $datalandAssetId is stored in EuroDaT under $location")
+            return location
+        } finally {
+            localAssetStore.deleteFromStore(datalandAssetId)
+        }
     }
 
     /**
@@ -59,9 +69,9 @@ class DataManager(
     private fun getLocalAssetAccessUrl(datalandAssetId: String): String =
         "$baseAddressDatalandToEurodatAssetUrl/$datalandAssetId"
 
-    private fun storeAssetLocally(data: String): String {
+    private fun storeAssetLocally(assetProvisionContainer: AssetProvisionContainer): String {
         val datalandAssetId = UUID.randomUUID().toString()
-        localAssetStore.insertDataIntoStore(datalandAssetId, data)
+        localAssetStore.insertDataIntoStore(datalandAssetId, assetProvisionContainer)
         monitor.info("Stored new local asset under ID $datalandAssetId)")
         return datalandAssetId
     }

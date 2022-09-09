@@ -2,11 +2,13 @@ package org.dataland.edc.server.controller
 
 import jakarta.ws.rs.core.Response
 import org.dataland.edc.server.api.DatalandEurodatApi
+import org.dataland.edc.server.models.AssetProvisionContainer
 import org.dataland.edc.server.models.EurodatAssetLocation
 import org.dataland.edc.server.service.EurodatAssetCache
 import org.dataland.edc.server.service.LocalAssetStore
 import org.dataland.edc.server.utils.Constants
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor
+import java.util.concurrent.locks.ReentrantLock
 
 /**
  * Implementation of the Dataland EDC Api
@@ -29,15 +31,18 @@ class DatalandEurodatController(
         monitor.info("EuroDat Asset ID is given by $eurodatAssetId.")
         monitor.info("EuroDat Contract ID is given by $eurodatContractDefinitionId.")
         try {
-            localAssetStore.insertEurodatAssetLocationIntoStore(
-                datalandAssetId,
+            val assetProvisionContainer =
+                localAssetStore.retrieveDataFromStore(datalandAssetId) ?: AssetProvisionContainer(
+                    "", null, ReentrantLock()
+                )
+            assetProvisionContainer.eurodatAssetLocation =
                 EurodatAssetLocation("$eurodatContractDefinitionId:${Constants.DUMMY_STRING}", eurodatAssetId)
-            )
-            return localAssetStore.retrieveDataFromStore(datalandAssetId) ?: ""
+            assetProvisionContainer.lock.unlock()
+            return assetProvisionContainer.data
         } catch (ignore_e: Exception) {
             monitor.severe(
                 "Error providing an Asset with dataland asset ID $datalandAssetId, EuroDat Asset ID " +
-                    "$eurodatAssetId, Contract ID $eurodatContractDefinitionId Errormessage: ${ignore_e.message}"
+                        "$eurodatAssetId, Contract ID $eurodatContractDefinitionId Errormessage: ${ignore_e.message}"
             )
             throw ignore_e
         }
