@@ -1,5 +1,6 @@
 package org.dataland.edc.server.exceptions
 
-class EuroDatTimeoutException : Exception {
-    constructor(message: String, cause: Throwable) : super(message, cause)
-}
+/**
+ * Exception that can be thrown in case a Timeout with EuroDaT occurs
+ */
+class EuroDatTimeoutException(message: String, cause: Throwable) : Exception(message, cause)
