@@ -35,7 +35,7 @@ class DatalandEurodatController(
             )
             return localAssetStore.retrieveDataFromStore(datalandAssetId) ?: ""
         } catch (ignore_e: Exception) {
-            monitor.info(
+            monitor.severe(
                 "Error providing an Asset with dataland asset ID $datalandAssetId, EuroDat Asset ID " +
                     "$eurodatAssetId, Contract ID $eurodatContractDefinitionId Errormessage: ${ignore_e.message}"
             )
@@ -53,7 +53,7 @@ class DatalandEurodatController(
             monitor.info("Received asset POST request by EuroDaT with ID $eurodatAssetId.")
             eurodatAssetCache.insertIntoCache(eurodatAssetId, data.decodeToString())
         } catch (ignore_e: Exception) {
-            monitor.info("Error receiving Asset with asset ID $eurodatAssetId. Errormessage: ${ignore_e.message}")
+            monitor.severe("Error receiving Asset with asset ID $eurodatAssetId. Errormessage: ${ignore_e.message}")
             throw ignore_e
         }
         return Response.ok("Dataland-connector received asset with asset ID $eurodatAssetId").build()

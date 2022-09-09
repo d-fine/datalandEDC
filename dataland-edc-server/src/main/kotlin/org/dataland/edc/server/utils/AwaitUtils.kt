@@ -85,7 +85,7 @@ object AwaitUtils {
                 .pollInterval(Duration.ofMillis(Constants.POLL_INTERVAL_MS))
                 .until(condition)
         } catch (e: ConditionTimeoutException) {
-            monitor?.info("Timeout waiting for $waitingForInformation")
+            monitor?.severe("Timeout waiting for $waitingForInformation")
             throw exceptionProvider(e)
         }
     }

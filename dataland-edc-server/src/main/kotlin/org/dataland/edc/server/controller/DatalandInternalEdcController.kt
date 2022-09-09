@@ -33,7 +33,7 @@ class DatalandInternalEdcController(
             dataId = "${eurodatAssetLocation.contractOfferId}_${eurodatAssetLocation.eurodatAssetId}"
             monitor.info("Data with ID $dataId stored in trustee")
         } catch (ignore_e: Error) {
-            monitor.info("Error inserting Data. Errormessage: ${ignore_e.message}")
+            monitor.severe("Error inserting Data. Errormessage: ${ignore_e.message}")
             throw ignore_e
         }
         return InsertDataResponse(dataId)
@@ -50,7 +50,7 @@ class DatalandInternalEdcController(
             monitor.info("Data with ID $dataId retrieved internally - Returning Data via REST")
             return response
         } catch (ignore_e: Exception) {
-            monitor.info(
+            monitor.severe(
                 "Error getting Asset with data ID $dataId from EuroDat. " +
                     "Errormessage: ${ignore_e.message}"
             )
