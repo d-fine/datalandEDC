@@ -48,7 +48,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: JaCoCoResultsTest
-          path: ./dataland-edc-server/*.exec
+          path: ./*.exec
       - name: Generate jacocoTestReport and run Sonar
         if: always()
         run: |
