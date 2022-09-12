@@ -43,6 +43,12 @@ jobs:
         with:
           name: EdcServerLog
           path: ./edc_server.log
+      - name: Upload JaCoCo Exec Results
+          if: always()
+          uses: actions/upload-artifact@v2
+          with:
+            name: JaCoCoResultsE2ETest
+            path: ./dataland-edc-server/*.exec
       - name: Generate jacocoTestReport and run Sonar
         if: always()
         run: |
