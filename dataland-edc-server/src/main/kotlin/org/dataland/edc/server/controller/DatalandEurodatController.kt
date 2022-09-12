@@ -42,7 +42,7 @@ class DatalandEurodatController(
         } catch (ignore_e: Exception) {
             monitor.severe(
                 "Error providing an Asset with dataland asset ID $datalandAssetId, EuroDat Asset ID " +
-                        "$eurodatAssetId, Contract ID $eurodatContractDefinitionId Errormessage: ${ignore_e.message}"
+                    "$eurodatAssetId, Contract ID $eurodatContractDefinitionId Errormessage: ${ignore_e.message}"
             )
             throw ignore_e
         }
