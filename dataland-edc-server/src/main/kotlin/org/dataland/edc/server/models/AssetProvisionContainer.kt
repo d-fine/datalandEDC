@@ -1,6 +1,6 @@
 package org.dataland.edc.server.models
 
-import java.util.concurrent.locks.ReentrantLock
+import java.util.concurrent.Semaphore
 
 /**
  * A class that holds the information necessary for a Provision process to EuroDaT
@@ -8,5 +8,5 @@ import java.util.concurrent.locks.ReentrantLock
 data class AssetProvisionContainer(
     val data: String,
     var eurodatAssetLocation: EurodatAssetLocation?,
-    var lock: ReentrantLock
+    var semaphore: Semaphore
 )

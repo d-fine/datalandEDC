@@ -8,7 +8,7 @@ import org.dataland.edc.server.service.EurodatAssetCache
 import org.dataland.edc.server.service.LocalAssetStore
 import org.dataland.edc.server.utils.Constants
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor
-import java.util.concurrent.locks.ReentrantLock
+import java.util.concurrent.Semaphore
 
 /**
  * Implementation of the Dataland EDC Api
@@ -30,19 +30,22 @@ class DatalandEurodatController(
         monitor.info("EuroDat retrieves asset with dataland asset ID $datalandAssetId.")
         monitor.info("EuroDat Asset ID is given by $eurodatAssetId.")
         monitor.info("EuroDat Contract ID is given by $eurodatContractDefinitionId.")
+        val semaphore = Semaphore(1)
+        semaphore.acquire()
         try {
             val assetProvisionContainer =
                 localAssetStore.retrieveDataFromStore(datalandAssetId) ?: AssetProvisionContainer(
-                    "", null, ReentrantLock()
+                    "", null, semaphore
                 )
             assetProvisionContainer.eurodatAssetLocation =
                 EurodatAssetLocation("$eurodatContractDefinitionId:${Constants.DUMMY_STRING}", eurodatAssetId)
-            assetProvisionContainer.lock.unlock()
+            assetProvisionContainer.semaphore.release()
             return assetProvisionContainer.data
         } catch (ignore_e: Exception) {
             monitor.severe(
                 "Error providing an Asset with dataland asset ID $datalandAssetId, EuroDat Asset ID " +
-                    "$eurodatAssetId, Contract ID $eurodatContractDefinitionId Errormessage: ${ignore_e.message}"
+                        "$eurodatAssetId, Contract ID $eurodatContractDefinitionId Errormessage: ${ignore_e.message}" +
+                        "\n${ignore_e.printStackTrace()}"
             )
             throw ignore_e
         }
