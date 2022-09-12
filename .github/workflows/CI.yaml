@@ -51,12 +51,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        - name: Upload Build Reports
-          if: always()
-          uses: actions/upload-artifact@v2
-          with:
-            name: JaCoCoResultsTest
-            path: ./build/reports/*
+      - name: Upload Build Reports
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: JaCoCoResultsTest
+          path: ./build/reports/*
 
   summary:
     runs-on: ubuntu-latest
