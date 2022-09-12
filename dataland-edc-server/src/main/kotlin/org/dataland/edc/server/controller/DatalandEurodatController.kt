@@ -6,9 +6,9 @@ import org.dataland.edc.server.models.AssetProvisionContainer
 import org.dataland.edc.server.models.EurodatAssetLocation
 import org.dataland.edc.server.service.EurodatAssetCache
 import org.dataland.edc.server.service.LocalAssetStore
+import org.dataland.edc.server.utils.ConcurrencyUtils.getAcquiredSemaphore
 import org.dataland.edc.server.utils.Constants
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor
-import java.util.concurrent.Semaphore
 
 /**
  * Implementation of the Dataland EDC Api
@@ -27,19 +27,16 @@ class DatalandEurodatController(
         eurodatAssetId: String,
         eurodatContractDefinitionId: String
     ): String {
-        monitor.info("EuroDat retrieves asset with dataland asset ID $datalandAssetId.")
-        monitor.info("EuroDat Asset ID is given by $eurodatAssetId.")
-        monitor.info("EuroDat Contract ID is given by $eurodatContractDefinitionId.")
-        val semaphore = Semaphore(1)
-        semaphore.acquire()
+        monitorProvideAssetParameters(datalandAssetId, eurodatAssetId, eurodatContractDefinitionId)
         try {
             val assetProvisionContainer =
                 localAssetStore.retrieveDataFromStore(datalandAssetId) ?: AssetProvisionContainer(
-                    "", null, semaphore
+                    "", null, getAcquiredSemaphore()
                 )
             assetProvisionContainer.eurodatAssetLocation =
                 EurodatAssetLocation("$eurodatContractDefinitionId:${Constants.DUMMY_STRING}", eurodatAssetId)
             assetProvisionContainer.semaphore.release()
+            localAssetStore.deleteFromStore(datalandAssetId)
             return assetProvisionContainer.data
         } catch (ignore_e: Exception) {
             monitor.severe(
@@ -49,6 +46,16 @@ class DatalandEurodatController(
             )
             throw ignore_e
         }
+    }
+
+    private fun monitorProvideAssetParameters(
+        datalandAssetId: String,
+        eurodatAssetId: String,
+        eurodatContractDefinitionId: String
+    ) {
+        monitor.info("EuroDat retrieves asset with dataland asset ID $datalandAssetId.")
+        monitor.info("EuroDat Asset ID is given by $eurodatAssetId.")
+        monitor.info("EuroDat Contract ID is given by $eurodatContractDefinitionId.")
     }
 
     override fun storeReceivedAsset(eurodatAssetId: String, data: ByteArray): Response {

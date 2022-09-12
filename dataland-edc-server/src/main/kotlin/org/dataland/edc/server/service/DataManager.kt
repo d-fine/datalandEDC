@@ -3,10 +3,10 @@ package org.dataland.edc.server.service
 import org.dataland.edc.server.models.AssetProvisionContainer
 import org.dataland.edc.server.models.EurodatAssetLocation
 import org.dataland.edc.server.utils.AwaitUtils
+import org.dataland.edc.server.utils.ConcurrencyUtils.getAcquiredSemaphore
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
 import java.util.UUID
-import java.util.concurrent.Semaphore
 
 /**
  * Entity orchestrating the required steps for trustee data exchange
@@ -35,21 +35,15 @@ class DataManager(
      * @param data The data to store in EuroDaT
      */
     fun provideAssetToTrustee(data: String): EurodatAssetLocation {
-        val semaphore = Semaphore(1)
-        semaphore.acquire()
-        val assetProvisionContainer = AssetProvisionContainer(data, null, semaphore)
+        val assetProvisionContainer = AssetProvisionContainer(data, null, getAcquiredSemaphore())
         val datalandAssetId = storeAssetLocally(assetProvisionContainer)
         eurodatService.registerAssetEurodat(datalandAssetId, getLocalAssetAccessUrl(datalandAssetId))
-        try {
-            monitor.info("Trying acquire from sempahore after provision of Asset with ID $datalandAssetId to EuroDaT")
-            semaphore.acquire()
-            monitor.info("acquired from semaphore")
-            val location = assetProvisionContainer.eurodatAssetLocation!!
-            monitor.info("Asset $datalandAssetId is stored in EuroDaT under $location")
-            return location
-        } finally {
-            localAssetStore.deleteFromStore(datalandAssetId)
-        }
+        monitor.info("Trying acquire from sempahore after provision of Asset with ID $datalandAssetId to EuroDaT")
+        assetProvisionContainer.semaphore.acquire()
+        monitor.info("acquired from semaphore")
+        val location = assetProvisionContainer.eurodatAssetLocation!!
+        monitor.info("Asset $datalandAssetId is stored in EuroDaT under $location")
+        return location
     }
 
     /**
