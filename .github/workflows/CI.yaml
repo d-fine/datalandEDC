@@ -48,7 +48,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: JaCoCoResultsTest
-          path: ./*.exec
+          path: ./**/build/*.exec
       - name: Generate jacocoTestReport and run Sonar
         if: always()
         run: |
