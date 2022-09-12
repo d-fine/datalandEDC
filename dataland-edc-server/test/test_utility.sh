@@ -44,7 +44,7 @@ restart_tunnel_server () {
 }
 
 is_eurodat_up_and_healthy () {
-  echo "Checking if EuroDaT is available."
+  echo "Checking if EuroDaT is available. Curling $eurodat_health_endpoint"
   if ! curl -f -X 'GET' "$eurodat_health_endpoint" -H 'accept: application/json' 2>/dev/null | grep -q '"isHealthy":true}],"isSystemHealthy":true}'; then
     echo "EuroDaT is not available."
     exit 1
