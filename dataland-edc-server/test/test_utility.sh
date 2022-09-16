@@ -122,3 +122,4 @@ execute_eurodat_test () {
       echo "ERROR: Did not receive 400 Response"
       exit 1
     fi
+}
