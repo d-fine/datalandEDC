@@ -98,14 +98,24 @@ execute_eurodat_test () {
 
   echo "Test successfully run. Up- and download took $runtime seconds."
 
-echo "Testing wrong data id response"
+  echo "Testing wrong data id response"
   test_broken_data="47t67dgxesy"
-  curl --max-time 780 -X GET "$data_url/$test_broken_data" -H "accept: application/json"
+  curl --max-time 780 -X GET "$data_url/$test_broken_data"
   if ! grep -q "Error getting Asset with data ID $test_broken_data from EuroDat." ../../edc_server.log; then
     echo "Unexpected response"
   else
     echo "Test of invalid data id was successfull"
   fi
+
+  echo "Testing get request to eurodat with wrong data id"
+    test_broken_data="trze648fksaasy"
+    get_response=$(curl -X 'GET' "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/eurodat/asset/$test_broken_data" -H "eurodat-asset-id: af8baf3c-" -H "eurodat-contract-definition-id: fe8a7ad6")
+    echo $get_response
+    if ! grep -q "Received asset POST request for an UNEXPECTED asset ID" ../../edc_server.log; then
+      echo "Unexpected response"
+    else
+      echo "Test of invalid data request to eurodat was successfull"
+    fi
 
   echo "Testing 400 error on unexpected asset transmission"
   if ! curl -X 'POST' "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/eurodat/asset/non-existent" | grep -q 'HTTP ERROR 400 Bad Request'; then
