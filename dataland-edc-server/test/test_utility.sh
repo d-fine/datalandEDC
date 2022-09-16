@@ -122,19 +122,3 @@ execute_eurodat_test () {
       echo "ERROR: Did not receive 400 Response"
       exit 1
     fi
-
-  echo "Testing metaawait timeout"
-    echo "Killing tunnel"
-    ps -lef | grep ssh | awk "{print \$2}" | xargs kill
-
-    echo "Retrieving test data."
-    get_response=$(curl --max-time 780 -X GET "$data_url/$dataId" -H "accept: application/json")
-    if [[ ! $get_response =~ $test_data ]]; then
-      echo "Response was unexpected: $get_response"
-      echo "Expected was substring: $test_data"
-      exit 1
-    fi
-    echo "Retrieved data is: $get_response"
-
-  echo "Test complete"
-}
