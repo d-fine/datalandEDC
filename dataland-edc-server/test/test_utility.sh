@@ -120,7 +120,7 @@ execute_eurodat_test () {
     fi
 
   echo "Testing 400 error on unexpected asset transmission"
-    if ! curl -X 'POST' "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/eurodat/asset/non-existent" | grep -q 'HTTP ERROR 400 Bad Request'; then
+    if ! curl -X 'POST' "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/eurodat/asset/non-existent" | grep -q '400'; then
       echo "ERROR: Did not receive 400 Response"
       exit 1
     fi
