@@ -139,7 +139,8 @@ execute_eurodat_test () {
     echo "Received response from post request with data ID: $dataId"
 
     echo "Killing tunnel"
-    ps -ef | grep ssh | awk "{print \$2}" | xargs kill -9
+    ps -ef
+    ps -ef | grep ssh | awk "{print \$2}" | xargs kill
 
     echo "Retrieving test data."
     curl --max-time 780 -X GET "http://${server_uri}:${dataland_edc_server_web_http_port}/api/dataland/data/$dataId" -H "accept: application/json"
