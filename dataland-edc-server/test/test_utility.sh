@@ -122,4 +122,30 @@ execute_eurodat_test () {
       echo "ERROR: Did not receive 400 Response"
       exit 1
     fi
+
+  echo "Testing metaawait timeout"
+
+    echo "Posting test data: $test_data."
+      response=$(curl --max-time 780 -X POST "$data_url" -H "accept: application/json" -H "Content-Type: application/json" -d "$test_data")
+      regex="\"dataId\":\"([0-9a-f:\-]+_[0-9a-f\-]+)\""
+      if [[ $response =~ $regex ]]; then
+        dataId=${BASH_REMATCH[1]}
+      else
+        echo "Unable to extract data ID from response: $response"
+        exit 1
+      fi
+    echo "Received response from post request with data ID: $dataId"
+
+    echo "Killing tunnel"
+    ps -lef | grep ssh | awk "{print \$2}" | xargs kill
+
+    echo "Retrieving test data."
+    curl --max-time 780 -X GET "http://${server_uri}:${dataland_edc_server_web_http_port}/api/dataland/data/$dataId" -H "accept: application/json"
+    if ! grep -q "Errormessage: Condition with org.dataland.edc.server.utils.AwaitUtils was not fulfilled within 1 minutes." ../../edc_server.log; then
+      echo "Response was unexpected: $get_response"
+      exit 1
+    fi
+    echo "Timeout Test was successfull"
+
+  echo "Test complete"
 }
