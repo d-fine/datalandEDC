@@ -103,6 +103,7 @@ execute_eurodat_test () {
   curl --max-time 780 -X GET "$data_url/$test_broken_data"
   if ! grep -q "Error getting Asset with data ID $test_broken_data from EuroDat." ../../edc_server.log; then
     echo "Unexpected response"
+    exit 1
   else
     echo "Test of invalid data id was successfull"
   fi
@@ -111,17 +112,18 @@ execute_eurodat_test () {
     test_broken_data="trze648fksaasy"
     get_response=$(curl -X 'GET' "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/eurodat/asset/$test_broken_data" -H "eurodat-asset-id: af8baf3c-" -H "eurodat-contract-definition-id: fe8a7ad6")
     echo $get_response
-    if ! grep -q "Received asset POST request for an UNEXPECTED asset ID" ../../edc_server.log; then
+    if [[ ! $get_response == "" ]]; then
       echo "Unexpected response"
+      exit 1
     else
       echo "Test of invalid data request to eurodat was successfull"
     fi
 
-  #echo "Testing 400 error on unexpected asset transmission"
- #   if ! curl -X 'POST' "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/eurodat/asset/non-existent" | grep -q 'HTTP ERROR 400 Bad Request'; then
-    #  echo "ERROR: Did not receive 400 Response"
-   #   exit 1
-  #  fi
+  echo "Testing 400 error on unexpected asset transmission"
+    if ! curl -X 'POST' "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/eurodat/asset/non-existent" | grep -q 'HTTP ERROR 400 Bad Request'; then
+      echo "ERROR: Did not receive 400 Response"
+      exit 1
+    fi
 
   echo "Testing metaawait timeout"
 
@@ -137,7 +139,7 @@ execute_eurodat_test () {
     echo "Received response from post request with data ID: $dataId"
 
     echo "Killing tunnel"
-    ps -lef | grep ssh | awk "{print \$2}" | xargs kill -9
+    ps -ef | grep ssh | awk "{print \$2}" | xargs kill -9
 
     echo "Retrieving test data."
     curl --max-time 780 -X GET "http://${server_uri}:${dataland_edc_server_web_http_port}/api/dataland/data/$dataId" -H "accept: application/json"
