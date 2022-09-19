@@ -73,6 +73,7 @@ execute_eurodat_test () {
 
   test_data="Test Data from: "$(date "+%d.%m.%Y %H:%M:%S")
   start_time=$(date +%s)
+  edc_log_path="../../edc_server.log"
 
   echo "Posting test data: $test_data."
   response=$(curl --max-time 780 -X POST "$data_url" -H "accept: application/json" -H "Content-Type: application/json" -d "$test_data")
@@ -101,7 +102,7 @@ execute_eurodat_test () {
   echo "Testing wrong data id response"
   test_broken_data="47t67dgxesy"
   curl --max-time 780 -X GET "$data_url/$test_broken_data"
-  if ! grep -q "Error getting Asset with data ID $test_broken_data from EuroDat." ../../edc_server.log; then
+  if ! grep -q "Error getting Asset with data ID $test_broken_data from EuroDat." $edc_log_path; then
     echo "Unexpected response"
     exit 1
   else
@@ -145,7 +146,7 @@ execute_eurodat_test () {
     echo "Retrieving test data."
     curl --max-time 780 -X GET "http://${server_uri}:${dataland_edc_server_web_http_port}/api/dataland/data/$dataId" -H "accept: application/json"
     sleep 1
-    if ! grep -q "Errormessage: Condition with org.dataland.edc.server.utils.AwaitUtils was not fulfilled within 1 minutes." ../../edc_server.log; then
+    if ! grep -q "Errormessage: Condition with org.dataland.edc.server.utils.AwaitUtils was not fulfilled within 1 minutes." $edc_log_path; then
       echo "Response was unexpected"
       exit 1
     fi
