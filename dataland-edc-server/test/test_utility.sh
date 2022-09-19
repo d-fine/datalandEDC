@@ -138,16 +138,15 @@ execute_eurodat_test () {
       fi
     echo "Received response from post request with data ID: $dataId"
 
-    echo "Killing tunnel"
-    ps -ef
-    ps -ef | grep ssh
-    ps -ef | grep :9191:localhost:9191 | awk "{print \$2}" | xargs kill
-    ps -ef | grep :9292:localhost:9292 | awk "{print \$2}" | xargs kill
+    echo "Shutting down tunnel"
+    ssh -S ./.ssh_tunnel_control_http_port -O exit ubuntu@"$dataland_tunnel_uri"
+    ssh -S ./.ssh_tunnel_control_ids_port -O exit ubuntu@"$dataland_tunnel_uri"
 
     echo "Retrieving test data."
     curl --max-time 780 -X GET "http://${server_uri}:${dataland_edc_server_web_http_port}/api/dataland/data/$dataId" -H "accept: application/json"
+    sleep 1
     if ! grep -q "Errormessage: Condition with org.dataland.edc.server.utils.AwaitUtils was not fulfilled within 1 minutes." ../../edc_server.log; then
-      echo "Response was unexpected: $get_response"
+      echo "Response was unexpected
       exit 1
     fi
     echo "Timeout Test was successfull"
