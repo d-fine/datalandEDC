@@ -65,10 +65,17 @@ start_edc_server () {
 }
 
 checkTestCondition () {
-  if ! grep -q $inputErrorMessage $edc_log_path; then
-    echo "Test response was unexpected"
-    exit 1
-  fi
+  while ! grep -q $inputErrorMessage $edc_log_path
+  do
+    echo "No result yet"
+    sleep 1
+    i=0
+    ((i++))
+    if i > 4; then
+      echo "Test timed out"
+      exit 1
+    fi
+  done
   echo "Test was successfull"
 }
 
