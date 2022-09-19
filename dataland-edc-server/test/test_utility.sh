@@ -140,6 +140,7 @@ execute_eurodat_test () {
     echo "Received response from post request with data ID: $dataId"
 
     echo "Shutting down tunnel"
+    ls -lisa /tmp
     ssh -S ./.ssh_tunnel_control_http_port -O exit ubuntu@"$dataland_tunnel_uri"
     ssh -S ./.ssh_tunnel_control_ids_port -O exit ubuntu@"$dataland_tunnel_uri"
 
