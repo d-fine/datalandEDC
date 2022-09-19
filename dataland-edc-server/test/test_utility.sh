@@ -64,14 +64,6 @@ start_edc_server () {
   timeout 240 bash -c "while ! is_edc_server_up_and_healthy; do echo 'Dataland EDC server not yet there - retrying in 10s'; sleep 10; done; echo 'Dataland EDC server up!'"
 }
 
-checkTestCondition () {
-  if ! grep -q $inputErrorMessage $edc_log_path; then
-      echo "Test response was unexpected"
-      exit 1
-    fi
-    echo "Test was successfull"
-}
-
 execute_eurodat_test () {
   echo "Checking health endpoint via tunnel server."
   timeout 60 bash -c "is_edc_server_up_and_healthy \"$dataland_edc_server_uri\"" || exit 1
@@ -110,8 +102,12 @@ execute_eurodat_test () {
   echo "Testing wrong data id response"
   test_broken_data="47t67dgxesy"
   curl --max-time 780 -X GET "$data_url/$test_broken_data"
-  inputErrorMessage="Error getting Asset with data ID $test_broken_data from EuroDat."
-  checkTestCondition
+  if ! grep -q "Error getting Asset with data ID $test_broken_data from EuroDat." $edc_log_path; then
+    echo "Unexpected response"
+    exit 1
+  else
+    echo "Test of invalid data id was successfull"
+  fi
 
   echo "Testing get request to eurodat with wrong data id"
     test_broken_data="trze648fksaasy"
@@ -151,8 +147,11 @@ execute_eurodat_test () {
     echo "Retrieving test data."
     curl --max-time 780 -X GET "http://${server_uri}:${dataland_edc_server_web_http_port}/api/dataland/data/$dataId" -H "accept: application/json"
     sleep 1
-    inputErrorMessage="Errormessage: Condition with org.dataland.edc.server.utils.AwaitUtils was not fulfilled within 1 minutes"
-    checkTestCondition
+    if ! grep -q "Errormessage: Condition with org.dataland.edc.server.utils.AwaitUtils was not fulfilled within 1 minutes." $edc_log_path; then
+      echo "Response was unexpected"
+      exit 1
+    fi
+    echo "Timeout Test was successfull"
 
   echo "Test complete"
 }
