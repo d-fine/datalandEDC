@@ -144,7 +144,7 @@ execute_eurodat_test () {
     ssh -S /tmp/.ssh_tunnel_control_ids_port -O exit ubuntu@"$dataland_tunnel_uri"
 
     echo "Retrieving test data."
-    curl --max-time 780 -X GET "$data_url/$dataId" -H "accept: application/json"
+    curl --max-time 780 -X GET "http://${server_uri}:${dataland_edc_server_web_http_port}/api/dataland/data/$dataId" -H "accept: application/json"
     sleep 1
     if ! grep -q "Errormessage: Condition with org.dataland.edc.server.utils.AwaitUtils was not fulfilled within 1 minutes." $edc_log_path; then
       echo "Response was unexpected"
