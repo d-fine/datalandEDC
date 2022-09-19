@@ -141,8 +141,8 @@ execute_eurodat_test () {
 
     echo "Shutting down tunnel"
     ls -lisa /tmp
-    ssh -S ./.ssh_tunnel_control_http_port -O exit ubuntu@"$dataland_tunnel_uri"
-    ssh -S ./.ssh_tunnel_control_ids_port -O exit ubuntu@"$dataland_tunnel_uri"
+    ssh -S /tmp/.ssh_tunnel_control_http_port -O exit ubuntu@"$dataland_tunnel_uri"
+    ssh -S /tmp/.ssh_tunnel_control_ids_port -O exit ubuntu@"$dataland_tunnel_uri"
 
     echo "Retrieving test data."
     curl --max-time 780 -X GET "http://${server_uri}:${dataland_edc_server_web_http_port}/api/dataland/data/$dataId" -H "accept: application/json"
