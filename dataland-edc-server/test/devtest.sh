@@ -39,6 +39,8 @@ echo "Open SSH tunnels between tunnel server and the host system."
 ssh -R \*:"$dataland_edc_server_web_http_port":$HOSTNAME:"$config_web_http_port" -S /tmp/.ssh_tunnel_control_http_port -M -fN ubuntu@"$dataland_tunnel_uri"
 ssh -R \*:"$dataland_edc_server_web_http_ids_port":$HOSTNAME:"$config_web_http_ids_port" -S /tmp/.ssh_tunnel_control_ids_port -M  -fN ubuntu@"$dataland_tunnel_uri"
 
+ls -lisa /tmp
+
 start_edc_server
 
 execute_eurodat_test
