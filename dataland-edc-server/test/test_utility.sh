@@ -65,7 +65,7 @@ start_edc_server () {
 }
 
 checkTestCondition () {
-  while ! grep -q $inputErrorMessage $edc_log_path
+  while ! grep -q "$inputErrorMessage" $edc_log_path
   do
     echo "No result yet"
     sleep 1
