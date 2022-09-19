@@ -146,7 +146,7 @@ execute_eurodat_test () {
     curl --max-time 780 -X GET "http://${server_uri}:${dataland_edc_server_web_http_port}/api/dataland/data/$dataId" -H "accept: application/json"
     sleep 1
     if ! grep -q "Errormessage: Condition with org.dataland.edc.server.utils.AwaitUtils was not fulfilled within 1 minutes." ../../edc_server.log; then
-      echo "Response was unexpected
+      echo "Response was unexpected"
       exit 1
     fi
     echo "Timeout Test was successfull"
