@@ -4,6 +4,7 @@ import org.dataland.edc.server.service.DataManager
 import org.dataland.edc.server.service.EurodatAssetCache
 import org.dataland.edc.server.service.EurodatService
 import org.dataland.edc.server.service.LocalAssetStore
+import org.eclipse.dataspaceconnector.spi.monitor.Monitor
 import org.eclipse.dataspaceconnector.spi.system.Inject
 import org.eclipse.dataspaceconnector.spi.system.Provider
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtension
@@ -24,6 +25,9 @@ class DatalandDataManagerExtension : ServiceExtension {
     @Inject
     private lateinit var eurodatService: EurodatService
 
+    @Inject
+    private lateinit var monitor: Monitor
+
     /**
      * Returns the DataManager object - A central object used for requesting
      * and storing assets in EuroDaT
@@ -34,7 +38,8 @@ class DatalandDataManagerExtension : ServiceExtension {
             context,
             eurodatService,
             localAssetStore,
-            eurodatAssetCache
+            eurodatAssetCache,
+            monitor,
         )
     }
 }

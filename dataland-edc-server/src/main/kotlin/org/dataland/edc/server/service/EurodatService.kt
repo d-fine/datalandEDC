@@ -10,6 +10,7 @@ import org.eclipse.dataspaceconnector.policy.model.Permission
 import org.eclipse.dataspaceconnector.policy.model.Policy
 import org.eclipse.dataspaceconnector.spi.contract.negotiation.ConsumerContractNegotiationManager
 import org.eclipse.dataspaceconnector.spi.contract.negotiation.store.ContractNegotiationStore
+import org.eclipse.dataspaceconnector.spi.monitor.Monitor
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
 import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessManager
 import org.eclipse.dataspaceconnector.spi.transfer.store.TransferProcessStore
@@ -30,6 +31,7 @@ import java.util.UUID
  * @param transferProcessStore holds information about transfers
  * @param contractNegotiationStore holds the contract negotiations of the Dataland EDC
  * @param consumerContractNegotiationManager manages contract negotiations
+ * @param monitor a monitor that also exposes thread information
  * @param context the context containing constants and the monitor for logging
  */
 class EurodatService(
@@ -37,6 +39,7 @@ class EurodatService(
     private val contractNegotiationStore: ContractNegotiationStore,
     private val transferProcessStore: TransferProcessStore,
     private val consumerContractNegotiationManager: ConsumerContractNegotiationManager,
+    private val monitor: Monitor,
     private val context: ServiceExtensionContext,
 ) {
     private val constantDummyDataDestination = DataAddress.Builder.newInstance()
@@ -74,7 +77,7 @@ class EurodatService(
                 AssetForAssetManagementContractExtension.assetForAssetManagementNegotiation!!
             )
         } catch (ex: ConditionTimeoutException) {
-            context.monitor.severe("Negotiation for the ASSET-FOR-ASSET-MANAGEMENT failed ($ex). Renegotiating...")
+            monitor.severe("Negotiation for the ASSET-FOR-ASSET-MANAGEMENT failed ($ex). Renegotiating...")
             val assetForAssetManagementContractNegotiation = negotiateAssetForAssetManagementContract()
             val contractAgreement = AwaitUtils.awaitContractConfirm(
                 contractNegotiationStore,
@@ -97,7 +100,7 @@ class EurodatService(
      */
     @Suppress("kotlin:S138")
     fun registerAssetEurodat(datalandAssetId: String, datalandAssetAccessURL: String) {
-        context.monitor.info("Registering asset $datalandAssetId with EuroDat")
+        monitor.info("Registering asset $datalandAssetId with EuroDat")
         val assetForAssetManagementContractConfirmation = awaitAssetForAssetManagementContractConfirm()
 
         val dataRequest = DataRequest.Builder.newInstance()

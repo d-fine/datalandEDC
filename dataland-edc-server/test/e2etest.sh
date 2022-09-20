@@ -20,9 +20,7 @@ chmod 600 ~/.ssh/id_rsa
 
 restart_tunnel_server
 
-echo "Open SSH tunnels between tunnel server and the host system."
-ssh -R \*:"$dataland_edc_server_web_http_port":localhost:"$config_web_http_port" -N -f ubuntu@"$dataland_tunnel_uri"
-ssh -R \*:"$dataland_edc_server_web_http_ids_port":localhost:"$config_web_http_ids_port" -N -f ubuntu@"$dataland_tunnel_uri"
+acquire_ssh_tunnel localhost
 
 start_edc_server
 
