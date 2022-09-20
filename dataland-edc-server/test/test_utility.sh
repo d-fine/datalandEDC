@@ -63,18 +63,21 @@ start_edc_server () {
   echo "Checking health endpoint of dataland edc server locally."
   timeout 240 bash -c "while ! is_edc_server_up_and_healthy; do echo 'Dataland EDC server not yet there - retrying in 10s'; sleep 10; done; echo 'Dataland EDC server up!'"
 }
-
+numberOfRetries=10
 checkTestCondition () {
-  while ! grep -q "$inputErrorMessage" $edc_log_path
+  i=0
+  while [ $i -le $numberOfRetries ]
   do
-    echo "No result yet"
-    sleep 1
-    i=0
-    ((i++))
-    if i > 4; then
+    if [ $i -eq $(( numberOfRetries-1 )) ]; then
       echo "Test timed out"
       exit 1
+    elif ! grep -q "$inputErrorMessage" $edc_log_path; then
+      echo "No result yet"
+      sleep 1
+    else
+      i=$numberOfRetries
     fi
+    ((i++))
   done
   echo "Test was successfull"
 }
