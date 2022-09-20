@@ -78,10 +78,10 @@ checkTestCondition () {
   local maxNumberOfRetries=10
   local inputErrorMessage=$1
   local i=0
-
-  while ! grep -q "$inputErrorMessage" "$edc_log_file" && [[ $i -le $maxNumberOfRetries ]]
+  echo "Checking log file $edc_log_file for message $inputErrorMessage"
+  while [[ $(grep -q "$inputErrorMessage" "$edc_log_file"; echo $?) -eq 1 && $i -lt $maxNumberOfRetries ]]
   do
-    echo "No result yet, waiting."
+    echo "No result yet (iteration $i), waiting."
     sleep 1
     ((i++))
   done
@@ -131,7 +131,7 @@ execute_eurodat_test () {
 
   echo "Testing wrong data id response"
   test_broken_data="47t67dgxesy"
-  curl --max-time 780 -X GET "$data_url/$test_broken_data"
+  curl -s --max-time 780 -X GET "$data_url/$test_broken_data"
   checkTestCondition "Error getting Asset with data ID $test_broken_data from EuroDat."
 
   echo "Testing get request to eurodat with wrong data id"
