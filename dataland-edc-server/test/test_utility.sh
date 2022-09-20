@@ -1,7 +1,7 @@
 #!/bin/bash
 
 is_edc_server_up_and_healthy () {
-  server_uri="${1:-localhost}"
+  local server_uri="${1:-localhost}"
   health_response=$(curl -s -f -X GET "http://${server_uri}:${dataland_edc_server_web_http_port}/api/dataland/health" -H "accept: application/json")
   if [[ ! $health_response =~ "I am alive!" ]]; then
     return 1
@@ -28,6 +28,9 @@ export dataland_edc_server_web_http_port=9191
 dataland_edc_server_uri=dataland-tunnel.duckdns.org
 eurodat_health_endpoint="${TRUSTEE_BASE_URL}/${TRUSTEE_ENVIRONMENT_NAME}/api/check/health"
 
+ssh_http_control_path=/tmp/.ssh_tunnel_control_http_port
+ssh_ids_control_path=/tmp/.ssh_tunnel_control_ids_port
+
 restart_tunnel_server () {
   echo "Stop tunnel server if it is currently running."
   if ssh ubuntu@"$dataland_tunnel_uri" "sudo shutdown now"; then
@@ -41,6 +44,13 @@ restart_tunnel_server () {
 
   echo "Checking availability of tunnel server."
   timeout 240 bash -c "while ! is_tunnel_server_up; do echo 'Tunnel server not yet there - retrying in 10s'; sleep 10; done; echo 'Tunnel server up!'"
+}
+
+acquire_ssh_tunnel () {
+  local host=$1
+  echo "Open SSH tunnels between tunnel server and the host system."
+  ssh -R \*:"$dataland_edc_server_web_http_port":"$host":"$config_web_http_port" -S $ssh_http_control_path -M -fN ubuntu@"$dataland_tunnel_uri"
+  ssh -R \*:"$dataland_edc_server_web_http_ids_port":"$host":"$config_web_http_ids_port" -S $ssh_ids_control_path -M -fN ubuntu@"$dataland_tunnel_uri"
 }
 
 is_eurodat_up_and_healthy () {
@@ -63,23 +73,25 @@ start_edc_server () {
   echo "Checking health endpoint of dataland edc server locally."
   timeout 240 bash -c "while ! is_edc_server_up_and_healthy; do echo 'Dataland EDC server not yet there - retrying in 10s'; sleep 10; done; echo 'Dataland EDC server up!'"
 }
-numberOfRetries=10
+
 checkTestCondition () {
-  i=0
-  while [ $i -le $numberOfRetries ]
+  local maxNumberOfRetries=10
+  local inputErrorMessage=$1
+  local i=0
+
+  while ! grep -q "$inputErrorMessage" "$edc_log_file" && [[ $i -le $maxNumberOfRetries ]]
   do
-    if [ $i -eq $(( numberOfRetries-1 )) ]; then
-      echo "Test timed out"
-      exit 1
-    elif ! grep -q "$inputErrorMessage" $edc_log_path; then
-      echo "No result yet"
-      sleep 1
-    else
-      i=$numberOfRetries
-    fi
+    echo "No result yet, waiting."
+    sleep 1
     ((i++))
   done
-  echo "Test was successfull"
+
+  if [[ $i -eq $maxNumberOfRetries ]]; then
+    echo "Test timed out."
+    exit 1
+  fi
+
+  echo "Test was successful"
 }
 
 execute_eurodat_test () {
@@ -91,7 +103,7 @@ execute_eurodat_test () {
 
   test_data="Test Data from: "$(date "+%d.%m.%Y %H:%M:%S")
   start_time=$(date +%s)
-  edc_log_path="../../edc_server.log"
+  edc_log_file="../../edc_server.log"
 
   echo "Posting test data: $test_data."
   response=$(curl --max-time 780 -X POST "$data_url" -H "accept: application/json" -H "Content-Type: application/json" -d "$test_data")
@@ -120,8 +132,7 @@ execute_eurodat_test () {
   echo "Testing wrong data id response"
   test_broken_data="47t67dgxesy"
   curl --max-time 780 -X GET "$data_url/$test_broken_data"
-  inputErrorMessage="Error getting Asset with data ID $test_broken_data from EuroDat."
-  checkTestCondition
+  checkTestCondition "Error getting Asset with data ID $test_broken_data from EuroDat."
 
   echo "Testing get request to eurodat with wrong data id"
     test_broken_data="trze648fksaasy"
@@ -142,26 +153,24 @@ execute_eurodat_test () {
 
   echo "Testing metaawait timeout"
 
-    echo "Posting test data: $test_data."
-      response=$(curl --max-time 780 -X POST "$data_url" -H "accept: application/json" -H "Content-Type: application/json" -d "$test_data")
-      regex="\"dataId\":\"([0-9a-f:\-]+_[0-9a-f\-]+)\""
-      if [[ $response =~ $regex ]]; then
-        dataId=${BASH_REMATCH[1]}
-      else
-        echo "Unable to extract data ID from response: $response"
-        exit 1
-      fi
-    echo "Received response from post request with data ID: $dataId"
+  echo "Posting test data: $test_data."
+  response=$(curl --max-time 780 -X POST "$data_url" -H "accept: application/json" -H "Content-Type: application/json" -d "$test_data")
+  regex="\"dataId\":\"([0-9a-f:\-]+_[0-9a-f\-]+)\""
+  if [[ $response =~ $regex ]]; then
+    dataId=${BASH_REMATCH[1]}
+  else
+    echo "Unable to extract data ID from response: $response"
+    exit 1
+  fi
+  echo "Received response from post request with data ID: $dataId"
 
-    echo "Shutting down tunnel"
-    ssh -S /tmp/.ssh_tunnel_control_http_port -O exit ubuntu@"$dataland_tunnel_uri"
-    ssh -S /tmp/.ssh_tunnel_control_ids_port -O exit ubuntu@"$dataland_tunnel_uri"
+  echo "Shutting down tunnel"
+  ssh -S $ssh_http_control_path -O exit ubuntu@"$dataland_tunnel_uri"
+  ssh -S $ssh_ids_control_path -O exit ubuntu@"$dataland_tunnel_uri"
 
-    echo "Retrieving test data."
-    curl --max-time 780 -X GET "http://localhost:${dataland_edc_server_web_http_port}/api/dataland/data/$dataId" -H "accept: application/json"
-    sleep 1
-    inputErrorMessage="Errormessage: Condition with org.dataland.edc.server.utils.AwaitUtils was not fulfilled within 1 minutes"
-    checkTestCondition
+  echo "Retrieving test data."
+  curl --max-time 780 -X GET "http://localhost:${dataland_edc_server_web_http_port}/api/dataland/data/$dataId" -H "accept: application/json"
+  checkTestCondition "Errormessage: Condition with org.dataland.edc.server.utils.AwaitUtils was not fulfilled within 1 minutes"
 
   echo "Test complete"
 }
