@@ -38,7 +38,10 @@ class DataManager(
         val assetProvisionContainer = AssetProvisionContainer(data, null, getAcquiredSemaphore())
         val datalandAssetId = storeAssetLocally(assetProvisionContainer)
         eurodatService.registerAssetEurodat(datalandAssetId, getLocalAssetAccessUrl(datalandAssetId))
-        monitor.info("Waiting for semaphore to be released after Asset with ID $datalandAssetId is picked up by EuroDaT.")
+        monitor.info(
+            "Waiting for semaphore to be released after Asset with ID $datalandAssetId " +
+                "is picked up by EuroDaT."
+        )
         assetProvisionContainer.semaphore.acquire()
         monitor.info("Acquired semaphore.")
         val location = assetProvisionContainer.eurodatAssetLocation!!
