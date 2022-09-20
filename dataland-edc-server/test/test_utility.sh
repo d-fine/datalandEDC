@@ -83,7 +83,7 @@ checkTestCondition () {
   do
     echo "No result yet (iteration $i), waiting."
     sleep 1
-    ((i++))
+    i=$((i+1))
   done
 
   if [[ $i -eq $maxNumberOfRetries ]]; then
