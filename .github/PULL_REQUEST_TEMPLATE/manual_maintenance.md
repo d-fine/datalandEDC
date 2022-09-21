@@ -3,6 +3,10 @@ Note: To create a PR using this template add the query parameter `template=manua
 
 # Maintenance tasks (to be completed by the assignee)
 ## EDC
+### Skipped updates
+The following known issues need to be reviewed in case a compatible version is available. Add new known issues as they appear.
+- [ ] ktlint 0.45.2 (higher version is not compatible with jlleitschuh plugin)
+
 ### Gradle update
 - [ ] Execute `gradlew dependencyUpdates` to get a report on Dependencies with updates
 - [ ] Update `settings.gradle.kts` (for libraries), `build.gradle.kts` (for plugins) and `gradle.properties` (for jacoco and ktlint)
@@ -19,7 +23,7 @@ Update versions in the following dockerfiles
 
 ## Conclusion
 - [ ] After updating all components check if everything still works
-    - [ ] Document any conflicts and skipped update by placing comments on this PR
+- [ ] This template has been updated to reflect the latest state of tasks required and known issues with upgrades
 
 # Review (to be completed by the reviewer)
 - [x] The Github Actions (including Sonarqube Gateway and Lint Checks) are green. This is enforced by Github.
