@@ -7,7 +7,7 @@ on:
 
 jobs:
 
-  unit-tests:
+  testing-and-sonar:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -62,7 +62,7 @@ jobs:
     runs-on: ubuntu-latest
     if: success()
     needs:
-      - unit-tests
+      - testing-and-sonar
     steps:
       - name: Summary of this workflow's overall outcome
         run: exit 0
