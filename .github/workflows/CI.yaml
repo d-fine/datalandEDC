@@ -7,7 +7,7 @@ on:
 
 jobs:
 
-  unit-tests:
+  testing-and-sonar:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
