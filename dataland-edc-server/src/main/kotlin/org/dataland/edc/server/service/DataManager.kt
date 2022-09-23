@@ -46,14 +46,14 @@ class DataManager(
         )
         try {
             assetProvisionContainer.semaphore.tryAcquire(Constants.TIMEOUT_MS, TimeUnit.MILLISECONDS)
-        monitor.info("Acquired semaphore.")
-        val location = assetProvisionContainer.eurodatAssetLocation!!
-        monitor.info("Asset $datalandAssetId is stored in EuroDaT under $location")
-        return location}
-        catch (ignore_e: Exception)  {
+            monitor.info("Acquired semaphore.")
+            val location = assetProvisionContainer.eurodatAssetLocation!!
+            monitor.info("Asset $datalandAssetId is stored in EuroDaT under $location")
+            return location
+        } catch (ignore_e: Exception) {
             monitor.severe(
                 "Timeout while providing an Asset with dataland asset ID $datalandAssetId: " +
-                         "Errormessage: ${ignore_e.message}"
+                    "Errormessage: ${ignore_e.message}"
             )
             throw ignore_e
         }
