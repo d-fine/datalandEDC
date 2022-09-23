@@ -4,9 +4,11 @@ import org.dataland.edc.server.models.AssetProvisionContainer
 import org.dataland.edc.server.models.EurodatAssetLocation
 import org.dataland.edc.server.utils.AwaitUtils
 import org.dataland.edc.server.utils.ConcurrencyUtils.getAcquiredSemaphore
+import org.dataland.edc.server.utils.Constants
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
 import java.util.UUID
+import java.util.concurrent.TimeUnit
 
 /**
  * Entity orchestrating the required steps for trustee data exchange
@@ -42,11 +44,19 @@ class DataManager(
             "Waiting for semaphore to be released after Asset with ID $datalandAssetId " +
                 "is picked up by EuroDaT."
         )
-        assetProvisionContainer.semaphore.acquire()
+        try {
+            assetProvisionContainer.semaphore.tryAcquire(Constants.TIMEOUT_MS, TimeUnit.MILLISECONDS)
         monitor.info("Acquired semaphore.")
         val location = assetProvisionContainer.eurodatAssetLocation!!
         monitor.info("Asset $datalandAssetId is stored in EuroDaT under $location")
-        return location
+        return location}
+        catch (ignore_e: Exception)  {
+            monitor.severe(
+                "Error providing an Asset with dataland asset ID $datalandAssetId, EuroDat Asset ID " +
+                         "Errormessage: ${ignore_e.message}"
+            )
+            throw ignore_e
+        }
     }
 
     /**
