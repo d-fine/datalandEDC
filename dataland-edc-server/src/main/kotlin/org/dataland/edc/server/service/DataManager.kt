@@ -51,7 +51,7 @@ class DataManager(
             return location
         } catch (ignore_e: Exception) {
             monitor.severe(
-                "Timeout while providing an Asset with dataland asset ID $datalandAssetId: Errormessage: ${ignore_e.message}"
+                "Timeout providing Asset with dataland asset ID $datalandAssetId: Errormessage: ${ignore_e.message}"
             )
             throw ignore_e
         }
