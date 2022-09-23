@@ -41,8 +41,7 @@ class DataManager(
         val datalandAssetId = storeAssetLocally(assetProvisionContainer)
         eurodatService.registerAssetEurodat(datalandAssetId, getLocalAssetAccessUrl(datalandAssetId))
         monitor.info(
-            "Waiting for semaphore to be released after Asset with ID $datalandAssetId " +
-                "is picked up by EuroDaT."
+            "Waiting for semaphore to be released after Asset with ID $datalandAssetId is picked up by EuroDaT."
         )
         try {
             assetProvisionContainer.semaphore.tryAcquire(Constants.TIMEOUT_MS, TimeUnit.MILLISECONDS)
@@ -52,8 +51,7 @@ class DataManager(
             return location
         } catch (ignore_e: Exception) {
             monitor.severe(
-                "Timeout while providing an Asset with dataland asset ID $datalandAssetId: " +
-                    "Errormessage: ${ignore_e.message}"
+                "Timeout while providing an Asset with dataland asset ID $datalandAssetId: Errormessage: ${ignore_e.message}"
             )
             throw ignore_e
         }
