@@ -25,18 +25,19 @@ class DatalandEurodatController(
     override fun provideAsset(
         datalandAssetId: String,
         eurodatAssetId: String,
-        eurodatContractDefinitionId: String
+        eurodatContractDefinitionId: String,
     ): String {
         monitorProvideAssetParameters(datalandAssetId, eurodatAssetId, eurodatContractDefinitionId)
         try {
             val assetProvisionContainer =
                 localAssetStore.retrieveDataFromStore(datalandAssetId) ?: AssetProvisionContainer(
-                    "", null, getAcquiredSemaphore()
+                    "", null, getAcquiredSemaphore(), ""
                 )
             assetProvisionContainer.eurodatAssetLocation =
                 EurodatAssetLocation("$eurodatContractDefinitionId:${Constants.DUMMY_STRING}", eurodatAssetId)
             assetProvisionContainer.semaphore.release()
             localAssetStore.deleteFromStore(datalandAssetId)
+            monitor.info("Correlation ID for the Asset: ${assetProvisionContainer.correlationId}.")
             return assetProvisionContainer.data
         } catch (ignore_e: Exception) {
             monitor.severe(
@@ -50,7 +51,7 @@ class DatalandEurodatController(
     private fun monitorProvideAssetParameters(
         datalandAssetId: String,
         eurodatAssetId: String,
-        eurodatContractDefinitionId: String
+        eurodatContractDefinitionId: String,
     ) {
         monitor.info("EuroDat retrieves asset with dataland asset ID $datalandAssetId.")
         monitor.info("EuroDat Asset ID is given by $eurodatAssetId.")

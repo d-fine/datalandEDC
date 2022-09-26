@@ -25,33 +25,33 @@ class DatalandInternalEdcController(
         return CheckHealthResponse("I am alive!")
     }
 
-    override fun insertData(data: String): InsertDataResponse {
+    override fun insertData(data: String, correlationId: String): InsertDataResponse {
         val dataId: String
         try {
-            monitor.info("Received data to store in the trustee.")
-            val eurodatAssetLocation = dataManager.provideAssetToTrustee(data)
+            monitor.info("Received data to store in the trustee. Correlation ID: $correlationId")
+            val eurodatAssetLocation = dataManager.provideAssetToTrustee(data, correlationId)
             dataId = "${eurodatAssetLocation.contractOfferId}_${eurodatAssetLocation.eurodatAssetId}"
-            monitor.info("Data with ID $dataId stored in trustee")
+            monitor.info("Data with ID $dataId stored in trustee. Correlation ID: $correlationId")
         } catch (ignore_e: Error) {
-            monitor.severe("Error inserting Data. Errormessage: ${ignore_e.message}")
+            monitor.severe("Error inserting Data with Correlation ID: $correlationId Errormessage: ${ignore_e.message}")
             throw ignore_e
         }
         return InsertDataResponse(dataId)
     }
 
-    override fun selectDataById(dataId: String): String {
-        monitor.info("Asset with data ID $dataId is requested.")
+    override fun selectDataById(dataId: String, correlationId: String): String {
+        monitor.info("Asset with data ID $dataId is requested. Correlation ID: $correlationId")
         try {
             val splitDataId = dataId.split("_")
-            if (splitDataId.size != 2) throw IllegalArgumentException("The data ID $dataId has an invalid format.")
+            if (splitDataId.size != 2) throw IllegalArgumentException("The data ID $dataId has an invalid format. Correlation ID: $correlationId")
             val eurodatAssetLocation = EurodatAssetLocation(splitDataId[0], splitDataId[1])
             val cacheResponse = eurodatAssetCache.retrieveFromCache(eurodatAssetLocation.eurodatAssetId)
-            val response = cacheResponse ?: dataManager.retrieveAssetFromTrustee(eurodatAssetLocation)
-            monitor.info("Data with ID $dataId retrieved internally - Returning Data via REST")
+            val response = cacheResponse ?: dataManager.retrieveAssetFromTrustee(eurodatAssetLocation, correlationId)
+            monitor.info("Data with ID $dataId retrieved internally - Returning Data via REST. Correlation ID: $correlationId")
             return response
         } catch (ignore_e: Exception) {
             monitor.severe(
-                "Error getting Asset with data ID $dataId from EuroDat. " +
+                "Error getting Asset with data ID $dataId from EuroDat. Correlation ID: $correlationId" +
                     "Errormessage: ${ignore_e.message}"
             )
             throw ignore_e

@@ -8,5 +8,6 @@ import java.util.concurrent.Semaphore
 data class AssetProvisionContainer(
     val data: String,
     var eurodatAssetLocation: EurodatAssetLocation?,
-    var semaphore: Semaphore
+    var semaphore: Semaphore,
+    var correlationId: String
 )
