@@ -106,7 +106,7 @@ execute_eurodat_test () {
   edc_log_file="../../edc_server.log"
 
   echo "Posting test data: $test_data."
-  response=$(curl --max-time 780 -X POST "$data_url" -H "accept: application/json" -H "Content-Type: application/json" -d "$test_data")
+  response=$(curl --max-time 780 -X POST "$data_url?correlationId=123" -H "accept: application/json" -H "Content-Type: application/json" -d "$test_data")
   regex="\"dataId\":\"([0-9a-f:\-]+_[0-9a-f\-]+)\""
   if [[ $response =~ $regex ]]; then
     dataId=${BASH_REMATCH[1]}
@@ -117,7 +117,7 @@ execute_eurodat_test () {
   echo "Received response from post request with data ID: $dataId"
 
   echo "Retrieving test data."
-  get_response=$(curl --max-time 780 -X GET "$data_url/$dataId" -H "accept: application/json")
+  get_response=$(curl --max-time 780 -X GET "$data_url/$dataId?correlationId=123" -H "accept: application/json")
   if [[ ! $get_response =~ $test_data ]]; then
     echo "Response was unexpected: $get_response"
     echo "Expected was substring: $test_data"
@@ -131,7 +131,7 @@ execute_eurodat_test () {
 
   echo "Testing wrong data id response"
   test_broken_data="47t67dgxesy"
-  curl -s --max-time 780 -X GET "$data_url/$test_broken_data"
+  curl -s --max-time 780 -X GET "$data_url/$test_broken_data?correlationId=123"
   checkTestCondition "Error getting Asset with data ID $test_broken_data from EuroDat."
 
   echo "Testing get request to eurodat with wrong data id"
@@ -154,7 +154,7 @@ execute_eurodat_test () {
   echo "Testing metaawait timeout"
 
   echo "Posting test data: $test_data."
-  response=$(curl --max-time 780 -X POST "$data_url" -H "accept: application/json" -H "Content-Type: application/json" -d "$test_data")
+  response=$(curl --max-time 780 -X POST "$data_url?correlationId=123" -H "accept: application/json" -H "Content-Type: application/json" -d "$test_data")
   regex="\"dataId\":\"([0-9a-f:\-]+_[0-9a-f\-]+)\""
   if [[ $response =~ $regex ]]; then
     dataId=${BASH_REMATCH[1]}
@@ -169,7 +169,7 @@ execute_eurodat_test () {
   ssh -S $ssh_ids_control_path -O exit ubuntu@"$dataland_tunnel_uri"
 
   echo "Retrieving test data."
-  curl --max-time 780 -X GET "http://localhost:${dataland_edc_server_web_http_port}/api/dataland/data/$dataId" -H "accept: application/json"
+  curl --max-time 780 -X GET "http://localhost:${dataland_edc_server_web_http_port}/api/dataland/data/$dataId?correlationId=123" -H "accept: application/json"
   checkTestCondition "Errormessage: Condition with org.dataland.edc.server.utils.AwaitUtils was not fulfilled within 2 minutes  30 seconds."
 
   echo "Test complete"
