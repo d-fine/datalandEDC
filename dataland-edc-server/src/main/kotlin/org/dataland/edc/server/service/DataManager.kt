@@ -39,7 +39,7 @@ class DataManager(
     fun provideAssetToTrustee(data: String, correlationId: String): EurodatAssetLocation {
         val assetProvisionContainer = AssetProvisionContainer(data, null, getAcquiredSemaphore(), correlationId)
         val datalandAssetId = storeAssetLocally(assetProvisionContainer)
-        eurodatService.registerAssetEurodat(datalandAssetId, getLocalAssetAccessUrl(datalandAssetId))
+        eurodatService.registerAssetEurodat(datalandAssetId, getLocalAssetAccessUrl(datalandAssetId), correlationId)
         monitor.info(
             "Waiting for semaphore to be released after Asset with ID $datalandAssetId is picked up by EuroDaT. Correlation ID : $correlationId"
         )
@@ -64,12 +64,13 @@ class DataManager(
      */
     fun retrieveAssetFromTrustee(dataLocation: EurodatAssetLocation, correlationId: String): String {
         monitor.info("Retrieve data with Correlation ID: $correlationId")
-        val contractAgreement = eurodatService.negotiateReadContract(dataLocation)
+        val contractAgreement = eurodatService.negotiateReadContract(dataLocation, correlationId)
         eurodatAssetCache.expectAsset(dataLocation.eurodatAssetId)
         eurodatService.requestData(
             eurodatAssetId = dataLocation.eurodatAssetId,
             retrievalContractId = contractAgreement.id,
-            targetURL = getLocalAssetAccessUrl(dataLocation.eurodatAssetId)
+            targetURL = getLocalAssetAccessUrl(dataLocation.eurodatAssetId),
+            correlationId
         )
         return AwaitUtils.awaitAssetArrival(eurodatAssetCache, dataLocation.eurodatAssetId)
     }

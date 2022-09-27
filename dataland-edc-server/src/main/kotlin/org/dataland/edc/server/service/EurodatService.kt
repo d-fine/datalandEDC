@@ -99,8 +99,8 @@ class EurodatService(
      * @param datalandAssetAccessURL a publicly reachable URL under which EuroDaT can retrieve the asset
      */
     @Suppress("kotlin:S138")
-    fun registerAssetEurodat(datalandAssetId: String, datalandAssetAccessURL: String) {
-        monitor.info("Registering asset $datalandAssetId with EuroDat")
+    fun registerAssetEurodat(datalandAssetId: String, datalandAssetAccessURL: String, correlationId: String) {
+        monitor.info("Registering asset $datalandAssetId with EuroDat. Correlation ID: $correlationId")
         val assetForAssetManagementContractConfirmation = awaitAssetForAssetManagementContractConfirm()
 
         val dataRequest = DataRequest.Builder.newInstance()
@@ -130,7 +130,8 @@ class EurodatService(
      * @param targetURL the URl where the asset is supposed to be sent to
      */
     @Suppress("kotlin:S138")
-    fun requestData(eurodatAssetId: String, retrievalContractId: String, targetURL: String) {
+    fun requestData(eurodatAssetId: String, retrievalContractId: String, targetURL: String, correlationId: String) {
+        monitor.info("Request data for eurodatasset ID: $eurodatAssetId. Correlation ID: $correlationId")
         val dataDestination = DataAddress.Builder.newInstance()
             .property("type", "")
             .property("baseUrl", targetURL)
@@ -152,7 +153,6 @@ class EurodatService(
                 )
             )
             .build()
-
         val transferId = transferProcessManager.initiateConsumerRequest(dataRequest).content
         AwaitUtils.awaitTransferCompletion(transferProcessStore, transferId)
     }
@@ -179,7 +179,8 @@ class EurodatService(
      * Negotiates a read contract for the specified asset
      * @param assetLocation the location of the asset the contract is for
      */
-    fun negotiateReadContract(assetLocation: EurodatAssetLocation): ContractAgreement {
+    fun negotiateReadContract(assetLocation: EurodatAssetLocation, correlationId: String): ContractAgreement {
+        monitor.info("Negotiating contract for correlation ID: $correlationId ")
         val useAssetPolicy = buildAssetPolicyForUse(assetLocation.eurodatAssetId)
 
         val assetContractOffer = ContractOffer.Builder.newInstance()
