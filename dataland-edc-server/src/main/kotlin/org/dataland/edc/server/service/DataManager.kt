@@ -41,13 +41,17 @@ class DataManager(
         val datalandAssetId = storeAssetLocally(assetProvisionContainer)
         eurodatService.registerAssetEurodat(datalandAssetId, getLocalAssetAccessUrl(datalandAssetId), correlationId)
         monitor.info(
-            "Waiting for semaphore to be released after Asset with ID $datalandAssetId is picked up by EuroDaT. Correlation ID : $correlationId"
+            "Waiting for semaphore to be released after Asset with ID $datalandAssetId is picked up by EuroDaT. " +
+                "Correlation ID : $correlationId"
         )
         try {
             assetProvisionContainer.semaphore.tryAcquire(Constants.TIMEOUT_MS, TimeUnit.MILLISECONDS)
             monitor.info("Acquired semaphore for correlation ID '$correlationId'.")
             val location = assetProvisionContainer.eurodatAssetLocation!!
-            monitor.info("Asset $datalandAssetId is stored in EuroDaT under $location . Correlation ID: '$correlationId'")
+            monitor.info(
+                "Asset $datalandAssetId is stored in EuroDaT under $location . Correlation ID: " +
+                    "'$correlationId'"
+            )
             return location
         } catch (ignore_e: Exception) {
             monitor.severe(
@@ -81,7 +85,10 @@ class DataManager(
     private fun storeAssetLocally(assetProvisionContainer: AssetProvisionContainer): String {
         val datalandAssetId = UUID.randomUUID().toString()
         localAssetStore.insertDataIntoStore(datalandAssetId, assetProvisionContainer)
-        monitor.info("Stored new local asset under ID $datalandAssetId with correlation ID: '${assetProvisionContainer.correlationId}'")
+        monitor.info(
+            "Stored new local asset under ID $datalandAssetId with correlation ID: " +
+                "'${assetProvisionContainer.correlationId}'"
+        )
         return datalandAssetId
     }
 }

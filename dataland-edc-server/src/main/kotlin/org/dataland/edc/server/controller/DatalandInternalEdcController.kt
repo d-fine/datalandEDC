@@ -43,11 +43,17 @@ class DatalandInternalEdcController(
         monitor.info("Asset with data ID $dataId is requested. Correlation ID: $correlationId")
         try {
             val splitDataId = dataId.split("_")
-            if (splitDataId.size != 2) throw IllegalArgumentException("The data ID $dataId has an invalid format. Correlation ID: $correlationId")
+            if (splitDataId.size != 2) throw IllegalArgumentException(
+                "The data ID $dataId has an invalid format. " +
+                    "Correlation ID: $correlationId"
+            )
             val eurodatAssetLocation = EurodatAssetLocation(splitDataId[0], splitDataId[1])
             val cacheResponse = eurodatAssetCache.retrieveFromCache(eurodatAssetLocation.eurodatAssetId)
             val response = cacheResponse ?: dataManager.retrieveAssetFromTrustee(eurodatAssetLocation, correlationId)
-            monitor.info("Data with ID $dataId retrieved internally - Returning Data via REST. Correlation ID: $correlationId")
+            monitor.info(
+                "Data with ID $dataId retrieved internally - Returning Data via REST. " +
+                    "Correlation ID: $correlationId"
+            )
             return response
         } catch (ignore_e: Exception) {
             monitor.severe(
