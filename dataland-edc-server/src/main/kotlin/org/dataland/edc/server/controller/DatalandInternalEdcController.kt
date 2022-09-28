@@ -42,11 +42,7 @@ class DatalandInternalEdcController(
     override fun selectDataById(dataId: String, correlationId: String): String {
         monitor.info("Asset with data ID $dataId is requested. Correlation ID: $correlationId")
         try {
-            val splitDataId = dataId.split("_")
-            if (splitDataId.size != 2) throw IllegalArgumentException(
-                "The data ID $dataId has an invalid format. Correlation ID: $correlationId"
-            )
-            val eurodatAssetLocation = EurodatAssetLocation(splitDataId[0], splitDataId[1])
+            val eurodatAssetLocation = getEurodatAssetLocation(dataId, correlationId)
             val cacheResponse = eurodatAssetCache.retrieveFromCache(eurodatAssetLocation.eurodatAssetId)
             val response = cacheResponse ?: dataManager.retrieveAssetFromTrustee(eurodatAssetLocation, correlationId)
             monitor.info(
@@ -61,5 +57,17 @@ class DatalandInternalEdcController(
             )
             throw ignore_e
         }
+    }
+
+    private fun getEurodatAssetLocation(
+        dataId: String,
+        correlationId: String
+    ): EurodatAssetLocation {
+        val splitDataId = dataId.split("_")
+        if (splitDataId.size != 2) throw IllegalArgumentException(
+            "The data ID $dataId has an invalid format. Correlation ID: $correlationId"
+        )
+        val eurodatAssetLocation = EurodatAssetLocation(splitDataId[0], splitDataId[1])
+        return eurodatAssetLocation
     }
 }
