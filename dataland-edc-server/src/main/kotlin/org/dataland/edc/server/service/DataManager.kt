@@ -51,7 +51,7 @@ class DataManager(
         } catch (ignore_e: Exception) {
             monitor.severe(
                 "Timeout providing Asset with dataland asset ID $datalandAssetId: Errormessage: ${ignore_e.message}" +
-                        " Correlation ID: '$correlationId'"
+                    " Correlation ID: '$correlationId'"
             )
             throw ignore_e
         }
@@ -64,8 +64,7 @@ class DataManager(
     ): EurodatAssetLocation {
         val location = assetProvisionContainer.eurodatAssetLocation!!
         monitor.info(
-            "Asset $datalandAssetId is stored in EuroDaT under $location . Correlation ID: " +
-                    "'$correlationId'"
+            "Asset $datalandAssetId is stored in EuroDaT under $location . Correlation ID: '$correlationId'"
         )
         return location
     }
