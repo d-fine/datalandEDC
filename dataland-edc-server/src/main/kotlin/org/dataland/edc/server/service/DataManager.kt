@@ -50,8 +50,7 @@ class DataManager(
             return getEurodatAssetLocation(assetProvisionContainer, datalandAssetId, correlationId)
         } catch (ignore_e: Exception) {
             monitor.severe(
-                "Timeout providing Asset with dataland asset ID $datalandAssetId: Errormessage: ${ignore_e.message}" +
-                    " Correlation ID: '$correlationId'"
+                "Timeout providing Asset with dataland asset ID $datalandAssetId. Correlation ID: '$correlationId'"
             )
             throw ignore_e
         }

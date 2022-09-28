@@ -33,6 +33,7 @@ interface DatalandInternalEdcApi {
     /**
      * Endpoint to trigger the upload of the delivered data to the trustee
      * @param data in a string format
+     * @queryparam correlationId in a string format
      */
     fun insertData(data: String, @QueryParam("correlationId") correlationId: String): InsertDataResponse
 
@@ -41,6 +42,7 @@ interface DatalandInternalEdcApi {
     /**
      * Endpoint for the Dataland backend to retrieve data from the trustee
      * @param dataId identifier containing the required information to retrieve data from the trustee
+     * * @queryparam correlationId in a string format
      */
     fun selectDataById(@PathParam("dataId") dataId: String, @QueryParam("correlationId") correlationId: String): String
 }
