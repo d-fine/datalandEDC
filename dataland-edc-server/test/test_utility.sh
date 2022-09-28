@@ -170,7 +170,7 @@ execute_eurodat_test () {
 
   echo "Retrieving test data."
   curl --max-time 780 -X GET "http://localhost:${dataland_edc_server_web_http_port}/api/dataland/data/$dataId?correlationId=123" -H "accept: application/json"
-  checkTestCondition "Errormessage: Condition with org.dataland.edc.server.utils.AwaitUtils was not fulfilled within 2 minutes  30 seconds."
+  checkTestCondition "Errormessage: Condition with org.dataland.edc.server.utils.AwaitUtils was not fulfilled within 3 minutes  30 seconds."
 
   echo "Test complete"
 }
