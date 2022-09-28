@@ -29,10 +29,7 @@ class DatalandEurodatController(
     ): String {
         monitorProvideAssetParameters(datalandAssetId, eurodatAssetId, eurodatContractDefinitionId)
         try {
-            val assetProvisionContainer =
-                localAssetStore.retrieveDataFromStore(datalandAssetId) ?: AssetProvisionContainer(
-                    "", null, getAcquiredSemaphore(), ""
-                )
+            val assetProvisionContainer = getAssetProvisionContainer(datalandAssetId)
             assetProvisionContainer.eurodatAssetLocation =
                 EurodatAssetLocation("$eurodatContractDefinitionId:${Constants.DUMMY_STRING}", eurodatAssetId)
             assetProvisionContainer.semaphore.release()
@@ -46,6 +43,14 @@ class DatalandEurodatController(
             )
             throw ignore_e
         }
+    }
+
+    private fun getAssetProvisionContainer(datalandAssetId: String): AssetProvisionContainer {
+        val assetProvisionContainer =
+            localAssetStore.retrieveDataFromStore(datalandAssetId) ?: AssetProvisionContainer(
+                "", null, getAcquiredSemaphore(), ""
+            )
+        return assetProvisionContainer
     }
 
     private fun monitorProvideAssetParameters(
