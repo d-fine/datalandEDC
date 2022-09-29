@@ -60,13 +60,13 @@ class DataManager(
             } else {
                 throw EurodatTimeoutException(
                     "Timeout error waiting for semamphore. Correlation ID: " +
-                            "$correlationId"
+                        "$correlationId"
                 )
             }
         } catch (ignore_e: Exception) {
             monitor.severe(
                 "Error receiving eurodat asset location with dataland asset ID $datalandAssetId. " +
-                        "Correlation ID: '$correlationId' caused by ${ignore_e.message} StackTrace: ${ignore_e.stackTrace}"
+                    "Correlation ID: '$correlationId' caused by ${ignore_e.message} StackTrace: ${ignore_e.stackTrace}"
             )
             throw ignore_e
         }
