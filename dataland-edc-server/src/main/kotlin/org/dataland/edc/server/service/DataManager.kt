@@ -1,5 +1,6 @@
 package org.dataland.edc.server.service
 
+import org.dataland.edc.server.exceptions.EurodatTimeoutException
 import org.dataland.edc.server.models.AssetProvisionContainer
 import org.dataland.edc.server.models.EurodatAssetLocation
 import org.dataland.edc.server.utils.AwaitUtils
@@ -45,12 +46,14 @@ class DataManager(
                 "Correlation ID : $correlationId"
         )
         try {
-            assetProvisionContainer.semaphore.tryAcquire(Constants.TIMEOUT_MS, TimeUnit.MILLISECONDS)
-            monitor.info("Acquired semaphore for correlation ID '$correlationId'.")
-            return getEurodatAssetLocation(assetProvisionContainer, datalandAssetId, correlationId)
+            if (assetProvisionContainer.semaphore.tryAcquire(Constants.TIMEOUT_MS, TimeUnit.MILLISECONDS)) {
+                monitor.info("Acquired semaphore for correlation ID '$correlationId'.")
+                return getEurodatAssetLocation(assetProvisionContainer, datalandAssetId, correlationId)
+            } else{throw EurodatTimeoutException("Timeout error waiting for semamphore. Correlation ID: $correlationId")}
         } catch (ignore_e: Exception) {
             monitor.severe(
-                "Timeout providing Asset with dataland asset ID $datalandAssetId. Correlation ID: '$correlationId'"
+                "Error receiving eurodat  asset location with dataland asset ID $datalandAssetId. " +
+                        "Correlation ID: '$correlationId' caused by ${ignore_e.message} StackTrace: ${ignore_e.stackTrace}"
             )
             throw ignore_e
         }

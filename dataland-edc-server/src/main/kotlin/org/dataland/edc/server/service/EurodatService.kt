@@ -118,6 +118,7 @@ class EurodatService(
             .build()
 
         val transferId = transferProcessManager.initiateConsumerRequest(dataRequest).content
+        monitor.info("Transferprocess ID: $transferId. Correlation ID: $correlationId")
         AwaitUtils.awaitTransferCompletion(transferProcessStore, transferId)
     }
 
@@ -154,6 +155,7 @@ class EurodatService(
             )
             .build()
         val transferId = transferProcessManager.initiateConsumerRequest(dataRequest).content
+        monitor.info("Transferprocess ID: $transferId. Correlation ID: $correlationId")
         AwaitUtils.awaitTransferCompletion(transferProcessStore, transferId)
     }
 
@@ -200,6 +202,7 @@ class EurodatService(
             .build()
 
         val negotiation = consumerContractNegotiationManager.initiate(contractOfferRequest).content
+        monitor.info("Contract negotiating id: ${negotiation.id}")
         return AwaitUtils.awaitContractConfirm(contractNegotiationStore, negotiation)
     }
 
