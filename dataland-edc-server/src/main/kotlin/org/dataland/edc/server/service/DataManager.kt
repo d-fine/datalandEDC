@@ -49,7 +49,12 @@ class DataManager(
             if (assetProvisionContainer.semaphore.tryAcquire(Constants.TIMEOUT_MS, TimeUnit.MILLISECONDS)) {
                 monitor.info("Acquired semaphore for correlation ID '$correlationId'.")
                 return getEurodatAssetLocation(assetProvisionContainer, datalandAssetId, correlationId)
-            } else { throw EurodatTimeoutException("Timeout error waiting for semamphore. Correlation ID: $correlationId") }
+            } else {
+                throw EurodatTimeoutException(
+                    "Timeout error waiting for semamphore. Correlation ID: " +
+                        "$correlationId"
+                )
+            }
         } catch (ignore_e: Exception) {
             monitor.severe(
                 "Error receiving eurodat  asset location with dataland asset ID $datalandAssetId. " +
