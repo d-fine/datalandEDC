@@ -45,6 +45,14 @@ class DataManager(
             "Waiting for semaphore to be released after Asset with ID $datalandAssetId is picked up by EuroDaT. " +
                 "Correlation ID : $correlationId"
         )
+        return checkAndRetrieveEurodatAssetLocation(assetProvisionContainer, correlationId, datalandAssetId)
+    }
+
+    private fun checkAndRetrieveEurodatAssetLocation(
+        assetProvisionContainer: AssetProvisionContainer,
+        correlationId: String,
+        datalandAssetId: String
+    ): EurodatAssetLocation {
         try {
             if (assetProvisionContainer.semaphore.tryAcquire(Constants.TIMEOUT_MS, TimeUnit.MILLISECONDS)) {
                 monitor.info("Acquired semaphore for correlation ID '$correlationId'.")
@@ -52,13 +60,13 @@ class DataManager(
             } else {
                 throw EurodatTimeoutException(
                     "Timeout error waiting for semamphore. Correlation ID: " +
-                        "$correlationId"
+                            "$correlationId"
                 )
             }
         } catch (ignore_e: Exception) {
             monitor.severe(
-                "Error receiving eurodat  asset location with dataland asset ID $datalandAssetId. " +
-                    "Correlation ID: '$correlationId' caused by ${ignore_e.message} StackTrace: ${ignore_e.stackTrace}"
+                "Error receiving eurodat asset location with dataland asset ID $datalandAssetId. " +
+                        "Correlation ID: '$correlationId' caused by ${ignore_e.message} StackTrace: ${ignore_e.stackTrace}"
             )
             throw ignore_e
         }

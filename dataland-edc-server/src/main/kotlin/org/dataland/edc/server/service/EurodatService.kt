@@ -181,6 +181,7 @@ class EurodatService(
      * Negotiates a read contract for the specified asset
      * @param assetLocation the location of the asset the contract is for
      */
+    @Suppress("kotlin:S138")
     fun negotiateReadContract(assetLocation: EurodatAssetLocation, correlationId: String): ContractAgreement {
         monitor.info("Negotiating contract for correlation ID: $correlationId ")
         val useAssetPolicy = buildAssetPolicyForUse(assetLocation.eurodatAssetId)
