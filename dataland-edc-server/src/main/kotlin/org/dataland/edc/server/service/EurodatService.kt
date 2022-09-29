@@ -203,7 +203,7 @@ class EurodatService(
             .build()
 
         val negotiation = consumerContractNegotiationManager.initiate(contractOfferRequest).content
-        monitor.info("Contract negotiating id: ${negotiation.id}")
+        monitor.info("Contract negotiating id: ${negotiation.id} Correlation ID: $correlationId")
         return AwaitUtils.awaitContractConfirm(contractNegotiationStore, negotiation)
     }
 
