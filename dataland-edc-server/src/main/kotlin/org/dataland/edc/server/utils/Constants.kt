@@ -4,7 +4,7 @@ package org.dataland.edc.server.utils
  * An object containing frequently used constants
  */
 object Constants {
-    const val TIMEOUT_MS = 210L * 1000L
+    const val TIMEOUT_MS = 420L * 1000L
     const val POLL_INTERVAL_MS = 50L
     const val DUMMY_STRING = "abc-123"
 
