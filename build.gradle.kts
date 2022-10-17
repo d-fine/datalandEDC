@@ -122,7 +122,7 @@ tasks.jacocoTestReport {
 }
 
 dependencies {
-    detekt("io.gitlab.arturbosch.detekt:detekt-cli:1.20.0")
+    detekt("io.gitlab.arturbosch.detekt:detekt-cli:1.21.0")
     detekt("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.7.20")
 }
 
