@@ -64,7 +64,7 @@ subprojects {
 
 plugins {
     id("org.springframework.boot") version "2.7.4" apply false
-    id("io.gitlab.arturbosch.detekt") version "1.21.0"
+    id("io.gitlab.arturbosch.detekt") version "1.20.0"
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
     kotlin("jvm") version "1.7.20"
     kotlin("plugin.spring") version "1.7.20" apply false
@@ -122,8 +122,8 @@ tasks.jacocoTestReport {
 }
 
 dependencies {
-    detekt("io.gitlab.arturbosch.detekt:detekt-cli:1.21.0")
-    detekt("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.7.10")
+    detekt("io.gitlab.arturbosch.detekt:detekt-cli:1.20.0")
+    detekt("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.7.20")
 }
 
 detekt {
