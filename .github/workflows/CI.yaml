@@ -20,7 +20,9 @@ jobs:
           java-version: 17
           cache: gradle
       - name: Build DataSpaceConnector
-        run: ./EDC/gradlew -Pskip.signing=true -p ./EDC publishToMavenLocal
+        run: | 
+          ./EDC/gradlew -Pskip.signing=true -p ./EDC publishToMavenLocal
+          ./EDCGradlePlugins/gradlew -Pskip.signing=true -p ./EDCGradlePlugins publishToMavenLocal
       - name: Build, check and test project
         run: ./gradlew assemble ktlintCheck detekt test --no-daemon --stacktrace
       - name: Upload Test Reports

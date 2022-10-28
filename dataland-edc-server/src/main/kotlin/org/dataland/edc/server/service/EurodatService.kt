@@ -181,10 +181,10 @@ class EurodatService(
      */
     fun negotiateReadContract(assetLocation: EurodatAssetLocation): ContractAgreement {
         val useAssetPolicy = buildAssetPolicyForUse(assetLocation.eurodatAssetId)
-
+        val asset = Asset.Builder.newInstance().id(assetLocation.eurodatAssetId).build()
         val assetContractOffer = ContractOffer.Builder.newInstance()
             .id(assetLocation.contractOfferId)
-            .assetId(assetLocation.eurodatAssetId)
+            .asset(asset)
             .policy(useAssetPolicy)
             .provider(URI(Constants.URN_KEY_PROVIDER))
             .consumer(URI(Constants.URN_KEY_CONSUMER))
