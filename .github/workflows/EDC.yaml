@@ -18,7 +18,7 @@ jobs:
           java-version: 17
           cache: gradle
       - name: Build DataSpaceConnector
-        run: ./DataSpaceConnector/gradlew -Pskip.signing=true -p ./DataSpaceConnector publishToMavenLocal
+        run: ./EDC/gradlew -Pskip.signing=true -p ./EDC publishToMavenLocal
       - name: Build jars and publish EDC client
         run: ./gradlew :dataland-edc-dummyserver:bootJar :dataland-edc-server:assemble :dataland-edc-client:publish --no-daemon --stacktrace
         env:
