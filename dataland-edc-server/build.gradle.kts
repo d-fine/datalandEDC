@@ -43,10 +43,10 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     implementation(libs.edc.filesystem.configuration)
-    implementation(libs.edc.filesystem.vault)
+    implementation(libs.edc.vault.filesystem)
     implementation(libs.edc.oauth2.core)
     implementation(libs.edc.ids)
-    implementation(libs.edc.core)
+    implementation(libs.edc.control.plane.core)
 
     implementation(libs.swagger.jaxrs2.jakarta)
     implementation(libs.rs.api)

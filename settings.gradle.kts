@@ -30,10 +30,10 @@ dependencyResolutionManagement {
                 "edc-filesystem-configuration",
                 "org.eclipse.dataspaceconnector:filesystem-configuration:0.0.1-SNAPSHOT"
             )
-            library("edc-filesystem-vault", "org.eclipse.dataspaceconnector:filesystem-vault:0.0.1-SNAPSHOT")
+            library("edc-vault-filesystem", "org.eclipse.dataspaceconnector:vault-filesystem:0.0.1-SNAPSHOT")
             library("edc-oauth2-core", "org.eclipse.dataspaceconnector:oauth2-core:0.0.1-SNAPSHOT")
             library("edc-ids", "org.eclipse.dataspaceconnector:ids:0.0.1-SNAPSHOT")
-            library("edc-core", "org.eclipse.dataspaceconnector:core:0.0.1-SNAPSHOT")
+            library("edc-control-plane-core", "org.eclipse.dataspaceconnector:control-plane-core:0.0.1-SNAPSHOT")
         }
     }
 }
