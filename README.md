@@ -33,4 +33,5 @@ To build this project, you need the compiled DataSpaceConnector libraries. As th
 To do so, run: (Please use git bash on Windows)
 ```
 ./EDC/gradlew -P"skip.signing=true" -p ./EDC publishToMavenLocal
+./EDCGradlePlugins/gradlew -P"skip.signing=true" -p ./EDC publishToMavenLocal
 ```
