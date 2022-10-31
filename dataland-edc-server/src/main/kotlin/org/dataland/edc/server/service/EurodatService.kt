@@ -43,7 +43,7 @@ class EurodatService(
     private val context: ServiceExtensionContext,
 ) {
     private val constantDummyDataDestination = DataAddress.Builder.newInstance()
-        .type("")
+        .type(Constants.DATA_TYPE_REGISTRATION)
         .property("endpoint", "unused-endpoint")
         .build()
 
@@ -132,7 +132,7 @@ class EurodatService(
     @Suppress("kotlin:S138")
     fun requestData(eurodatAssetId: String, retrievalContractId: String, targetURL: String) {
         val dataDestination = DataAddress.Builder.newInstance()
-            .property("type", "")
+            .type(Constants.DATA_TYPE_RECEIVING)
             .property("baseUrl", targetURL)
             .build()
 
@@ -148,7 +148,9 @@ class EurodatService(
             .properties(
                 mapOf(
                     "type" to Constants.TYPE_HTTP_FV,
-                    "endpoint" to targetURL
+                    "app" to Constants.APP_EXTRACT_ASSET,
+                    "endpoint" to targetURL,
+                    "inputList" to Constants.INPUT_LIST_EMPTY
                 )
             )
             .build()

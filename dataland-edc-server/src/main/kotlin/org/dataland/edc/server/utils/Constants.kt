@@ -20,7 +20,12 @@ object Constants {
     const val CONTENT_TYPE_PERSISTENT = "persistent"
     const val POLICY_TEMPLATE_ID = "policy-template"
     const val TYPE_HTTP_FV = "HttpFV"
+    const val APP_EXTRACT_ASSET = "EXTRACT_ASSET"
+    const val INPUT_LIST_EMPTY = "[]"
 
     const val URN_KEY_PROVIDER = "urn:connector:provider"
     const val URN_KEY_CONSUMER = "urn:connector:consumer"
+
+    const val DATA_TYPE_REGISTRATION = "DataTypeForRegisteringAsset"
+    const val DATA_TYPE_RECEIVING = "DataTypeForReceivingAsset"
 }
