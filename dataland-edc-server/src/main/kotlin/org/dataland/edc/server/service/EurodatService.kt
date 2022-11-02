@@ -43,7 +43,7 @@ class EurodatService(
     private val context: ServiceExtensionContext,
 ) {
     private val constantDummyDataDestination = DataAddress.Builder.newInstance()
-        .type("")
+        .type(Constants.DATA_TYPE_REGISTRATION)
         .property("endpoint", "unused-endpoint")
         .build()
 
@@ -134,7 +134,7 @@ class EurodatService(
     fun requestData(eurodatAssetId: String, retrievalContractId: String, targetURL: String, correlationId: String) {
         monitor.info("Request data for eurodatasset ID: $eurodatAssetId. Correlation ID: $correlationId")
         val dataDestination = DataAddress.Builder.newInstance()
-            .property("type", "")
+            .type(Constants.DATA_TYPE_RECEIVING)
             .property("baseUrl", targetURL)
             .build()
 
@@ -150,7 +150,9 @@ class EurodatService(
             .properties(
                 mapOf(
                     "type" to Constants.TYPE_HTTP_FV,
-                    "endpoint" to targetURL
+                    "app" to Constants.APP_EXTRACT_ASSET,
+                    "endpoint" to targetURL,
+                    "inputList" to Constants.INPUT_LIST_EMPTY
                 )
             )
             .build()
@@ -185,10 +187,10 @@ class EurodatService(
     fun negotiateReadContract(assetLocation: EurodatAssetLocation, correlationId: String): ContractAgreement {
         monitor.info("Negotiating contract for correlation ID: $correlationId ")
         val useAssetPolicy = buildAssetPolicyForUse(assetLocation.eurodatAssetId)
-
+        val asset = Asset.Builder.newInstance().id(assetLocation.eurodatAssetId).build()
         val assetContractOffer = ContractOffer.Builder.newInstance()
             .id(assetLocation.contractOfferId)
-            .assetId(assetLocation.eurodatAssetId)
+            .asset(asset)
             .policy(useAssetPolicy)
             .provider(URI(Constants.URN_KEY_PROVIDER))
             .consumer(URI(Constants.URN_KEY_CONSUMER))

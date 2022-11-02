@@ -32,5 +32,6 @@ Make sure the applied changes (import of `TimeUnit` as well as setting the timeo
 To build this project, you need the compiled DataSpaceConnector libraries. As they didn't yet publish a version to maven central, deploy them to maven local before. 
 To do so, run: (Please use git bash on Windows)
 ```
-./DataSpaceConnector/gradlew -P"skip.signing=true" -p ./DataSpaceConnector publishToMavenLocal
+./EDC/gradlew -P"skip.signing=true" -p ./EDC publishToMavenLocal
+./EDCGradlePlugins/gradlew -P"skip.signing=true" -p ./EDC publishToMavenLocal
 ```

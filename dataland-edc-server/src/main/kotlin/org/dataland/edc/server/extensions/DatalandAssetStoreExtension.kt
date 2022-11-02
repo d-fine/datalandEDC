@@ -2,7 +2,7 @@ package org.dataland.edc.server.extensions
 
 import org.dataland.edc.server.service.EurodatAssetCache
 import org.dataland.edc.server.service.LocalAssetStore
-import org.eclipse.dataspaceconnector.spi.system.Provider
+import org.eclipse.dataspaceconnector.runtime.metamodel.annotation.Provider
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtension
 
 /**

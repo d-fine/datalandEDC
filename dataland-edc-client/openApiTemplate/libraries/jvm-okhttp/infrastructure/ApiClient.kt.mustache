@@ -176,7 +176,7 @@ private const val HTTP_TIMEOUT: Long = 300
                         MediaType.parse(mediaType ?: JsonMediaType), Serializer.jacksonObjectMapper.writeValueAsString(content)
                         {{/jackson}}
                         {{#kotlinx_serialization}}
-                        MediaType.parse(mediaType ?: JsonMediaType), Serializer.jvmJson.encodeToString(content)
+                        MediaType.parse(mediaType ?: JsonMediaType), Serializer.kotlinxSerializationJson.encodeToString(content)
                         {{/kotlinx_serialization}}
                     )
                 }
@@ -195,7 +195,7 @@ private const val HTTP_TIMEOUT: Long = 300
                     Serializer.jacksonObjectMapper.writeValueAsString(content)
                     {{/jackson}}
                     {{#kotlinx_serialization}}
-                    Serializer.jvmJson.encodeToString(content)
+                    Serializer.kotlinxSerializationJson.encodeToString(content)
                     {{/kotlinx_serialization}}
                         .toRequestBody((mediaType ?: JsonMediaType).toMediaTypeOrNull())
                 }
@@ -215,7 +215,7 @@ private const val HTTP_TIMEOUT: Long = 300
         if (T::class.java == File::class.java) {
             // return tempFile
             {{^supportAndroidApiLevel25AndBelow}}
-            // Attention: if you are developing an android app that supports API Level 25 and bellow, please check flag supportAndroidApiLevel25AndBelow in https://openapi-generator.tech/docs/generators/kotlin#config-options        
+            // Attention: if you are developing an android app that supports API Level 25 and bellow, please check flag supportAndroidApiLevel25AndBelow in https://openapi-generator.tech/docs/generators/kotlin#config-options
             val tempFile = java.nio.file.Files.createTempFile("tmp.{{packageName}}", null).toFile()
             {{/supportAndroidApiLevel25AndBelow}}
             {{#supportAndroidApiLevel25AndBelow}}
@@ -243,7 +243,7 @@ private const val HTTP_TIMEOUT: Long = 300
                 {{#moshi}}Serializer.moshi.adapter<T>().fromJson(bodyContent){{/moshi}}{{!
                 }}{{#gson}}Serializer.gson.fromJson(bodyContent, (object: TypeToken<T>(){}).getType()){{/gson}}{{!
                 }}{{#jackson}}Serializer.jacksonObjectMapper.readValue(bodyContent, object: TypeReference<T>() {}){{/jackson}}{{!
-                }}{{#kotlinx_serialization}}Serializer.jvmJson.decodeFromString<T>(bodyContent){{/kotlinx_serialization}}
+                }}{{#kotlinx_serialization}}Serializer.kotlinxSerializationJson.decodeFromString<T>(bodyContent){{/kotlinx_serialization}}
             else ->  throw UnsupportedOperationException("responseBody currently only supports JSON body.")
         }
     }
@@ -320,7 +320,7 @@ private const val HTTP_TIMEOUT: Long = 300
         {{/hasAuthMethods}}
 
         val url = httpUrl.newBuilder()
-            .addPathSegments(requestConfig.path.trimStart('/'))
+            .addEncodedPathSegments(requestConfig.path.trimStart('/'))
             .apply {
                 requestConfig.query.forEach { query ->
                     query.value.forEach { queryValue ->
@@ -439,7 +439,7 @@ private const val HTTP_TIMEOUT: Long = 300
         return Serializer.jacksonObjectMapper.writeValueAsString(value).replace("\"", "")
         {{/jackson}}
         {{#kotlinx_serialization}}
-        return Serializer.jvmJson.encodeToString(value).replace("\"", "")
+        return Serializer.kotlinxSerializationJson.encodeToString(value).replace("\"", "")
         {{/kotlinx_serialization}}
         {{/toJson}}
         {{^toJson}}
