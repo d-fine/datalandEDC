@@ -9,7 +9,7 @@ jobs:
   build-and-publish-edc-server-image:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: recursive
       - name: log inputs
@@ -41,34 +41,34 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: $GITHUB_ACTOR
       - name: Login to Github Packages
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
       - name: Get edcdummyserver version for the RELEASE tags without prefix
         id: metaEdcdummyserver
-        uses: docker/metadata-action@v3
+        uses: docker/metadata-action@v4
         with:
           images: ghcr.io/d-fine/datalandedc/edcdummyserver
           tags: type=match,pattern=RELEASE-(.*),group=1
       - name: Build the edc dummy server image and push it to GitHub Container Registry
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: ./dataland-edc-dummyserver
           tags: ${{steps.metaEdcdummyserver.outputs.tags}}
           push: true
       - name: Get edcserver version for the RELEASE tags without prefix
         id: metaEdcserver
-        uses: docker/metadata-action@v3
+        uses: docker/metadata-action@v4
         with:
           images: ghcr.io/d-fine/datalandedc/edcserver
           tags: type=match,pattern=RELEASE-(.*),group=1
       - name: Build the edc real server image and push it to GitHub Container Registry
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: ./dataland-edc-server
           tags: ${{steps.metaEdcserver.outputs.tags}}
