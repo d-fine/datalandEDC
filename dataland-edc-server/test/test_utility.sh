@@ -17,8 +17,8 @@ is_tunnel_server_up () {
 }
 export -f is_tunnel_server_up
 
-export dataland_tunnel_uri=dataland-tunnel.duckdns.org
-dataland_edc_server_uri=dataland-tunnel.duckdns.org
+export dataland_tunnel_uri=tunnel.dataland.com
+dataland_edc_server_uri=tunnel.dataland.com
 export dataland_tunnel_startup_link=$TUNNEL_STARTUP_LINK
 
 eurodat_health_endpoint="${TRUSTEE_BASE_URL}/${TRUSTEE_ENVIRONMENT_NAME}/api/check/health"
