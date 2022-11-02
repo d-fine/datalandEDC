@@ -57,8 +57,8 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v2
         with:
-          name: EdcServerLog
-          path: ./edc_server.log
+          name: EdcServerLog and env file
+          path: ./edc_server.log ./test/.env
       - name: Generate jacocoTestReport and run Sonar
         if: always()
         run: |
