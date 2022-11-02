@@ -60,7 +60,7 @@ jobs:
           name: EdcServerLog and env file
           path: |
             ./edc_server.log 
-            ./test/.env
+            ./dataland-edc-server/test/.env
       - name: Generate jacocoTestReport and run Sonar
         if: always()
         run: |
