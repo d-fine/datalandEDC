@@ -157,7 +157,8 @@ execute_eurodat_test () {
   ssh -S $ssh_ids_control_path -O exit ubuntu@"$dataland_tunnel_uri"
 
   echo "Retrieving test data. Expecting a timeout."
-  curl --max-time 780 -X GET "http://localhost:${dataland_edc_server_web_http_port}/api/dataland/data/$dataId?correlationId=123" -H "accept: application/json"
+  dummy_data_id="c6ba36f0-5b58-11ed-9b6a-0242ac120002:abc-123_c3294922-5b58-11ed-9b6a-0242ac120002"
+  curl --max-time 780 -X GET "http://localhost:${dataland_edc_server_web_http_port}/api/dataland/data/$dummy_data_id?correlationId=123" -H "accept: application/json"
   checkEdcServerLogForMessage "Errormessage: Condition with org.dataland.edc.server.utils.AwaitUtils was not fulfilled within "
 
   echo "Test complete"
