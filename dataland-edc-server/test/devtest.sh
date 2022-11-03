@@ -40,3 +40,5 @@ acquire_ssh_tunnel "$HOSTNAME"
 start_edc_server
 
 execute_eurodat_test
+
+echo "EuroDaT Integration Test successful"

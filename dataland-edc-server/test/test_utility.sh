@@ -74,7 +74,7 @@ start_edc_server () {
   timeout 240 bash -c "while ! is_edc_server_up_and_healthy; do echo 'Dataland EDC server not yet there - retrying in 10s'; sleep 10; done; echo 'Dataland EDC server up!'"
 }
 
-checkTestCondition () {
+checkEdcServerLogForMessage () {
   local maxNumberOfRetries=10
   local inputErrorMessage=$1
   local i=0
@@ -132,7 +132,7 @@ execute_eurodat_test () {
   echo "Testing wrong data id response"
   test_broken_data="47t67dgxesy"
   curl -s --max-time 780 -X GET "$data_url/$test_broken_data?correlationId=123"
-  checkTestCondition "Error getting Asset with data ID $test_broken_data from EuroDat."
+  checkEdcServerLogForMessage "Error getting Asset with data ID $test_broken_data from EuroDat."
 
   echo "Testing get request to eurodat with wrong data id"
     test_broken_data="trze648fksaasy"
@@ -152,25 +152,13 @@ execute_eurodat_test () {
     fi
 
   echo "Testing metaawait timeout"
-
-  echo "Posting test data: $test_data."
-  response=$(curl --max-time 780 -X POST "$data_url?correlationId=123" -H "accept: application/json" -H "Content-Type: application/json" -d "$test_data")
-  regex="\"dataId\":\"([0-9a-f:\-]+_[0-9a-f\-]+)\""
-  if [[ $response =~ $regex ]]; then
-    dataId=${BASH_REMATCH[1]}
-  else
-    echo "Unable to extract data ID from response: $response"
-    exit 1
-  fi
-  echo "Received response from post request with data ID: $dataId"
-
   echo "Shutting down tunnel"
   ssh -S $ssh_http_control_path -O exit ubuntu@"$dataland_tunnel_uri"
   ssh -S $ssh_ids_control_path -O exit ubuntu@"$dataland_tunnel_uri"
 
-  echo "Retrieving test data."
+  echo "Retrieving test data. Expecting a timeout."
   curl --max-time 780 -X GET "http://localhost:${dataland_edc_server_web_http_port}/api/dataland/data/$dataId?correlationId=123" -H "accept: application/json"
-  checkTestCondition "Errormessage: Condition with org.dataland.edc.server.utils.AwaitUtils was not fulfilled within 3 minutes  30 seconds."
+  checkEdcServerLogForMessage "Errormessage: Condition with org.dataland.edc.server.utils.AwaitUtils was not fulfilled within "
 
   echo "Test complete"
 }
