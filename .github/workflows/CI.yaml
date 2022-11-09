@@ -7,7 +7,7 @@ on:
 
 jobs:
 
-  unit-tests:
+  testing-and-sonar:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -51,12 +51,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: Upload Build Reports
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: JaCoCoResultsTest
+          path: ./build/reports/*
 
   summary:
     runs-on: ubuntu-latest
     if: success()
     needs:
-      - unit-tests
+      - testing-and-sonar
     steps:
       - name: Summary of this workflow's overall outcome
         run: exit 0

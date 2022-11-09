@@ -1,16 +1,20 @@
 #!/bin/bash
-# This script executes a DevTest against EuroDaT. It will upload a dataset, and download it again
+# This script executes a DevTest against EuroDaT. It will upload a dataset, and download it again.
+# It requires the tunnel server and will reboot it during the test. Hence, only one developer at
+# the time should be using this test and it cannot be executed in parallel to the CI pipeline!
 # Prerequisites:
 # - Set all env variables according the DatalandInternal Wiki
-# - Build the current version of the DataSpaceConnector (see Readme on how to update
-#   submodules and build the DataSpaceConnector
+# - Build the current version of the DataSpaceConnector (see Readme)
 
 set -e
 
 trap stopEDCServer EXIT
 
 function stopEDCServer() {
-  kill "$edc_server_pid"
+  if [[ -n $edc_server_pid ]]; then
+    echo "Shutting down EDC server running under: $edc_server_pid"
+    kill "$edc_server_pid"
+  fi
 }
 
 workdir=$(dirname "$0")
@@ -24,27 +28,15 @@ source ./test_utility.sh
 
 is_eurodat_up_and_healthy
 
-echo "Check connection to tunnel server."
-if ! ssh ubuntu@"$dataland_tunnel_uri" "echo Successfully connected!"; then
-  echo "Unable to connect to tunnel server. Trying to start server."
-  curl "$dataland_tunnel_startup_link"
-  sleep 60
+if is_edc_server_up_and_healthy; then
+  echo "Local EDC Server already responding before test started. Make sure no conflicting process is running."
+  exit 1
 fi
 
-echo "Kill all locally running SSH tunnels"
-for pid in $(ps | grep /usr/bin/ssh | awk '{ print $1 }')
-do
-  echo "Killing PID: $pid"
-  kill "$pid"
-done
+restart_tunnel_server
 
-echo "Open all three SSH tunnels from the Dataland-Tunnel-Server to your host system"
-ssh -R \*:"$dataland_edc_server_web_http_port":$HOSTNAME:"$config_web_http_port" -N -f ubuntu@"$dataland_tunnel_uri"
-ssh -R \*:"$dataland_edc_server_web_http_ids_port":$HOSTNAME:"$config_web_http_ids_port" -N -f ubuntu@"$dataland_tunnel_uri"
+acquire_ssh_tunnel "$HOSTNAME"
 
 start_edc_server
-
-echo "Checking health endpoint of dataland edc server locally."
-timeout 240 bash -c "while ! is_edc_server_up_and_healthy; do echo 'Dataland EDC server not yet there - retrying in 5s'; sleep 5; done; echo 'Dataland EDC server up!'"
 
 execute_eurodat_test

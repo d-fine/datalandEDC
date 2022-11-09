@@ -3,7 +3,7 @@ package org.dataland.edc.server.extensions
 import org.dataland.edc.server.service.EurodatService
 import org.eclipse.dataspaceconnector.spi.contract.negotiation.ConsumerContractNegotiationManager
 import org.eclipse.dataspaceconnector.spi.contract.negotiation.store.ContractNegotiationStore
-import org.eclipse.dataspaceconnector.spi.message.RemoteMessageDispatcherRegistry
+import org.eclipse.dataspaceconnector.spi.monitor.Monitor
 import org.eclipse.dataspaceconnector.spi.system.Inject
 import org.eclipse.dataspaceconnector.spi.system.Provider
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtension
@@ -30,7 +30,7 @@ class DatalandEurodatServiceExtension : ServiceExtension {
     private lateinit var transferProcessStore: TransferProcessStore
 
     @Inject
-    private lateinit var dispatcher: RemoteMessageDispatcherRegistry
+    private lateinit var monitor: Monitor
 
     /**
      * Creates a EuroDaTService Instance with the required injects
@@ -43,8 +43,8 @@ class DatalandEurodatServiceExtension : ServiceExtension {
             contractNegotiationStore,
             transferProcessStore,
             consumerContractNegotiationManager,
-            context,
-            dispatcher
+            monitor,
+            context
         )
     }
 }

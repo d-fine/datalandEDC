@@ -1,3 +1,4 @@
+org.dataland.edc.server.extensions.ThreadAwareMonitorExtension
 org.dataland.edc.server.extensions.AssetForAssetManagementContractExtension
 org.dataland.edc.server.extensions.DatalandApiEndpointExtension
 org.dataland.edc.server.extensions.DatalandEurodatServiceExtension

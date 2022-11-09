@@ -1,28 +1,28 @@
 package org.dataland.edc.server.service
 
+import org.dataland.edc.server.models.AssetProvisionContainer
 import java.util.concurrent.ConcurrentHashMap
 
 /**
  * An in-memory store of assets provided to EuroDaT
  */
 class LocalAssetStore {
-    private val store: ConcurrentHashMap<String, String> = ConcurrentHashMap()
+    private val dataStore: ConcurrentHashMap<String, AssetProvisionContainer> = ConcurrentHashMap()
 
     /**
      * Retrieves an asset from the store
      * @param id the id of the asset
      */
-    fun retrieveFromStore(id: String): String? {
-        return store[id]
+    fun retrieveDataFromStore(id: String): AssetProvisionContainer? {
+        return dataStore[id]
     }
 
     /**
      * Inserts an asset into the store
      * @param id the id of the asset
-     * @param asset the actual asset data
      */
-    fun insertIntoStore(id: String, asset: String) {
-        store[id] = asset
+    fun insertDataIntoStore(id: String, assetProvisionContainer: AssetProvisionContainer) {
+        dataStore[id] = assetProvisionContainer
     }
 
     /**
@@ -30,6 +30,6 @@ class LocalAssetStore {
      * @param id the id of the asset
      */
     fun deleteFromStore(id: String) {
-        store.remove(id)
+        dataStore.remove(id)
     }
 }

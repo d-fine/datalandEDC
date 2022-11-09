@@ -2,6 +2,7 @@ package org.dataland.edc.server.api
 
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.GET
+import jakarta.ws.rs.HeaderParam
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
@@ -21,7 +22,11 @@ interface DatalandEurodatApi {
      * Endpoint returning the data associated to the provided ID, data are deleted on Dataland EDC after pick-up
      * @param datalandAssetId ID used on Dataland EDC side to identify the data
      */
-    fun provideAsset(@PathParam("datalandAssetId") datalandAssetId: String): String
+    fun provideAsset(
+        @PathParam("datalandAssetId") datalandAssetId: String,
+        @HeaderParam("eurodat-asset-id") eurodatAssetId: String,
+        @HeaderParam("eurodat-contract-definition-id") eurodatContractDefinitionId: String
+    ): String
 
     @Consumes(MediaType.APPLICATION_OCTET_STREAM)
     @Produces(MediaType.APPLICATION_JSON)
