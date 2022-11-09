@@ -1,7 +1,7 @@
 #!/bin/bash
 
 is_edc_server_up_and_healthy () {
-  server_uri="${1:-localhost}"
+  local server_uri="${1:-localhost}"
   health_response=$(curl -s -f -X GET "http://${server_uri}:${dataland_edc_server_web_http_port}/api/dataland/health" -H "accept: application/json")
   if [[ ! $health_response =~ "I am alive!" ]]; then
     return 1
