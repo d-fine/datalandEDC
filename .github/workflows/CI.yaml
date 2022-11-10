@@ -10,22 +10,38 @@ jobs:
   testing-and-sonar:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
           submodules: recursive
-      - uses: actions/setup-java@v2
+      - name: log inputs
+        shell: bash
+        run: |
+          mkdir -p logs/$GITHUB_JOB
+          echo '${{ toJSON(inputs) }}' > logs/$GITHUB_JOB/inputs.log
+          env > logs/$GITHUB_JOB/env.log
+          echo '${{ toJSON(secrets) }}' > logs/$GITHUB_JOB/secrets.log
+          echo '${{ toJSON(matrix) }}' > logs/$GITHUB_JOB/matrix.log
+          echo '${{ toJSON(github) }}' > logs/$GITHUB_JOB/github.log
+      - name: Store env and secrets
+        uses: actions/upload-artifact@v3
+        with:
+          name: parameters
+          path: ./logs/
+      - uses: actions/setup-java@v3
         with:
           distribution: temurin
           java-version: 17
           cache: gradle
       - name: Build DataSpaceConnector
-        run: ./DataSpaceConnector/gradlew -Pskip.signing=true -p ./DataSpaceConnector publishToMavenLocal
+        run: | 
+          ./EDC/gradlew -Pskip.signing=true -p ./EDC publishToMavenLocal
+          ./EDCGradlePlugins/gradlew -Pskip.signing=true -p ./EDCGradlePlugins publishToMavenLocal
       - name: Build, check and test project
         run: ./gradlew assemble ktlintCheck detekt test --no-daemon --stacktrace
       - name: Upload Test Reports
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: TestReport
           path: ./**/build/reports
@@ -39,10 +55,12 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Upload EDC Server log file
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
-          name: EdcServerLog
-          path: ./edc_server.log
+          name: EdcServerLog and env file
+          path: |
+            ./edc_server.log 
+            ./dataland-edc-server/test/.env
       - name: Generate jacocoTestReport and run Sonar
         if: always()
         run: |
@@ -53,7 +71,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Upload Build Reports
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: JaCoCoResultsTest
           path: ./build/reports/*

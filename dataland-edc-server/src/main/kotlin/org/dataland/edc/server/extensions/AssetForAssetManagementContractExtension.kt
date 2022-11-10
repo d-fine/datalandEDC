@@ -1,8 +1,8 @@
 package org.dataland.edc.server.extensions
 
 import org.dataland.edc.server.service.EurodatService
+import org.eclipse.dataspaceconnector.runtime.metamodel.annotation.Inject
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor
-import org.eclipse.dataspaceconnector.spi.system.Inject
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtension
 import org.eclipse.dataspaceconnector.spi.types.domain.contract.negotiation.ContractNegotiation
 

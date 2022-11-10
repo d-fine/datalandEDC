@@ -43,7 +43,7 @@ class EurodatService(
     private val context: ServiceExtensionContext,
 ) {
     private val constantDummyDataDestination = DataAddress.Builder.newInstance()
-        .type("")
+        .type(Constants.DATA_TYPE_REGISTRATION)
         .property("endpoint", "unused-endpoint")
         .build()
 
@@ -99,8 +99,8 @@ class EurodatService(
      * @param datalandAssetAccessURL a publicly reachable URL under which EuroDaT can retrieve the asset
      */
     @Suppress("kotlin:S138")
-    fun registerAssetEurodat(datalandAssetId: String, datalandAssetAccessURL: String) {
-        monitor.info("Registering asset $datalandAssetId with EuroDat")
+    fun registerAssetEurodat(datalandAssetId: String, datalandAssetAccessURL: String, correlationId: String) {
+        monitor.info("Registering asset $datalandAssetId with EuroDat. Correlation ID: $correlationId")
         val assetForAssetManagementContractConfirmation = awaitAssetForAssetManagementContractConfirm()
 
         val dataRequest = DataRequest.Builder.newInstance()
@@ -118,6 +118,7 @@ class EurodatService(
             .build()
 
         val transferId = transferProcessManager.initiateConsumerRequest(dataRequest).content
+        monitor.info("Transferprocess ID: $transferId. Correlation ID: $correlationId")
         AwaitUtils.awaitTransferCompletion(transferProcessStore, transferId)
     }
 
@@ -130,9 +131,10 @@ class EurodatService(
      * @param targetURL the URl where the asset is supposed to be sent to
      */
     @Suppress("kotlin:S138")
-    fun requestData(eurodatAssetId: String, retrievalContractId: String, targetURL: String) {
+    fun requestData(eurodatAssetId: String, retrievalContractId: String, targetURL: String, correlationId: String) {
+        monitor.info("Request data for eurodatasset ID: $eurodatAssetId. Correlation ID: $correlationId")
         val dataDestination = DataAddress.Builder.newInstance()
-            .property("type", "")
+            .type(Constants.DATA_TYPE_RECEIVING)
             .property("baseUrl", targetURL)
             .build()
 
@@ -148,12 +150,14 @@ class EurodatService(
             .properties(
                 mapOf(
                     "type" to Constants.TYPE_HTTP_FV,
-                    "endpoint" to targetURL
+                    "app" to Constants.APP_EXTRACT_ASSET,
+                    "endpoint" to targetURL,
+                    "inputList" to Constants.INPUT_LIST_EMPTY
                 )
             )
             .build()
-
         val transferId = transferProcessManager.initiateConsumerRequest(dataRequest).content
+        monitor.info("Transferprocess ID: $transferId. Correlation ID: $correlationId")
         AwaitUtils.awaitTransferCompletion(transferProcessStore, transferId)
     }
 
@@ -179,12 +183,14 @@ class EurodatService(
      * Negotiates a read contract for the specified asset
      * @param assetLocation the location of the asset the contract is for
      */
-    fun negotiateReadContract(assetLocation: EurodatAssetLocation): ContractAgreement {
+    @Suppress("kotlin:S138")
+    fun negotiateReadContract(assetLocation: EurodatAssetLocation, correlationId: String): ContractAgreement {
+        monitor.info("Negotiating contract for correlation ID: $correlationId ")
         val useAssetPolicy = buildAssetPolicyForUse(assetLocation.eurodatAssetId)
-
+        val asset = Asset.Builder.newInstance().id(assetLocation.eurodatAssetId).build()
         val assetContractOffer = ContractOffer.Builder.newInstance()
             .id(assetLocation.contractOfferId)
-            .assetId(assetLocation.eurodatAssetId)
+            .asset(asset)
             .policy(useAssetPolicy)
             .provider(URI(Constants.URN_KEY_PROVIDER))
             .consumer(URI(Constants.URN_KEY_CONSUMER))
@@ -199,6 +205,7 @@ class EurodatService(
             .build()
 
         val negotiation = consumerContractNegotiationManager.initiate(contractOfferRequest).content
+        monitor.info("Contract negotiating id: ${negotiation.id} Correlation ID: $correlationId")
         return AwaitUtils.awaitContractConfirm(contractNegotiationStore, negotiation)
     }
 

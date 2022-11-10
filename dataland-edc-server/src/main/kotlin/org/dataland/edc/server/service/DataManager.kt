@@ -1,12 +1,15 @@
 package org.dataland.edc.server.service
 
+import org.dataland.edc.server.exceptions.EurodatTimeoutException
 import org.dataland.edc.server.models.AssetProvisionContainer
 import org.dataland.edc.server.models.EurodatAssetLocation
 import org.dataland.edc.server.utils.AwaitUtils
 import org.dataland.edc.server.utils.ConcurrencyUtils.getAcquiredSemaphore
+import org.dataland.edc.server.utils.Constants
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext
 import java.util.UUID
+import java.util.concurrent.TimeUnit
 
 /**
  * Entity orchestrating the required steps for trustee data exchange
@@ -34,18 +37,50 @@ class DataManager(
      * identifying information returned for the newly created asset
      * @param data The data to store in EuroDaT
      */
-    fun provideAssetToTrustee(data: String): EurodatAssetLocation {
-        val assetProvisionContainer = AssetProvisionContainer(data, null, getAcquiredSemaphore())
+    fun provideAssetToTrustee(data: String, correlationId: String): EurodatAssetLocation {
+        val assetProvisionContainer = AssetProvisionContainer(data, null, getAcquiredSemaphore(), correlationId)
         val datalandAssetId = storeAssetLocally(assetProvisionContainer)
-        eurodatService.registerAssetEurodat(datalandAssetId, getLocalAssetAccessUrl(datalandAssetId))
+        eurodatService.registerAssetEurodat(datalandAssetId, getLocalAssetAccessUrl(datalandAssetId), correlationId)
         monitor.info(
-            "Waiting for semaphore to be released after Asset with ID $datalandAssetId " +
-                "is picked up by EuroDaT."
+            "Waiting for semaphore to be released after Asset with ID $datalandAssetId is picked up by EuroDaT. " +
+                "Correlation ID : $correlationId"
         )
-        assetProvisionContainer.semaphore.acquire()
-        monitor.info("Acquired semaphore.")
+        return checkAndRetrieveEurodatAssetLocation(assetProvisionContainer, correlationId, datalandAssetId)
+    }
+
+    private fun checkAndRetrieveEurodatAssetLocation(
+        assetProvisionContainer: AssetProvisionContainer,
+        correlationId: String,
+        datalandAssetId: String
+    ): EurodatAssetLocation {
+        try {
+            if (assetProvisionContainer.semaphore.tryAcquire(Constants.TIMEOUT_MS, TimeUnit.MILLISECONDS)) {
+                monitor.info("Acquired semaphore for correlation ID '$correlationId'.")
+                return getEurodatAssetLocation(assetProvisionContainer, datalandAssetId, correlationId)
+            } else {
+                throw EurodatTimeoutException(
+                    "Timeout error waiting for semamphore. Correlation ID: " +
+                        "$correlationId"
+                )
+            }
+        } catch (ignore_e: Exception) {
+            monitor.severe(
+                "Error receiving eurodat asset location with dataland asset ID $datalandAssetId. " +
+                    "Correlation ID: '$correlationId' caused by ${ignore_e.message} StackTrace: ${ignore_e.stackTrace}"
+            )
+            throw ignore_e
+        }
+    }
+
+    private fun getEurodatAssetLocation(
+        assetProvisionContainer: AssetProvisionContainer,
+        datalandAssetId: String,
+        correlationId: String
+    ): EurodatAssetLocation {
         val location = assetProvisionContainer.eurodatAssetLocation!!
-        monitor.info("Asset $datalandAssetId is stored in EuroDaT under $location")
+        monitor.info(
+            "Asset $datalandAssetId is stored in EuroDaT under $location . Correlation ID: '$correlationId'"
+        )
         return location
     }
 
@@ -53,13 +88,15 @@ class DataManager(
      * Retrieves an Asset from EuroDaT
      * @param dataLocation The location of the data in EuroDaT
      */
-    fun retrieveAssetFromTrustee(dataLocation: EurodatAssetLocation): String {
-        val contractAgreement = eurodatService.negotiateReadContract(dataLocation)
+    fun retrieveAssetFromTrustee(dataLocation: EurodatAssetLocation, correlationId: String): String {
+        monitor.info("Retrieve data with Correlation ID: $correlationId")
+        val contractAgreement = eurodatService.negotiateReadContract(dataLocation, correlationId)
         eurodatAssetCache.expectAsset(dataLocation.eurodatAssetId)
         eurodatService.requestData(
             eurodatAssetId = dataLocation.eurodatAssetId,
             retrievalContractId = contractAgreement.id,
-            targetURL = getLocalAssetAccessUrl(dataLocation.eurodatAssetId)
+            targetURL = getLocalAssetAccessUrl(dataLocation.eurodatAssetId),
+            correlationId
         )
         return AwaitUtils.awaitAssetArrival(eurodatAssetCache, dataLocation.eurodatAssetId)
     }
@@ -70,7 +107,10 @@ class DataManager(
     private fun storeAssetLocally(assetProvisionContainer: AssetProvisionContainer): String {
         val datalandAssetId = UUID.randomUUID().toString()
         localAssetStore.insertDataIntoStore(datalandAssetId, assetProvisionContainer)
-        monitor.info("Stored new local asset under ID $datalandAssetId)")
+        monitor.info(
+            "Stored new local asset under ID $datalandAssetId with correlation ID: " +
+                "'${assetProvisionContainer.correlationId}'"
+        )
         return datalandAssetId
     }
 }
