@@ -133,7 +133,8 @@ detekt {
     val detektFileTree = fileTree("$projectDir")
     detektFileTree
         .exclude("**/build/**")
-        .exclude("**/DataSpaceConnector/**")
+        .exclude("**/EDC/**")
+        .exclude("**/EDCGradlePlugins/**")
         .exclude(".gradle")
     source = files(detektFileTree)
 }

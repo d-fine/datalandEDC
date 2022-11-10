@@ -8,6 +8,7 @@ import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
+import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.MediaType
 import org.dataland.edc.server.models.CheckHealthResponse
 import org.dataland.edc.server.models.InsertDataResponse
@@ -32,14 +33,16 @@ interface DatalandInternalEdcApi {
     /**
      * Endpoint to trigger the upload of the delivered data to the trustee
      * @param data in a string format
+     * @queryparam correlationId in a string format
      */
-    fun insertData(data: String): InsertDataResponse
+    fun insertData(data: String, @QueryParam("correlationId") correlationId: String): InsertDataResponse
 
     @GET
     @Path("/data/{dataId}")
     /**
      * Endpoint for the Dataland backend to retrieve data from the trustee
      * @param dataId identifier containing the required information to retrieve data from the trustee
+     * * @queryparam correlationId in a string format
      */
-    fun selectDataById(@PathParam("dataId") dataId: String): String
+    fun selectDataById(@PathParam("dataId") dataId: String, @QueryParam("correlationId") correlationId: String): String
 }

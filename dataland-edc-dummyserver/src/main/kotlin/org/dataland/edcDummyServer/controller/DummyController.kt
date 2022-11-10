@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RestController
 class DummyController : DefaultApi {
     val dataStore = InMemoryDataStore()
 
-    override fun selectDataById(dataId: String): ResponseEntity<String> {
+    override fun selectDataById(dataId: String, correlationId: String?): ResponseEntity<String> {
         return ResponseEntity.ok(dataStore.selectDataSet(dataId))
     }
 
-    override fun insertData(body: String?): ResponseEntity<InsertDataResponse> {
+    override fun insertData(correlationId: String?, body: String?): ResponseEntity<InsertDataResponse> {
         return ResponseEntity.ok(InsertDataResponse(dataStore.insertDataSet(body ?: "")))
     }
 
