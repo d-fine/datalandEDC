@@ -1,8 +1,8 @@
 #!/bin/bash
 
 is_edc_server_up_and_healthy () {
-  local server_uri="${1:-localhost}"
-  health_response=$(curl -s -f -X GET "http://${server_uri}:${dataland_edc_server_web_http_port}/api/dataland/health" -H "accept: application/json")
+  local server_uri="${1:-http://localhost}"
+  health_response=$(curl -s -f -X GET "${server_uri}:${dataland_edc_server_web_http_port}/api/dataland/health" -H "accept: application/json")
   if [[ ! $health_response =~ "I am alive!" ]]; then
     return 1
   fi
@@ -25,7 +25,7 @@ export dataland_tunnel_uri=tunnel.dataland.com
 export dataland_tunnel_startup_link=$TUNNEL_STARTUP_LINK
 export dataland_edc_server_web_http_port=9191
 
-dataland_edc_server_uri=tunnel.dataland.com
+dataland_edc_server_base_url="http://tunnel.dataland.com"
 eurodat_health_endpoint="${TRUSTEE_BASE_URL}/auth/"
 
 ssh_http_control_path=/tmp/.ssh_tunnel_control_http_port
@@ -96,9 +96,9 @@ checkEdcServerLogForMessage () {
 
 execute_eurodat_test () {
   echo "Checking health endpoint via tunnel server."
-  timeout 60 bash -c "is_edc_server_up_and_healthy \"$dataland_edc_server_uri\"" || exit 1
+  timeout 60 bash -c "is_edc_server_up_and_healthy \"$dataland_edc_server_base_url\"" || exit 1
 
-  data_url="http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/data"
+  data_url="${dataland_edc_server_base_url}:${dataland_edc_server_web_http_port}/api/dataland/data"
   echo "Using $data_url for requests."
 
   test_data="Test Data from: "$(date "+%d.%m.%Y %H:%M:%S")
@@ -136,7 +136,7 @@ execute_eurodat_test () {
 
   echo "Testing get request to eurodat with wrong data id"
     test_broken_data="trze648fksaasy"
-    get_response=$(curl -X 'GET' "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/eurodat/asset/$test_broken_data" -H "eurodat-asset-id: af8baf3c-" -H "eurodat-contract-definition-id: fe8a7ad6")
+    get_response=$(curl -X 'GET' "${dataland_edc_server_base_url}:${dataland_edc_server_web_http_port}/api/dataland/eurodat/asset/$test_broken_data" -H "eurodat-asset-id: af8baf3c-" -H "eurodat-contract-definition-id: fe8a7ad6")
     echo $get_response
     if [[ ! $get_response == "" ]]; then
       echo "Unexpected response"
@@ -146,7 +146,7 @@ execute_eurodat_test () {
     fi
 
   echo "Testing 400 error on unexpected asset transmission"
-    if ! curl -X 'POST' "http://${dataland_edc_server_uri}:${dataland_edc_server_web_http_port}/api/dataland/eurodat/asset/non-existent" | grep -q '400'; then
+    if ! curl -X 'POST' "${dataland_edc_server_base_url}:${dataland_edc_server_web_http_port}/api/dataland/eurodat/asset/non-existent" | grep -q '400'; then
       echo "ERROR: Did not receive 400 Response"
       exit 1
     fi
