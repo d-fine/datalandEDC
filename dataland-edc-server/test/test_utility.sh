@@ -26,7 +26,7 @@ export dataland_tunnel_startup_link=$TUNNEL_STARTUP_LINK
 export dataland_edc_server_web_http_port=9191
 
 dataland_edc_server_uri=dataland-tunnel.duckdns.org
-eurodat_health_endpoint="${TRUSTEE_BASE_URL}/${TRUSTEE_ENVIRONMENT_NAME}/auth"
+eurodat_health_endpoint="${TRUSTEE_BASE_URL}/auth/"
 
 ssh_http_control_path=/tmp/.ssh_tunnel_control_http_port
 ssh_ids_control_path=/tmp/.ssh_tunnel_control_ids_port
