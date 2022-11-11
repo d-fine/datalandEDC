@@ -65,7 +65,7 @@ jobs:
         if: always()
         run: |
           ./gradlew jacocoTestReport --no-daemon --stacktrace
-          ./gradlew sonar --no-daemon --stacktrace
+          ./gradlew sonarqube --no-daemon --stacktrace
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

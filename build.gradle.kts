@@ -28,7 +28,7 @@ allprojects {
 extra["OpenApiSpec"] = "OpenApiSpec.json"
 
 subprojects {
-    sonar {
+    sonarqube {
         isSkipProject = true
     }
     apply(plugin = "maven-publish")
@@ -68,7 +68,7 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
     kotlin("jvm") version "1.7.21"
     kotlin("plugin.spring") version "1.7.21" apply false
-    id("org.sonarqube") version "3.5.0.2730"
+    id("org.sonarqube") version "3.4.0.2513"
     id("org.openapi.generator") version "6.2.1" apply false
     id("org.springdoc.openapi-gradle-plugin") version "1.4.0" apply false
     id("io.swagger.core.v3.swagger-gradle-plugin") version "2.2.6" apply false
@@ -81,7 +81,7 @@ tasks.dependencyUpdates.configure {
     gradleReleaseChannel = "current"
 }
 
-sonar {
+sonarqube {
     properties {
         property("sonar.projectKey", "d-fine_datalandEDC")
         property("sonar.organization", "d-fine")
