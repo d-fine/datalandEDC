@@ -28,7 +28,7 @@ allprojects {
 extra["OpenApiSpec"] = "OpenApiSpec.json"
 
 subprojects {
-    sonarqube {
+    sonar {
         isSkipProject = true
     }
     apply(plugin = "maven-publish")
@@ -81,7 +81,7 @@ tasks.dependencyUpdates.configure {
     gradleReleaseChannel = "current"
 }
 
-sonarqube {
+sonar {
     properties {
         property("sonar.projectKey", "d-fine_datalandEDC")
         property("sonar.organization", "d-fine")
