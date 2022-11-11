@@ -6,6 +6,7 @@ Note: To create a PR using this template add the query parameter `template=manua
 ### Skipped updates
 The following known issues need to be reviewed in case a compatible version is available. Add new known issues as they appear.
 - [ ] ktlint 0.45.2 (higher version is not compatible with jlleitschuh plugin)
+- [ ] sonarqube 3.4.0.2513 not update to 3.5.X, due to issues in file resolving mechanism
 
 ### Gradle update
 - [ ] Execute `gradlew dependencyUpdates` to get a report on Dependencies with updates
