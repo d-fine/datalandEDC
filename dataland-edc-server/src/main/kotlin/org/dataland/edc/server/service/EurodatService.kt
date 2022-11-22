@@ -58,8 +58,8 @@ class EurodatService(
             "contentType" to Constants.CONTENT_TYPE_PERSISTENT,
             "policyTemplateId" to Constants.POLICY_TEMPLATE_ID,
             "assetName" to assetName,
-            "providerAssetId" to "",
-            "queryAgreementId" to "",
+//            "providerAssetId" to "",
+//            "queryAgreementId" to "",
         )
     }
 
